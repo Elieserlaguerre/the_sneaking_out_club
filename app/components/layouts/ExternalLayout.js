@@ -11,7 +11,7 @@ export default function ExternalLayout({ children }) {
 
 	return (
 		department && (
-			<div className="min-h-screen">
+			<div>
 				<div>
 					<Navbar navList={dynamicExternalNavlist(department)} />
 				</div>
