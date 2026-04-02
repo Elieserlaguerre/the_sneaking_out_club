@@ -3,6 +3,12 @@
     "subdomain": "admin"
   },
   {
+    "subdomain": "careers"
+  },
+  {
     "subdomain": "parents"
+  },
+  {
+    "subdomain": "teachers"
   }
 ]

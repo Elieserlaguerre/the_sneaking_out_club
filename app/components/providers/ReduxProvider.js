@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
-import store from "@/app/lib/redux/Store";
-
+import store from "@/app/lib/redux/store";
 
 export default function ReduxProvider({ children }) {
 	const [persistor, setPersistor] = useState(null);

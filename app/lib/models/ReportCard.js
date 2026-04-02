@@ -59,7 +59,14 @@ const reportCardSchema = new Schema(
 
 		school: {
 			type: ObjectId,
-			ref: "School"
+			required: true,
+			refPath: "schoolType"
+		},
+
+		schoolType: {
+			type: String,
+			required: true,
+			enum: ["School", "Academy"]
 		}
 	},
 	{ timestamps: true }

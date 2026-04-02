@@ -4,11 +4,9 @@ import { Bars3Icon, ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outli
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../shad-ui/card";
 import { useAtomValue } from "jotai";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
-import { handleDepartmentThemeColor } from "@/app/lib/util/frontend-helper-functions";
-
+import { dynamicLayoutThemeColor, handleDepartmentThemeColor } from "@/app/lib/util/frontend-helper-functions";
 
 export default function SectionNavbar({ navList, profile }) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -28,23 +26,14 @@ export default function SectionNavbar({ navList, profile }) {
 		navList.forEach((section) => (section?.component?.hideMobileButton ? setHideMobileButton(true) : setHideMobileButton(false)));
 	}, [path]);
 
-	const navbar = true;
-	const theme = handleDepartmentThemeColor(department, user, navbar, profile);
-
-	const domainThemeColorSelector = () => {
-		if (department && theme) {
-			if (department && !profile && theme.secondary !== "black" && theme.secondary !== "white") return `bg-gradient-to-br from-${theme.secondary}-500 to-${theme.secondary}-700`;
-			if (department && profile) return `bg-gradient-to-br from-${theme.primary}-500 to-${theme.primary}-700`;
-			return `bg-${theme.secondary}`;
-		}
-	};
+	const theme = dynamicLayoutThemeColor(department);
 
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
 
 	return (
-		<div className={classNames(domainThemeColorSelector())}>
+		<div className={classNames(theme.sectionNavbar.root)}>
 			<header className="relative isolate z-40">
 				<nav aria-label="Global" className={classNames(navList.length > 15 ? "max-w-full" : "max-w-7xl", "mx-auto flex items-center justify-end lg:justify-start p-6 lg:px-8 gap-4")}>
 					<div className={classNames(hideMobileButton ? "hidden" : "flex lg:hidden")}>
@@ -57,7 +46,7 @@ export default function SectionNavbar({ navList, profile }) {
 					{navList?.map((section, i) => {
 						if (section.title) {
 							return (
-								<Link key={i} className={classNames(profile?.active && section.href === lastRouteSegments ? "ring-1 ring-white rounded-sm" : path === section.href && "ring-1 ring-white rounded-sm", "hidden lg:flex items-center gap-x-1 text-sm font-semibold leading-6 text-white capitalize px-2.5 py-1 hover:ring hover:ring-white hover:rounded-sm")} href={profile?.active ? `${basePath}${section.href}` : section.href}>
+								<Link key={i} className={classNames(profile?.active && section.href === lastRouteSegments ? "ring-1 ring-white rounded-sm" : path === section.href && `ring-1 ring-white rounded-sm`, theme.text.navbar, "hidden lg:flex items-center gap-x-1 text-sm font-semibold leading-6 capitalize px-2.5 py-1 hover:ring hover:ring-white hover:rounded-sm")} href={profile?.active ? `${basePath}${section.href}` : section.href}>
 									{section.title}
 								</Link>
 							);
@@ -72,16 +61,12 @@ export default function SectionNavbar({ navList, profile }) {
 											<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none text-white" />
 										</PopoverButton>
 
-										<PopoverPanel transition="true" className={classNames("absolute inset-x-0 top-20 -z-10 bg-white pt-2 shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:-translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in")}>
+										<PopoverPanel transition="true" className={classNames("absolute inset-x-0 top-20 -z-10 bg-white pt-2 shadow-lg ring-1 ring-gray-900/5 transition data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150 data-enter:ease-out data-leave:ease-in")}>
 											<div className={classNames(section.panel.nav.length < 4 ? `grid grid-cols-${section.panel.nav.length}` : "grid grid-cols-4", "mx-auto max-w-7xl px-6 py-5 lg:px-8 divide-x divide-gray-400")}>
 												{section.panel.nav.map((nav, i) => (
-													<Card key={nav.title} className="lg:border-y-0">
-														{nav.title && (
-															<CardHeader>
-																<CardTitle className="capitalize font-semibold text-base">{nav.title}</CardTitle>
-															</CardHeader>
-														)}
-														<CardContent className="px-6">
+													<div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+														{nav.title && <div className="px-4 py-5 sm:px-6">{nav.title}</div>}
+														<div className="px-4 py-5 sm:p-6">
 															<ol className="w-full h-full leading-8">
 																{nav.links.map((link, i) => (
 																	<PopoverButton key={i} as={Link} href={profile?.active ? `${basePath}${link.href}` : link.href} className={classNames(link.href === path ? "bg-indigo-500 text-white" : null, "capitalize font-semibold hover:bg-indigo-500 cursor-pointer hover:text-white block w-full text-left pl-2")}>
@@ -89,8 +74,8 @@ export default function SectionNavbar({ navList, profile }) {
 																	</PopoverButton>
 																))}
 															</ol>
-														</CardContent>
-													</Card>
+														</div>
+													</div>
 												))}
 											</div>
 										</PopoverPanel>
@@ -101,7 +86,7 @@ export default function SectionNavbar({ navList, profile }) {
 
 						if (section.component) {
 							return (
-								<div key={i} className="w-full">
+								<div key={i} className={classNames(theme.text.navbar, "w-full")}>
 									{section.component.elements}
 								</div>
 							);
@@ -112,7 +97,7 @@ export default function SectionNavbar({ navList, profile }) {
 				{/* mobile device navbar */}
 				<Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
 					<div className="fixed inset-0 z-10" />
-					<DialogPanel className={classNames(profile?.active ? "top-14" : "top-[8.5rem]", "fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10")}>
+					<DialogPanel className={classNames(profile?.active ? "top-14" : "top-34", "fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10")}>
 						<div className="flex items-center justify-between">
 							<Link href="#" className="-m-1.5 p-1.5">
 								<span className="sr-only">synergistic enterprises</span>
@@ -139,7 +124,7 @@ export default function SectionNavbar({ navList, profile }) {
 												<Disclosure key={i} as="div" className="-mx-3">
 													<DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 capitalize">
 														{section.panel.title}
-														<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-[open]:rotate-180" />
+														<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-open:rotate-180" />
 													</DisclosureButton>
 													<DisclosurePanel className="mt-2 space-y-2">
 														{({ close }) => {

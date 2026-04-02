@@ -50,9 +50,9 @@ const schoolStaffSchema = new Schema(
 			}
 		},
 
-		school: {
+		academy: {
 			type: ObjectId,
-			ref: "School"
+			ref: "Academy"
 		}
 	},
 	{ timestamps: true }

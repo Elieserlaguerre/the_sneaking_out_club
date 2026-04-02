@@ -26,12 +26,6 @@ const activitySchema = new Schema(
 			url: {
 				type: String,
 				trim: true
-			},
-			width: {
-				type: Number
-			},
-			height: {
-				type: Number
 			}
 		},
 		address1: {
@@ -81,11 +75,10 @@ const activitySchema = new Schema(
 			type: ObjectId,
 			ref: "Admin"
 		},
-		tier: {
+		type: {
 			type: String,
 			trim: true,
-			required: true,
-			enum: ["tier_1", "tier_2", "tier_3", "tier_4"]
+			enum: ["school", "family", "club"]
 		}
 	},
 	{ timestamps: true }

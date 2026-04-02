@@ -29,6 +29,41 @@ const parentSchema = new Schema(
 			trim: true,
 			required: true
 		},
+		address1: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		address2: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		city: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		state: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		zipCode: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		country: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		cloudinarySubfolder: {
+			type: String,
+			trim: true,
+			required: true
+		},
 		image: {
 			publicId: {
 				type: String,
@@ -37,21 +72,44 @@ const parentSchema = new Schema(
 			url: {
 				type: String,
 				trim: true
-			},
-			width: {
-				type: Number
-			},
-			height: {
-				type: Number
 			}
 		},
-		clubStatus: {
+		status: {
 			type: String,
 			trim: true,
 			required: true,
 			enum: ["active", "probation", "suspended", "expelled"],
 			default: "active"
-		}
+		},
+		dateOfBirth: {
+			type: Date
+		},
+		age: {
+			type: Number
+		},
+		nationality: {
+			type: String,
+			trim: true
+		},
+		gender: {
+			type: String,
+			trim: true
+		},
+		introduction: {
+			type: String,
+			trim: true
+		},
+		online: {
+			type: Boolean,
+			required: true,
+			default: false
+		},
+		children: [
+			{
+				type: ObjectId,
+				ref: "Member"
+			}
+		]
 	},
 	{ timestamps: true }
 );

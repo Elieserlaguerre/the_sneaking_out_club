@@ -19,12 +19,47 @@ const adminSchema = new Schema(
 			trim: true,
 			required: true
 		},
+		phone: {
+			type: String,
+			trim: true,
+			required: true
+		},
 		password: {
 			type: String,
 			trim: true,
 			required: true
 		},
-		phone: {
+		address1: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		address2: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		city: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		state: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		zipCode: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		country: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		cloudinarySubfolder: {
 			type: String,
 			trim: true,
 			required: true
@@ -39,12 +74,39 @@ const adminSchema = new Schema(
 				trim: true
 			}
 		},
-		clubStatus: {
+		status: {
 			type: String,
 			trim: true,
 			required: true,
-			enum: ["active", "probation", "suspended", "expelled"],
-			default: "active"
+			enum: ["pending", "active", "probation", "suspended", "expelled"],
+			default: "pending"
+		},
+		dateOfBirth: {
+			type: Date
+		},
+		age: {
+			type: Number
+		},
+		nationality: {
+			type: String,
+			trim: true
+		},
+		gender: {
+			type: String,
+			trim: true
+		},
+		introduction: {
+			type: String,
+			trim: true
+		},
+		online: {
+			type: Boolean,
+			required: true,
+			default: false
+		},
+		academy: {
+			type: ObjectId,
+			ref: "Academy"
 		}
 	},
 	{ timestamps: true }

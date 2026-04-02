@@ -17,7 +17,7 @@ const meetingSchema = new Schema(
 		senderType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent", "Member"]
+			enum: ["Admin", "Parent", "Member", "Teacher", "Applicant"]
 		},
 
 		recipients: [
@@ -36,12 +36,12 @@ const meetingSchema = new Schema(
 					type: String,
 					trim: true,
 					enum: ["accepted", "declined", "requested_reschedule"]
-                },
-                
-                comment: {
-                    type: String,
-                    trim: true
-                }
+				},
+
+				comment: {
+					type: String,
+					trim: true
+				}
 			}
 		],
 

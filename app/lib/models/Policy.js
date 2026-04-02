@@ -15,6 +15,16 @@ const policySchema = new Schema(
 		creator: {
 			type: ObjectId,
 			ref: "Admin"
+		},
+		school: {
+			type: ObjectId,
+			required: true,
+			refPath: "schoolType"
+		},
+		schoolType: {
+			type: String,
+			required: true,
+			enum: ["School", "Academy"]
 		}
 	},
 	{ timestamps: true }

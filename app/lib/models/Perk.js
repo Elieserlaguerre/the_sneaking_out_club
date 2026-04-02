@@ -27,7 +27,7 @@ const perkSchema = new Schema(
 			default: 0
 		},
 
-		purpose: [
+		description: [
 			{
 				title: {
 					type: String,

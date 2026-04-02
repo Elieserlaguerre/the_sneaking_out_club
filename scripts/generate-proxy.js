@@ -216,38 +216,39 @@ if (isExternalRoute) return withCookies(baseResponse, NextResponse.redirect(new 
 if (isInternalRoute) return baseResponse;
 }
 }
-
 if (isValidSubdomain) {
 const platformRoutes = findPlatformRoutesForSubdomain(subdomain);
+
 const { externalRoutes = [], internalRoutes = [] } = platformRoutes;
 
-const isInternalRoute = internalRoutes.some((r) => pathname.includes(r));
-const isExternalRoute = externalRoutes.some((r) => pathname === "/" || pathname.includes(r));
+const isInternalRoute = internalRoutes.some((r) => pathname.startsWith(\`/\${r}\`));
+const isExternalRoute = externalRoutes.some((r) => pathname === "/" || pathname.startsWith(\`/\${r}\`));
 
-if (!activeSession) {
-if (subdomain === "admin") {
-if (pathname !== "/") return withCookies(baseResponse, NextResponse.redirect(new URL("/", origin)));
-if (pathname === "/" || isExternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}\${url.pathname}\`, req.url)));
+// Block invalid routes
+const isKnownRoute = isInternalRoute || isExternalRoute;
+
+if (!isKnownRoute) {
+return withCookies(
+baseResponse,
+NextResponse.rewrite(new URL("/not-found", origin))
+);
 }
-if (isInternalRoute) return withCookies(baseResponse, NextResponse.redirect(new URL("/login", origin)));
-if (isExternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}\${url.pathname}\`, req.url)));
+
+//Auth logic
+if (!activeSession) {
+if (isInternalRoute)
+return withCookies(baseResponse, NextResponse.redirect(new URL("/login", origin)));
+
+if (isExternalRoute)
+return withCookies(
+baseResponse,
+NextResponse.rewrite(new URL(\`\/\${subdomain}\${url.pathname}\`, req.url))
+);
 }
 
 if (activeSession) {
-if (subdomain === "admin") {
 if (pathname === "/" || isExternalRoute) return withCookies(baseResponse, NextResponse.redirect(new URL("/dashboard", origin)));
-if (isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}\${url.pathname}\`, req.url)));
-}
-
-if (subdomain === "partners") {
-if (isExternalRoute) return withCookies(baseResponse, NextResponse.redirect(new URL("/dashboard", origin)));
-if (activeSession.accountType === "retail account" && isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}/retail-account\${url.pathname}\`, req.url)));
-if (activeSession.accountType === "service account" && isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}/service-account\${url.pathname}\`, req.url)));
-if (activeSession.accountType === "content account" && isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}/content-account\${url.pathname}\`, req.url)));
-}
-
-if (isExternalRoute) return withCookies(baseResponse, NextResponse.redirect(new URL("/dashboard", origin)));
-if (isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`/\${subdomain}\${url.pathname}\`, req.url)));
+if (isInternalRoute) return withCookies(baseResponse, NextResponse.rewrite(new URL(\`\/\${subdomain}\${url.pathname}\`, req.url)));
 }
 }
 

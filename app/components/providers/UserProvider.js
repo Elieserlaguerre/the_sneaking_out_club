@@ -1,6 +1,6 @@
 "use client";
 
-import { useLazyGetCurrentUserQuery } from "@/app/lib/data-fetching/globalComponentsApi";
+import { useLazyGetCurrentUserQuery } from "@/app/lib/redux/data-fetching/global-api";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useSession } from "next-auth/react";
@@ -8,11 +8,14 @@ import React, { Fragment, useEffect } from "react";
 import toast from "react-hot-toast";
 
 export default function UserProvider({ children }) {
-	const { data, status } = useSession();
-	const user = data?.user;
-
 	const department = useAtomValue(currentDepartment);
 	const setCurrentUser = useSetAtom(currentUser);
+	const { data: session, status } = useSession();
+	const user = session?.user;
+
+	useEffect(() => {
+		setCurrentUser(user);
+	}, []);
 
 	const [getUser, getUserResults] = useLazyGetCurrentUserQuery({ refetchOnReconnect: true });
 
@@ -24,9 +27,8 @@ export default function UserProvider({ children }) {
 			// toast.success(getUserResults.data.message);
 			const { results } = getUserResults.data;
 			const currentUser = {
-				...results,
 				...user,
-				online: true
+				...results
 			};
 
 			setCurrentUser(currentUser);

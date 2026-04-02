@@ -21,7 +21,7 @@ const assignmentSchema = new Schema(
 		senderType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent"]
+			enum: ["Admin", "Parent", "Teacher"]
 		},
 		recipient: {
 			type: ObjectId,
@@ -31,13 +31,13 @@ const assignmentSchema = new Schema(
 		recipientType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent"]
+			enum: ["Admin", "Parent", "Member", "Teacher", "Applicant"]
 		},
 		status: {
 			type: String,
 			trim: true,
 			required: true,
-			enum: ["pending", "started", "action_required", "complete"]
+			enum: ["pending", "started", "action_required", "completed"]
 		},
 		comments: [
 			{
@@ -129,6 +129,28 @@ const assignmentSchema = new Schema(
 					ref: "Review"
 				}
 			]
+		},
+		type: {
+			type: String,
+			enum: ["school", "parent", "club"],
+			required: true
+		},
+
+		priority: {
+			type: String,
+			enum: ["low", "medium", "high"],
+			default: "medium"
+		},
+
+		completionProof: {
+			type: String // file or text
+		},
+
+		assignedAt: {
+			type: Date
+		},
+		completedAt: {
+			type: Date
 		}
 	},
 	{ timestamps: true }

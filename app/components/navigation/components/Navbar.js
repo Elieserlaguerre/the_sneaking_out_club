@@ -4,9 +4,8 @@ import { Bars3Icon, ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outli
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../shad-ui/card";
 import Image from "next/image";
-import logo from "@/public/images/company-logo/multi-market-logo-svg.svg";
+// import logo from "@/public/images/company-logo/multi-market-logo-svg.svg";
 
 export default function Navbar({ navList }) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -22,7 +21,8 @@ export default function Navbar({ navList }) {
 			<header className="relative isolate z-50">
 				<div className="hidden xl:flex w-1/12 absolute left-0 top-0 h-20  justify-center items-center">
 					<Link className={classNames("hidden lg:flex items-center gap-x-1 text-sm font-semibold leading-6 text-white capitalize px-2.5 py-1 hover:ring hover:ring-white hover:rounded-sm")} href="/">
-						<Image className="w-12 h-auto" src={logo} alt="synergistic enterprises company logo" />
+						{/* <Image className="w-12 h-auto" src={logo} alt="synergistic enterprises company logo" /> */ }
+						logo
 					</Link>
 				</div>
 				<nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-end lg:justify-start p-6 lg:px-8 gap-4">
@@ -51,23 +51,23 @@ export default function Navbar({ navList }) {
 											<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none text-white" />
 										</PopoverButton>
 
-										<PopoverPanel transition="true" className="absolute inset-x-0 top-[5rem] -z-10 bg-white pt-2 shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:-translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in">
-											<div className={classNames(section.panel.nav.length < 4 ? `grid grid-cols-${section.panel.nav.length}` : "grid grid-cols-4", "mx-auto max-w-7xl px-6 py-5 lg:px-8 lg:divide-x-1 lg:divide-gray-400")}>
-												{section.panel.nav.map((nav, i) => (
-													<Card key={nav.title} className="lg:border-y-0">
-														<CardHeader>
-															<CardTitle className="capitalize font-semibold text-base">{nav.title}</CardTitle>
-														</CardHeader>
-														<CardContent className="px-6">
-															<ol className="w-full h-full leading-8">
+										<PopoverPanel transition="true" className="absolute inset-x-0 top-20 -z-10 bg-white pt-2 shadow-lg ring-1 ring-gray-900/5 transition data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150 data-enter:ease-out data-leave:ease-in">
+											<div className={classNames(section.panel.nav.length < 4 ? `grid grid-cols-${section.panel.nav.length}` : "grid grid-cols-4", "mx-auto max-w-7xl px-6 py-5 lg:px-8 lg:divide-x lg:divide-gray-400")}>
+												{ section.panel.nav.map((nav, i) => (
+													<div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+													<div className="px-4 py-5 sm:px-6">
+													{nav.title}
+													</div>
+													<div className="px-4 py-5 sm:p-6">
+																<ol className="w-full h-full leading-8">
 																{nav.links.map((link, i) => (
 																	<PopoverButton key={i} as={Link} href={link.href} className={classNames(link.href === path ? "bg-indigo-500 text-white" : null, "capitalize font-semibold hover:bg-indigo-500 cursor-pointer hover:text-white block w-full text-left pl-2")}>
 																		{link.name}
 																	</PopoverButton>
 																))}
 															</ol>
-														</CardContent>
-													</Card>
+													</div>
+													</div>
 												))}
 											</div>
 										</PopoverPanel>
@@ -89,7 +89,7 @@ export default function Navbar({ navList }) {
 				{/* mobile device navbar */}
 				<Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
 					<div className="fixed inset-0 z-10" />
-					<DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 top-[4.5rem]">
+					<DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 top-18">
 						<div className="flex items-center justify-between">
 							<Link href="#" className="-m-1.5 p-1.5">
 								<span className="sr-only">synergistic enterprises</span>
@@ -116,7 +116,7 @@ export default function Navbar({ navList }) {
 												<Disclosure key={i} as="div" className="-mx-3">
 													<DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 capitalize">
 														{section.panel.title}
-														<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-[open]:rotate-180" />
+														<ChevronDownIcon aria-hidden="true" className="h-5 w-5 flex-none group-data-open:rotate-180" />
 													</DisclosureButton>
 													<DisclosurePanel className="mt-2 space-y-2">
 														{({ close }) => {

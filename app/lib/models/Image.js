@@ -22,9 +22,9 @@ const imageSchema = new Schema(
 		ownerType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent", "Member"]
+			enum: ["Admin", "Parent", "Member", "Teacher", "Applicant"]
 		},
-		details: {
+		src: {
 			publicId: {
 				type: String,
 				trim: true
@@ -32,12 +32,6 @@ const imageSchema = new Schema(
 			url: {
 				type: String,
 				trim: true
-			},
-			width: {
-				type: Number
-			},
-			height: {
-				type: Number
 			}
 		},
 		album: {

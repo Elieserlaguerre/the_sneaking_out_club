@@ -1,10 +1,7 @@
 "use client";
-import Image from "next/image";
-import logo from "@/public/images/company-logo/multi-market-logo.png";
-import { useEffect, useState } from "react";
+
+import { scrollToTop } from "@/app/lib/util/frontend-helper-functions";
 import { PLATFORM_INFRASTRUCTURE } from "@/scripts/platform-infrastructure.js";
-import { useAtomValue } from "jotai";
-import { refreshInfrastructure } from "@/app/lib/state-management/global-state";
 
 const social = [
 	{
@@ -46,20 +43,6 @@ const social = [
 ];
 
 export default function Footer() {
-	const scrollToTop = () => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth"
-		});
-	};
-
-	const [navigation, setNavigation] = useState([]);
-
-	const refreshPage = useAtomValue(refreshInfrastructure);
-
-	useEffect(() => {
-		setNavigation(PLATFORM_INFRASTRUCTURE);
-	}, [refreshPage]);
 
 	return (
 		<footer aria-labelledby="footer-heading">
@@ -72,11 +55,12 @@ export default function Footer() {
 				</h2>
 				<div className="mx-auto w-full px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
 					<div className="xl:grid xl:grid-cols-4 xl:gap-8">
-						<div className="">
-							<Image className="mx-auto w-48 h-48" src={logo} alt="Synergistic Enterprises" />
+						<div className="text-white capitalize">
+							{/* <Image className="mx-auto w-48 h-48" src={logo} alt="Synergistic Enterprises" /> */}
+							logo
 						</div>
 						<div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-3 xl:grid-cols-5 xl:mt-0">
-							{navigation.map((navigation) => {
+							{PLATFORM_INFRASTRUCTURE.map((navigation) => {
 								if (navigation.display) {
 									return (
 										<div key={navigation._id}>
@@ -110,8 +94,8 @@ export default function Footer() {
 								Email address
 							</label>
 							<input type="email" name="email-address" id="email-address" autoComplete="email" required className="w-full min-w-0 appearance-none rounded-md border-0 bg-white/5 px-3 py-1.5 text-base text-white shadow-sm ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:w-56 sm:text-sm sm:leading-6" placeholder="Enter your email" />
-							<div className="mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0">
-								<button type="submit" className="flex w-full items-center justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+							<div className="mt-4 sm:ml-4 sm:mt-0 sm:shrink-0">
+								<button type="submit" className="flex w-full items-center justify-center rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
 									Subscribe
 								</button>
 							</div>
@@ -126,7 +110,7 @@ export default function Footer() {
 								</a>
 							))}
 						</div>
-						<p className="mt-8 text-xs leading-5 text-gray-400 md:order-1 md:mt-0">&copy; 2022 - {new Date().getFullYear()} synergistic enterprises. All rights reserved.</p>
+						<p className="mt-8 text-xs leading-5 text-gray-400 md:order-1 md:mt-0 capitalize">&copy; 2026 - {new Date().getFullYear()} The Sneaking Out Club. All rights reserved.</p>
 					</div>
 				</div>
 			</div>

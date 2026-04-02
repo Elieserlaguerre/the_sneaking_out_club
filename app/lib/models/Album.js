@@ -17,7 +17,7 @@ const albumSchema = new Schema(
 		ownerType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent", "Member"]
+			enum: ["Admin", "Parent", "Member", "Teacher", "Applicant"]
 		},
 		coverImage: {
 			publicId: {

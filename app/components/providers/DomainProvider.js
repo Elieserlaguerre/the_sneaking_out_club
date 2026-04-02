@@ -1,4 +1,5 @@
 "use client";
+
 import { currentDepartment } from "@/app/lib/state-management/global-state";
 import { useSetAtom } from "jotai";
 import React, { Fragment, useEffect } from "react";

@@ -1,15 +1,9 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "../styles/global.css";
+import ProvidersLayout from "../components/layouts/ProvidersLayout";
+import InternalLayout from "../components/layouts/InternalLayout";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"]
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"]
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
 	title: "Create Next App",
@@ -17,9 +11,17 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+	function classNames(...classes) {
+		return classes.filter(Boolean).join(" ");
+	}
+
 	return (
-		<html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-			<body className="min-h-full flex flex-col">{children}</body>
+		<html lang="en" className={classNames(inter.className, "h-full antialiased")} suppressHydrationWarning>
+			<body className="min-h-full flex flex-col">
+				<ProvidersLayout>
+					<InternalLayout>{children}</InternalLayout>
+				</ProvidersLayout>
+			</body>
 		</html>
 	);
 }

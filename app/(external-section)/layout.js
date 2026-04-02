@@ -1,16 +1,9 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "../styles/global.css";
 import ProvidersLayout from "../components/layouts/ProvidersLayout";
+import ExternalLayout from "../components/layouts/ExternalLayout";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"]
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"]
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
 	title: "The Sneaking Out Club",
@@ -18,10 +11,16 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+	function classNames(...classes) {
+		return classes.filter(Boolean).join(" ");
+	}
+
 	return (
-		<html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+		<html lang="en" className={classNames(inter.className, "h-full antialiased")} suppressHydrationWarning>
 			<body className="min-h-full flex flex-col">
-				<ProvidersLayout>{children}</ProvidersLayout>
+				<ProvidersLayout>
+					<ExternalLayout>{children}</ExternalLayout>
+				</ProvidersLayout>
 			</body>
 		</html>
 	);

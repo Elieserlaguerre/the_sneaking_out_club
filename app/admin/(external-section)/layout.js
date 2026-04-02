@@ -1,5 +1,7 @@
 import { Inter } from "next/font/google";
 import "../../styles/global.css";
+import ProvidersLayout from "@/app/components/layouts/ProvidersLayout";
+import ExternalLayout from "@/app/components/layouts/ExternalLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,8 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang="en">
-			<body className={inter.className}>{children}</body>
+		<html lang="en" suppressHydrationWarning>
+			<body className={inter.className}>
+				<ProvidersLayout>
+					<ExternalLayout>{children}</ExternalLayout>
+				</ProvidersLayout>
+			</body>
 		</html>
 	);
 }
