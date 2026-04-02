@@ -36,8 +36,7 @@ const memberSchema = new Schema(
 		},
 		address2: {
 			type: String,
-			trim: true,
-			required: true
+			trim: true
 		},
 		city: {
 			type: String,

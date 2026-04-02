@@ -42,7 +42,9 @@ export const additionalInfoSchema = z.object({
 	nationality: z.string().min(1, { message: "nationality is required." }),
 	gender: z.enum(["Male", "Female", "Other"]),
 	introduction: z.string().min(1, { message: "introduction is required." }),
-	image: z.instanceof(File),
+	image: z.instanceof(File).refine((file) => file instanceof File, {
+		message: "Please upload a valid image file."
+	}),
 	cloudinarySubfolder: z.string().trim().nonempty({ message: "Cloudinary subfolder is required." })
 });
 
