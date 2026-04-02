@@ -9,7 +9,7 @@ export const registrationFormSchema = z
 		password: z.string().trim().min(1, { message: "password is required." }),
 		confirmPassword: z.string().trim().min(1, { message: "password must be confirmed." }),
 		address1: z.string().trim().min(1, { message: "address is required." }),
-		address2: z.string().trim().optional(),
+		address2: z.string().optional(),
 		accountType: z.any().refine((value) => value !== "select one", { message: "account type is required." }),
 		city: z.string().trim().min(1, { message: "city is required." }),
 		state: z.string().trim().min(1, { message: "state is required." }),
