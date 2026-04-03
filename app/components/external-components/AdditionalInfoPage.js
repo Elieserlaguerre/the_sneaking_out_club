@@ -56,7 +56,6 @@ export default function AdditionalInfoForm() {
 		if (getUserResults.isError) {
 			const message = typeof getUserResults.error === "string" ? getUserResults.error : getUserResults.error.message;
 			if (message === "user not found.") {
-				toast.error(message);
 				router.push("/register");
 			} else {
 				toast.error(message);
@@ -64,6 +63,7 @@ export default function AdditionalInfoForm() {
 		} else if (getUserResults.isSuccess) {
 			// toast.success(getUserResults.data.message);
 			const { results } = getUserResults.data;
+
 			setFormContent({
 				dateOfBirth: results?.dateOfBirth ?? "",
 				age: results?.age ?? "",
@@ -73,7 +73,7 @@ export default function AdditionalInfoForm() {
 				cloudinarySubfolder: results?.cloudinarySubfolder
 			});
 
-			if (results?.firstName && results?.lastName) setName(`${results.firstName} ${results.lastName}'s Image`);
+			if (results?.firstName && results?.lastName) setName(`${results.firstName} ${results.lastName}`);
 		}
 	}, [getUserResults.isFetching]);
 
@@ -134,7 +134,7 @@ export default function AdditionalInfoForm() {
 		} else if (cloudinaryUploadResults.isSuccess) {
 			// toast.success(cloudinaryUploadResults.data.message);
 			const { results } = cloudinaryUploadResults.data;
-			
+
 			const userData = {
 				...formContent,
 				image: results,
