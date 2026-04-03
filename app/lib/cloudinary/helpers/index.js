@@ -1,5 +1,6 @@
 import cloudinary from "..";
 import { Readable } from "stream";
+import crypto from "crypto";
 
 export const uploadImage = async (file, subfolder) => {
 	if (!file || file.size === 0) {
@@ -105,3 +106,18 @@ export const deleteMultipleSubfolders = async (subfolders) => {
 
 	return results;
 };
+
+export function generateCloudinarySignature({ folder, public_id }) {
+	const timestamp = Math.round(Date.now() / 1000);
+
+	const paramsToSign = `folder=${folder}&public_id=${public_id}&timestamp=${timestamp}${process.env.CLOUDINARY_API_SECRET}`;
+
+	const signature = crypto.createHash("sha1").update(paramsToSign).digest("hex");
+
+	return {
+		timestamp,
+		signature,
+		apiKey: process.env.CLOUDINARY_API_KEY,
+		cloudName: process.env.CLOUD_NAME
+	};
+}

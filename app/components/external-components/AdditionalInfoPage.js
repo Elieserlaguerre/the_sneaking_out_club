@@ -10,13 +10,14 @@ import { useCloudinaryUploadMutation, useDeleteUserRegistrationMutation, useLazy
 import { useAtomValue } from "jotai";
 import { currentDepartment } from "@/app/lib/state-management/global-state";
 import AdditionalInfoSkeleton from "../loading-skeletons/AdditionalInfoSkeleton";
-import Image from "../cards/Image";
+import Image from "../cards/ImageCard";
 import { buttonVariants } from "../shadcn/button";
 import { additionalInfoSchema, cloudinarySingleUploadSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
 import { nanoid } from "nanoid";
 import { calculateAge } from "@/app/lib/util/global-helper-functions";
 import { signIn } from "next-auth/react";
 import { loginUser } from "@/app/lib/database/helpers";
+import { useUploadMutation } from "@/app/lib/hooks/useUploadMutation";
 
 export default function AdditionalInfoForm() {
 	const { userId } = useParams();
@@ -104,10 +105,7 @@ export default function AdditionalInfoForm() {
 	const handleChanges = ({ target }) => {
 		const { name, value, files } = target;
 		if (name === "image") {
-			setFormContent((prev) => ({
-				...prev,
-				[name]: files[0]
-			}));
+			uploadImage(files[0]);
 		} else {
 			setFormContent((prev) => ({
 				...prev,
@@ -125,48 +123,38 @@ export default function AdditionalInfoForm() {
 		}));
 	}, [department, formContent.dateOfBirth]);
 
-	const [cloudinaryUpload, cloudinaryUploadResults] = useCloudinaryUploadMutation();
+	const [uploadImage, uploadImageResults] = useUploadMutation({
+		folder: formContent.cloudinarySubfolder,
+		userId,
+		department
+	});
 
 	useEffect(() => {
-		if (cloudinaryUploadResults.isError) {
-			const message = typeof cloudinaryUploadResults.error === "string" ? cloudinaryUploadResults.error : cloudinaryUploadResults.error.message;
-			toast.error(message);
-		} else if (cloudinaryUploadResults.isSuccess) {
-			// toast.success(cloudinaryUploadResults.data.message);
-			const { results } = cloudinaryUploadResults.data;
+		if (uploadImageResults.isError) {
+			const message = typeof uploadImageResults.error === "string" ? uploadImageResults.error : uploadImageResults.error.message;
 
-			const userData = {
-				...formContent,
-				image: results,
-				department,
-				userId
-			};
-
-			const validation = additionalInfoSchema.safeParse(userData);
-
-			if (validation.success) {
-				updateUser(userData);
+			if (message === "user not found.") {
+				router.push("/register");
 			} else {
-				const error = fromZodError(validation.error);
-				console.log("error", error);
-
-				error.details.map((error) => toast.error(error.message));
+				toast.error(message);
 			}
+		} else if (uploadImageResults.isSuccess) {
+			const { results } = uploadImageResults.data;
+
+			setFormContent((content) => ({
+				...content,
+				image: results
+			}));
 		}
-	}, [cloudinaryUploadResults.isLoading]);
+	}, [uploadImageResults.isSuccess, uploadImageResults.isError]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (department) {
-			const validation = cloudinarySingleUploadSchema.safeParse(formContent);
+			const validation = additionalInfoSchema.safeParse(formContent);
+
 			if (validation.success) {
-				const formData = new FormData();
-
-				formData.append("image", validation.data.image);
-				formData.append("cloudinarySubfolder", validation.data.cloudinarySubfolder);
-				formData.append("uploadType", "single");
-
-				cloudinaryUpload(formData);
+				updateUser({ ...validation.data, department, userId });
 			} else {
 				const error = fromZodError(validation.error);
 				console.log("error", error);

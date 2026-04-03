@@ -10,7 +10,7 @@ export async function POST(req) {
 		// console.log("formData", formData);
 
 		const upload = Object.fromEntries(data.entries());
-		console.log("upload", upload);
+		// console.log("upload", upload);
 
 		const { uploadType, cloudinarySubfolder } = upload;
 
@@ -31,7 +31,7 @@ export async function POST(req) {
 				throw new Error("upload type not recognized.");
 		}
 
-		console.log("upload results", results);
+		// console.log("upload results", results);
 
 		return NextResponse.json({ results, message: "Image successfully uploaded." }, { status: 200 });
 	} catch (error) {
