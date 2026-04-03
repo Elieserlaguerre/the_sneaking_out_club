@@ -1,7 +1,7 @@
 import { adminAssignmentsSectionNav, adminDashboardSectionNav, adminDocumentsSectionNav, adminEventsSectionNav, adminExternalSectionNav, adminInaternalSectionNav, adminMeetingSectionNav, adminMessagesSectionNav, adminReportsSectionNav } from "@/app/components/navigation/lists/admin-nav-list";
 import { careersAssignmentsSectionNav, careersDashboardSectionNav, careersDocumentsSectionNav, careersEventsSectionNav, careersExternalSectionNav, careersInaternalSectionNav, careersMeetingSectionNav, careersMessagesSectionNav, careersReportsSectionNav } from "@/app/components/navigation/lists/careers-nav-list";
 import { membersAssignmentsSectionNav, membersDashboardSectionNav, membersDocumentsSectionNav, membersEventsSectionNav, membersExternalSectionNav, membersInaternalSectionNav, membersMeetingSectionNav, membersMessagesSectionNav, membersReportsSectionNav } from "@/app/components/navigation/lists/members-nav-list";
-import { parentsAssignmentsSectionNav, parentsDashboardSectionNav, parentsDocumentsSectionNav, parentsEventsSectionNav, parentsExternalSectionNav, parentsInaternalSectionNav, parentsMeetingSectionNav, parentsMessagesSectionNav, parentsReportsSectionNav } from "@/app/components/navigation/lists/parents-nav-list";
+import { parentFamilySectionNav, parentsAssignmentsSectionNav, parentsDashboardSectionNav, parentsDocumentsSectionNav, parentsEventsSectionNav, parentsExternalSectionNav, parentsInaternalSectionNav, parentsMeetingSectionNav, parentsMessagesSectionNav, parentsReportsSectionNav } from "@/app/components/navigation/lists/parents-nav-list";
 import { teachersAssignmentsSectionNav, teachersDashboardSectionNav, teachersDocumentsSectionNav, teachersEventsSectionNav, teachersExternalSectionNav, teachersInaternalSectionNav, teachersMeetingSectionNav, teachersMessagesSectionNav, teachersReportsSectionNav } from "@/app/components/navigation/lists/teachers-nav-list";
 import { nanoid } from "nanoid";
 import { signOut } from "next-auth/react";
@@ -644,7 +644,7 @@ export const dynamicInternalAppSections = (department, path) => {
 				case "members":
 					return [];
 				case "parents":
-					return [];
+					return parentFamilySectionNav;
 				case "teachers":
 					return [];
 				case "admin":

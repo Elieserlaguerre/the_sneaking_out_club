@@ -1,30 +1,36 @@
 import { nanoid } from "nanoid";
-import { CalendarIcon, ChartPieIcon, DocumentDuplicateIcon, EnvelopeIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { CalendarIcon, ChartPieIcon, DocumentDuplicateIcon, EnvelopeIcon, HomeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { TbTimelineEventText } from "react-icons/tb";
 import { MdOutlineAssignmentInd } from "react-icons/md";
 
 export const parentsExternalSectionNav = [
 	{
+		id: nanoid(),
 		title: "home",
 		href: "/"
 	},
 	{
+		id: nanoid(),
 		title: "about us",
 		href: "/about-us"
 	},
 	{
+		id: nanoid(),
 		title: "contact us",
 		href: "/contact-us"
 	},
 	{
+		id: nanoid(),
 		title: "pricing",
 		href: "/pricing"
 	},
 	{
+		id: nanoid(),
 		title: "register",
 		href: "/register"
 	},
 	{
+		id: nanoid(),
 		title: "login",
 		href: "/login"
 	}
@@ -36,43 +42,49 @@ export const parentsInaternalSectionNav = [
 		sectionTile: "navigation",
 		list: [
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "dashboard",
 				href: "/dashboard",
 				icon: HomeIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
+				name: "family",
+				href: "/family",
+				icon: UserGroupIcon
+			},
+			{
+				id: nanoid(),
 				name: "assignments",
 				href: "/assignments",
 				icon: MdOutlineAssignmentInd
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "messages",
 				href: "/messages",
 				icon: EnvelopeIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "meetings",
 				href: "/meetings",
 				icon: CalendarIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "events",
 				href: "/events",
 				icon: TbTimelineEventText
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "Documents",
 				href: "/documents",
 				icon: DocumentDuplicateIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "Reports",
 				href: "/reports",
 				icon: ChartPieIcon
@@ -91,6 +103,29 @@ export const parentsDashboardSectionNav = [
 				</div>
 			)
 		}
+	}
+];
+
+export const parentFamilySectionNav = [
+	{
+		id: nanoid(),
+		title: "members",
+		href: "/family"
+	},
+	{
+		id: nanoid(),
+		title: "plans",
+		href: "/family/plans"
+	},
+	{
+		id: nanoid(),
+		title: "health",
+		href: "/family/health"
+	},
+	{
+		id: nanoid(),
+		title: "estate",
+		href: "/family/estate"
 	}
 ];
 

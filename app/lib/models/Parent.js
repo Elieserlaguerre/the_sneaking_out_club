@@ -103,7 +103,7 @@ const parentSchema = new Schema(
 			required: true,
 			default: false
 		},
-		children: [
+		family: [
 			{
 				type: ObjectId,
 				ref: "Member"

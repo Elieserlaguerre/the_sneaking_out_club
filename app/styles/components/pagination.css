@@ -1,0 +1,21 @@
+@layer components {
+	.pagination-white {
+		@apply [&_.MuiPaginationItem-root]:bg-white
+             [&_.MuiPaginationItem-ellipsis]:bg-transparent
+             [&_.MuiPaginationItem-ellipsis]:text-white;
+	}
+
+	.pagination-yellow {
+		@apply [&_.Mui-selected]:bg-yellow-400
+             [&_.Mui-selected]:text-black
+             [&_.MuiButtonBase-root:hover]:bg-yellow-400
+             [&_.MuiButtonBase-root:hover]:text-black;
+	}
+
+	.pagination-black {
+		@apply [&_.MuiPaginationItem-root]:bg-black
+             [&_.MuiPaginationItem-root]:text-white
+             [&_.MuiPaginationItem-ellipsis]:bg-transparent
+             [&_.MuiPaginationItem-ellipsis]:text-black;
+	}
+}

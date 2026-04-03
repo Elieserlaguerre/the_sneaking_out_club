@@ -58,6 +58,7 @@ export const PLATFORM_ROUTES = [
       "dashboard",
       "documents",
       "events",
+      "family",
       "meetings",
       "messages",
       "reports"

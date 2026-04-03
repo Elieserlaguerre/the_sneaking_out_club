@@ -44,6 +44,8 @@ export default function InternalLayout({ children }) {
 
 	const [user, setUser] = useAtom(currentUser);
 
+	console.log("user", user);
+
 	const handleUserSignOut = async () => {
 		const logOut = await signCurrentUserOut();
 

@@ -23,28 +23,58 @@ export async function POST(req) {
 			cloudinarySubfolder: `the_sneaking_out_club/${slugify(`${user.firstName} ${user.lastName}`)}/${department}`
 		};
 
-		let createdUser;
+		let createdUser, userAlreadyExist;
 
 		switch (department) {
 			case "members":
+				userAlreadyExist = await Member.findOne({ email: user.email });
+
+				if (userAlreadyExist) return NextResponse.json({ results: userAlreadyExist, message: "user already exist." }, { status: 200 });
+
 				newUser.password = await encryptPassword(user.password);
+
 				createdUser = await Member.create(newUser);
+
 				return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 			case "parents":
+				userAlreadyExist = await Parent.findOne({ email: user.email });
+
+				if (userAlreadyExist) return NextResponse.json({ results: userAlreadyExist, message: "user already exist." }, { status: 200 });
+
 				newUser.password = await encryptPassword(user.password);
+
 				createdUser = await Parent.create(newUser);
+
 				return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 			case "teachers":
+				userAlreadyExist = await Teacher.findOne({ email: user.email });
+
+				if (userAlreadyExist) return NextResponse.json({ results: userAlreadyExist, message: "user already exist." }, { status: 200 });
+
 				newUser.password = await encryptPassword(user.password);
+
 				createdUser = await Teacher.create(newUser);
+
 				return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 			case "admin":
+				userAlreadyExist = await Admin.findOne({ email: user.email });
+
+				if (userAlreadyExist) return NextResponse.json({ results: userAlreadyExist, message: "user already exist." }, { status: 200 });
+
 				newUser.password = await encryptPassword(user.password);
+
 				createdUser = await Admin.create(newUser);
+
 				return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 			case "careers":
+				userAlreadyExist = await Applicant.findOne({ email: user.email });
+
+				if (userAlreadyExist) return NextResponse.json({ results: userAlreadyExist, message: "user already exist." }, { status: 200 });
+
 				newUser.password = await encryptPassword(user.password);
+
 				createdUser = await Applicant.create(newUser);
+
 				return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 			default:
 				return NextResponse.json({ message: "department not recognized" }, { status: 400 });

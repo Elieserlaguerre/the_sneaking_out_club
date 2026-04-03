@@ -52,14 +52,11 @@ export default function RegisterPage() {
 
 	useEffect(() => {
 		if (createUserResults.isError) {
-			if (typeof createUserResults.error === "string") {
-				toast.error(createUserResults.error);
-			} else {
-				toast.error(createUserResults.error.message);
-			}
+			const message = typeof createUserResults.error === "string" ? createUserResults.error : createUserResults.error.message;
+
+			toast.error(message);
 		} else if (createUserResults.isSuccess) {
 			toast.success(createUserResults.data.message);
-
 			clearForm();
 
 			const { results } = createUserResults.data;
