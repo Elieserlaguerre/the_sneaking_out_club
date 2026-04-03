@@ -78,8 +78,17 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "global contact us" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		cloudinaryUpload: build.mutation({
+			query: (formData) => ({
+				url: "/global/uploads",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global image management" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const {useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

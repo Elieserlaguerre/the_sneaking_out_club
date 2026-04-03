@@ -18,6 +18,13 @@ export const registrationFormSchema = z
 	})
 	.refine((data) => data.password === data.confirmPassword, { message: "password must match.", path: ["confirmPassword"] });
 
+export const cloudinarySingleUploadSchema = z.object({
+	image: z.custom((value) => value instanceof File, {
+		message: "Please upload a valid image file."
+	}),
+	cloudinarySubfolder: z.string().trim().nonempty({ message: "Cloudinary subfolder is required." })
+});
+
 export const additionalInfoSchema = z.object({
 	dateOfBirth: z
 		.string()
@@ -42,8 +49,9 @@ export const additionalInfoSchema = z.object({
 	nationality: z.string().min(1, { message: "nationality is required." }),
 	gender: z.enum(["Male", "Female", "Other"]),
 	introduction: z.string().min(1, { message: "introduction is required." }),
-	image: z.instanceof(File).refine((file) => file instanceof File, {
-		message: "Please upload a valid image file."
+	image: z.object({
+		publicId: z.string().trim().nonempty({ message: "Image's public Id is required." }),
+		url: z.string().trim().nonempty({ message: "uploaded image file url is required." })
 	}),
 	cloudinarySubfolder: z.string().trim().nonempty({ message: "Cloudinary subfolder is required." })
 });

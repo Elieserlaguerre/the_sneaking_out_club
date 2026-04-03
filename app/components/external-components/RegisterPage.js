@@ -83,6 +83,7 @@ export default function RegisterPage() {
 				createUser({ user: validation.data, department: department });
 			} else {
 				const error = fromZodError(validation.error);
+				console.log("validation error", error);
 				error.details.map((error) => toast.error(error.message));
 			}
 		}

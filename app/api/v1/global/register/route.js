@@ -115,28 +115,18 @@ export async function PATCH(req) {
 	try {
 		await db.connect();
 
-		const formData = await req.formData();
+		const update = await req.json();
 		// console.log("formData", formData);
 
-		const image = formData.get("image"); // ✅ File object
-		const dateOfBirth = formData.get("dateOfBirth");
-		const age = Number(formData.get("age"));
-		const nationality = formData.get("nationality");
-		const gender = formData.get("gender");
-		const introduction = formData.get("introduction");
-		const cloudinarySubfolder = formData.get("cloudinarySubfolder");
-		const department = formData.get("department");
-		const userId = formData.get("userId");
-		let user, update;
+		const { department, userId } = update;
 
-		update = {
-			dateOfBirth,
-			age,
-			nationality,
-			gender,
-			introduction,
-			image: await uploadImage(image, cloudinarySubfolder)
-		};
+		if (!department) return NextResponse.json({ message: "department is missing." }, { status: 404 });
+
+		if (!userId) return NextResponse.json({ message: "user id is missing." }, { status: 404 });
+
+		let user;
+
+		console.log("update", update);
 
 		switch (department) {
 			case "members":

@@ -6,13 +6,13 @@ import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { CameraIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { useDeleteUserRegistrationMutation, useLazyGetUserRegistrationQuery, useUpdateUserRegistrationMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useCloudinaryUploadMutation, useDeleteUserRegistrationMutation, useLazyGetUserRegistrationQuery, useUpdateUserRegistrationMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { useAtomValue } from "jotai";
 import { currentDepartment } from "@/app/lib/state-management/global-state";
 import AdditionalInfoSkeleton from "../loading-skeletons/AdditionalInfoSkeleton";
 import Image from "../cards/Image";
 import { buttonVariants } from "../shadcn/button";
-import { additionalInfoSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
+import { additionalInfoSchema, cloudinarySingleUploadSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
 import { nanoid } from "nanoid";
 import { calculateAge } from "@/app/lib/util/global-helper-functions";
 import { signIn } from "next-auth/react";
@@ -31,6 +31,10 @@ export default function AdditionalInfoForm() {
 		image: "",
 		cloudinarySubfolder: ""
 	});
+
+	const [name, setName] = useState("upload image");
+
+	console.log("formContent", formContent);
 
 	const clearForm = () => {
 		setFormContent({
@@ -66,8 +70,10 @@ export default function AdditionalInfoForm() {
 				gender: results?.gender ?? "",
 				nationality: results?.nationality ?? "",
 				introduction: results?.introduction ?? "",
-				cloudinarySubfolder: results?.cloudinarySubfolder ?? ""
+				cloudinarySubfolder: results?.cloudinarySubfolder
 			});
+
+			if (results?.firstName && results?.lastName) setName(`${results.firstName} ${results.lastName}'s Image`);
 		}
 	}, [getUserResults.isFetching]);
 
@@ -119,24 +125,48 @@ export default function AdditionalInfoForm() {
 		}));
 	}, [department, formContent.dateOfBirth]);
 
+	const [cloudinaryUpload, cloudinaryUploadResults] = useCloudinaryUploadMutation();
+
+	useEffect(() => {
+		if (cloudinaryUploadResults.isError) {
+			const message = typeof cloudinaryUploadResults.error === "string" ? cloudinaryUploadResults.error : cloudinaryUploadResults.error.message;
+			toast.error(message);
+		} else if (cloudinaryUploadResults.isSuccess) {
+			// toast.success(cloudinaryUploadResults.data.message);
+			const { results } = cloudinaryUploadResults.data;
+			
+			const userData = {
+				...formContent,
+				image: results,
+				department,
+				userId
+			};
+
+			const validation = additionalInfoSchema.safeParse(userData);
+
+			if (validation.success) {
+				updateUser(userData);
+			} else {
+				const error = fromZodError(validation.error);
+				console.log("error", error);
+
+				error.details.map((error) => toast.error(error.message));
+			}
+		}
+	}, [cloudinaryUploadResults.isLoading]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (department) {
-			const validation = additionalInfoSchema.safeParse(formContent);
+			const validation = cloudinarySingleUploadSchema.safeParse(formContent);
 			if (validation.success) {
 				const formData = new FormData();
 
-				formData.append("dateOfBirth", validation.data.dateOfBirth);
-				formData.append("age", validation.data.age);
-				formData.append("nationality", validation.data.nationality);
-				formData.append("gender", validation.data.gender);
-				formData.append("introduction", validation.data.introduction);
 				formData.append("image", validation.data.image);
 				formData.append("cloudinarySubfolder", validation.data.cloudinarySubfolder);
-				formData.append("department", department);
-				formData.append("userId", userId);
+				formData.append("uploadType", "single");
 
-				updateUser(formData);
+				cloudinaryUpload(formData);
 			} else {
 				const error = fromZodError(validation.error);
 				console.log("error", error);
@@ -213,7 +243,7 @@ export default function AdditionalInfoForm() {
 						<>
 							<div className="flex flex-col min-h-98 p-px xl:col-span-3 border border-gray-400 rounded-md divide-y divide-gray-200 overflow-hidden">
 								<div className="p-4">
-									<p className="capitalize text-center font-semibold">avatar</p>
+									<p className="capitalize text-center font-semibold">{name}</p>
 								</div>
 								<div className="p-4 flex-1">
 									<Image
