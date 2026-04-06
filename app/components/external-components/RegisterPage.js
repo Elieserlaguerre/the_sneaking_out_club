@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";

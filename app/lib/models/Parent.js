@@ -108,6 +108,24 @@ const parentSchema = new Schema(
 				type: ObjectId,
 				ref: "Member"
 			}
+		],
+		roles: [
+			{
+				role: {
+					type: String,
+					trim: true
+				},
+				creator: {
+					type: ObjectId,
+					required: true,
+					refPath: "creatorType"
+				},
+				creatorType: {
+					type: String,
+					required: true,
+					enum: ["Parent", "Member", "Teacher", "Admin"]
+				}
+			}
 		]
 	},
 	{ timestamps: true }

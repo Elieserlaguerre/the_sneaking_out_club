@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { buttonVariants } from "../shadcn/button";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
-export default function ManageFamilyPlans({ open, closingFunction }) {
+export default function ManageFamilyPlans({ open, closingFunction, settings }) {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
@@ -47,7 +47,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													product's name
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="name" name="name" type="text" value={formContent?.name} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="name" name="name" type="text" value={formContent?.name} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -55,7 +55,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													product type
 												</label>
 												<div className="mt-2">
-													<select onChange={handleChanges} id="productType" name="productType" type="text" value={formContent?.productType} className="block w-full rounded-md bg-white px-3 py-1.5 ext-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
+													<select onChange={handleChanges} id="productType" name="productType" type="text" value={formContent?.productType} className="block w-full rounded-md bg-white px-3 py-1.5 ext-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
 														<option>select one</option>
 													</select>
 												</div>
@@ -65,7 +65,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													brand
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="brand" name="brand" type="text" value={formContent?.brand} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="brand" name="brand" type="text" value={formContent?.brand} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -73,7 +73,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													brand image
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="brandImage" name="brandImage" type="file" className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="brandImage" name="brandImage" type="file" className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -81,7 +81,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													parent category
 												</label>
 												<div className="mt-2">
-													<select onChange={handleChanges} id="category" name="category" type="text" value={formContent?.category} className="block w-full rounded-md bg-white px-3 py-1.5 text-base ext-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
+													<select onChange={handleChanges} id="category" name="category" type="text" value={formContent?.category} className="block w-full rounded-md bg-white px-3 py-1.5 text-base ext-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
 														<option value="">select one</option>
 													</select>
 												</div>
@@ -91,7 +91,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													sub-category
 												</label>
 												<div className="mt-2">
-													<select onChange={handleChanges} id="subCategory" name="subCategory" type="text" value={formContent?.subCategory} className="block w-full rounded-md bg-white px-3 py-1.5 ext-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
+													<select onChange={handleChanges} id="subCategory" name="subCategory" type="text" value={formContent?.subCategory} className="block w-full rounded-md bg-white px-3 py-1.5 ext-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
 														<option value="">select one</option>
 													</select>
 												</div>
@@ -101,7 +101,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													price
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="price" name="price" type="text" value={formContent?.price} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="price" name="price" type="text" value={formContent?.price} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -109,7 +109,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													stock quantity
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="stock" name="stock" type="number" min={0} value={formContent?.stock} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="stock" name="stock" type="number" min={0} value={formContent?.stock} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -117,7 +117,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													discount (optional)
 												</label>
 												<div className="mt-2">
-													<input onChange={handleChanges} id="discount" name="discount" type="number" min={0} value={formContent?.discount} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+													<input onChange={handleChanges} id="discount" name="discount" type="number" min={0} value={formContent?.discount} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
 												</div>
 											</div>
 											<div>
@@ -125,7 +125,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													store
 												</label>
 												<div className="mt-2">
-													<select onChange={handleChanges} id="store" name="store" type="text" value={formContent?.store} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
+													<select onChange={handleChanges} id="store" name="store" type="text" value={formContent?.store} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
 														<option value="">select one</option>
 													</select>
 												</div>
@@ -135,7 +135,7 @@ export default function ManageFamilyPlans({ open, closingFunction }) {
 													product's owner
 												</label>
 												<div className="mt-2">
-													<select onChange={handleChanges} id="owner" name="owner" type="text" value={formContent?.owner} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
+													<select onChange={handleChanges} id="owner" name="owner" type="text" value={formContent?.owner} className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline  -outline-offset-1 outline-gray-400 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 capitalize">
 														<option>select one</option>
 													</select>
 												</div>

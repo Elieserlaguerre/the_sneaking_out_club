@@ -18,6 +18,8 @@ import { calculateAge } from "@/app/lib/util/global-helper-functions";
 import { signIn } from "next-auth/react";
 import { loginUser } from "@/app/lib/database/helpers";
 import { useUploadMutation } from "@/app/lib/hooks/useUploadMutation";
+import ImageCard from "../cards/ImageCard";
+import { useTheme } from "../providers/ThemeProvider";
 
 export default function AdditionalInfoForm() {
 	const { userId } = useParams();
@@ -218,6 +220,8 @@ export default function AdditionalInfoForm() {
 		}
 	};
 
+	const theme = useTheme();
+
 	return (
 		<div className="isolate bg-white px-6 py-24 sm:py-16 lg:px-8">
 			<div className="mx-auto max-w-2xl text-center">
@@ -234,16 +238,22 @@ export default function AdditionalInfoForm() {
 									<p className="capitalize text-center font-semibold">{name}</p>
 								</div>
 								<div className="p-4 flex-1">
-									<Image
-										image={formContent.image}
-										settings={{
-											alt: "user registration image",
-											styles: {
-												image: "object-contain object-center",
-												background: "size-60 aspect-square rounded-full"
-											}
-										}}
-									/>
+									{uploadImageResults.isLoading ? (
+										<div className="size-full aspect-square flex justify-center items-center bg-gray-400 rounded-full">
+											<Loader2 className={classNames(theme.text.secondary, "size-6/12 aspect-square animate-spin inline-block")} />
+										</div>
+									) : (
+										<ImageCard
+											image={formContent.image}
+											settings={{
+												alt: "user registration image",
+												styles: {
+													image: "object-contain object-center",
+													background: "size-full aspect-square rounded-full"
+												}
+											}}
+										/>
+									)}
 								</div>
 								<div className="p-4 flex justify-center items-center">
 									<label htmlFor="image" className={classNames(buttonVariants({ variant: "greenBtn" }))}>

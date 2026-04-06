@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import { CalendarIcon, ChartPieIcon, DocumentDuplicateIcon, EnvelopeIcon, HomeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import { CalendarIcon, ChartPieIcon, DocumentDuplicateIcon, EnvelopeIcon, HomeIcon, QueueListIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { TbTimelineEventText } from "react-icons/tb";
 import { MdOutlineAssignmentInd } from "react-icons/md";
 
@@ -61,6 +61,12 @@ export const parentsInaternalSectionNav = [
 			},
 			{
 				id: nanoid(),
+				name: "schedules",
+				href: "/schedules",
+				icon: CalendarIcon
+			},
+			{
+				id: nanoid(),
 				name: "messages",
 				href: "/messages",
 				icon: EnvelopeIcon
@@ -69,7 +75,7 @@ export const parentsInaternalSectionNav = [
 				id: nanoid(),
 				name: "meetings",
 				href: "/meetings",
-				icon: CalendarIcon
+				icon: QueueListIcon
 			},
 			{
 				id: nanoid(),
@@ -131,42 +137,74 @@ export const parentFamilySectionNav = [
 
 export const parentsAssignmentsSectionNav = [
 	{
+		id: nanoid(),
 		title: "daily",
 		href: "/assignments"
 	},
 	{
+		id: nanoid(),
 		title: "weekly",
 		href: "/assignments/weekly"
 	},
 	{
+		id: nanoid(),
 		title: "monthly",
 		href: "/assignments/monthly"
 	},
 	{
+		id: nanoid(),
 		title: "yearly",
 		href: "/assignments/yearly"
 	}
 ];
 
+export const parentsSchedulesSectionNav = [
+	{
+		id: nanoid(),
+		title: "daily",
+		href: "/schedules"
+	},
+	{
+		id: nanoid(),
+		title: "weekly",
+		href: "/schedules/weekly"
+	},
+	{
+		id: nanoid(),
+		title: "monthly",
+		href: "/schedules/monthly"
+	},
+	{
+		id: nanoid(),
+		title: "yearly",
+		href: "/schedules/yearly"
+	}
+];
+
 export const parentsMessagesSectionNav = [
 	{
+		id: nanoid(),
 		title: "inbox",
 		href: "/messages"
 	},
 	{
+		id: nanoid(),
 		title: "sent",
 		href: "/messages/sent"
 	},
 	{
+		id: nanoid(),
 		title: "draft",
 		href: "/messages/draft"
 	},
 
 	{
+		id: nanoid(),
 		title: "important",
 		href: "/messages/important"
 	},
 	{
+		id: nanoid(),
 		title: "trash",
 		href: "/messages/trash"
 	}

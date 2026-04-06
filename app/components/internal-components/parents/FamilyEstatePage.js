@@ -1,15 +1,15 @@
 "use client";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import React, { useState } from "react";
 import { buttonVariants } from "../../shadcn/button";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
 import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
-import EmptyFamilyMembers from "../../empty-states/EmptyFamilyMembers";
-import ManageFamilyMembers from "../../overlays/ManageFamilyMembers";
+import EmptyFamilyHealthState from "../../empty-states/EmptyFamilyHealth.js";
+import EmptyFamilyEstate from "../../empty-states/EmptyFamilyEstate";
 
-export default function FamilyMembersPage() {
+export default function FamilyEstatePage() {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
@@ -21,23 +21,28 @@ export default function FamilyMembersPage() {
 			list: [
 				{
 					id: nanoid(),
+					value: "all",
+					label: "all"
+				},
+				{
+					id: nanoid(),
+					value: "pending",
+					label: "pending"
+				},
+				{
+					id: nanoid(),
 					value: "active",
 					label: "active"
 				},
 				{
 					id: nanoid(),
-					value: "probation",
-					label: "probation"
+					value: "paused",
+					label: "paused"
 				},
 				{
 					id: nanoid(),
-					value: "suspended",
-					label: "suspended"
-				},
-				{
-					id: nanoid(),
-					value: "expelled",
-					label: "expelled"
+					value: "completed",
+					label: "completed"
 				}
 			]
 		},
@@ -45,6 +50,11 @@ export default function FamilyMembersPage() {
 			id: nanoid(),
 			title: "page size",
 			list: [
+				{
+					id: nanoid(),
+					label: "10",
+					value: 10
+				},
 				{
 					id: nanoid(),
 					label: "25",
@@ -83,8 +93,8 @@ export default function FamilyMembersPage() {
 				},
 				{
 					id: nanoid(),
-					label: "youngest",
-					value: "youngest"
+					label: "most progressing",
+					value: "most progressing"
 				}
 			]
 		}
@@ -104,26 +114,16 @@ export default function FamilyMembersPage() {
 
 	const theme = useTheme();
 
-	const [familyMembers, setFamilyMembers] = useState([]);
-
-	const [openDrawer, setOpenDrawer] = useState(false);
-
-	const handleOpenDrawer = () => {
-		setOpenDrawer(true);
-	};
-
-	const closeDrawer = () => {
-		setOpenDrawer(false);
-	};
+	const [familyEstates, setFamilyEstates] = useState([]);
 
 	return (
 		<div>
 			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 min-h-screen flex flex-col">
-				<h2 className="sr-only">family members page</h2>
+				<h2 className="sr-only">family plans</h2>
 				<header>
-					<div className={classNames(theme.base, "px-4 py-16 text-center sm:px-6 lg:px-8 bg-linear-to-br from-blue-500 to-blue-700")}>
-						<h1 className={classNames("text-4xl font-bold tracking-tight capitalize text-white")}>family members</h1>
-						<p className={classNames("mx-auto mt-4 max-w-xl text-base text-white")}>Add, remove, and manage your family members all in one place.</p>
+					<div className={classNames(theme.base, "px-4 py-16 text-center sm:px-6 lg:px-8")}>
+						<h1 className={classNames("text-4xl font-bold tracking-tight capitalize text-white")}>family Estate</h1>
+						<p className={classNames("mx-auto mt-4 max-w-xl text-base text-white")}>keep track of your family's estate.</p>
 					</div>
 
 					{/* Filters */}
@@ -136,9 +136,9 @@ export default function FamilyMembersPage() {
 								<div className="relative mx-auto flex w-full justify-between items-center max-w-7xl p-4 text-sm sm:px-6 lg:px-8">
 									<div className="flex gap-4">
 										<div className="pr-6 flex justify-center items-center">
-											<button onClick={handleOpenDrawer} className={classNames(buttonVariants({ variant: "blueBtn" }))}>
+											<button className={classNames(buttonVariants({ variant: "blueBtn" }))}>
 												<PlusIcon aria-hidden="true" className="mr-1.5 -ml-0.5 w-5 h-5" />
-												family
+												estate
 											</button>
 										</div>
 										<div className="pr-6 flex justify-center items-center">
@@ -181,13 +181,10 @@ export default function FamilyMembersPage() {
 					</Disclosure>
 				</header>
 				<div className="divide-y divide-gray-200 overflow-hidden bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 min-h-screen flex flex-col">
-					<div className="flex-1">{familyMembers.length > 0 ? "display family members" : <EmptyFamilyMembers />}</div>
+					<div className="flex-1">{familyEstates.length > 0 ? "display family estate" : <EmptyFamilyEstate />}</div>
 					<div className={classNames(theme.base, "px-4 py-4 sm:px-6 flex justify-center items-center")}>
 						<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination-black pagination-yellow" />
 					</div>
-				</div>
-				<div className="hidden">
-					<ManageFamilyMembers open={openDrawer} closingFunction={closeDrawer} />
 				</div>
 			</div>
 		</div>

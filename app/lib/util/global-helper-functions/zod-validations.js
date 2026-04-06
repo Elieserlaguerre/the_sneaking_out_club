@@ -70,3 +70,49 @@ export const contactUsSchema = z.object({
 	subject: z.string().trim().nonempty({ message: "subject is required." }),
 	message: z.string().trim().nonempty({ message: "message is required." })
 });
+
+export const manageFamilyMemberSchema = z
+	.object({
+		firstName: z.string().trim().min(1, { message: "first name is required." }),
+		lastName: z.string().trim().min(1, { message: "last name is required." }),
+		email: z.email({ message: "please provide a valid email." }),
+		phone: z.string().trim().nonempty({ message: "phone number is required." }),
+		password: z.string().trim().min(1, { message: "password is required." }),
+		confirmPassword: z.string().trim().min(1, { message: "password must be confirmed." }),
+		address1: z.string().trim().min(1, { message: "address is required." }),
+		address2: z.string().optional(),
+		accountType: z.any().refine((value) => value !== "select one", { message: "account type is required." }),
+		city: z.string().trim().min(1, { message: "city is required." }),
+		state: z.string().trim().min(1, { message: "state is required." }),
+		zipCode: z.string().trim().nonempty({ message: "zip code/region is required." }),
+		country: z.string().trim().nonempty({ message: "Country is required." }),
+		relation: z.string().trim().nonempty({ message: "relation is required." }),
+		dateOfBirth: z
+			.string()
+			.nonempty({ message: "date of birth is required." })
+			.transform((date) => new Date(date))
+			.pipe(z.date()),
+		age: z
+			.union([z.string(), z.number()])
+			.transform((value) => {
+				const num = Number(value);
+				return isNaN(num) ? undefined : num;
+			})
+			.pipe(
+				z.number({
+					required_error: "age is required.",
+					invalid_type_error: "age must be a number"
+				})
+			),
+		nationality: z.string().min(1, { message: "nationality is required." }),
+		gender: z.enum(["Male", "Female", "Other"]),
+		introduction: z.string().min(1, { message: "introduction is required." }),
+		image: z
+			.object({
+				publicId: z.string().trim().nonempty({ message: "Image's public Id is required." }),
+				url: z.string().trim().nonempty({ message: "uploaded image file url is required." })
+			})
+			.refine((value) => typeof value === "string", { message: "Please upload a valid image." }),
+		cloudinarySubfolder: z.string().trim().nonempty({ message: "Cloudinary subfolder is required." })
+	})
+	.refine((data) => data.password === data.confirmPassword, { message: "password must match.", path: ["confirmPassword"] });

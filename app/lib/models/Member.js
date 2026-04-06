@@ -151,7 +151,40 @@ const memberSchema = new Schema(
 			suspensionEndDate: {
 				type: Date
 			}
-		}
+		},
+		
+		family: [
+			{
+				member: {
+					type: ObjectId,
+					required: true,
+					refPath: "memberType"
+				},
+				memberType: {
+					type: String,
+					required: true,
+					enum: ["Member", "Parent", "Admin", "Teacher"]
+				}
+			}
+		],
+		roles: [
+			{
+				role: {
+					type: String,
+					trim: true
+				},
+				creator: {
+					type: ObjectId,
+					required: true,
+					refPath: "creatorType"
+				},
+				creatorType: {
+					type: String,
+					required: true,
+					enum: ["Parent", "Member", "Teacher", "Admin"]
+				}
+			}
+		]
 	},
 	{ timestamps: true }
 );

@@ -44,7 +44,7 @@ export default function InternalLayout({ children }) {
 
 	const [user, setUser] = useAtom(currentUser);
 
-	console.log("user", user);
+	// console.log("user", user);
 
 	const handleUserSignOut = async () => {
 		const logOut = await signCurrentUserOut();
@@ -116,8 +116,8 @@ export default function InternalLayout({ children }) {
 						</div>
 						<nav className="flex flex-1 flex-col">
 							<ul role="list" className="flex flex-1 flex-col gap-y-7">
-								{navigation.map((section) => (
-									<li key={section._id}>
+								{navigation.map((section, idx) => (
+									<li key={section?.id ?? idx}>
 										<div className="text-xs/6 font-semibold text-indigo-200 dark:text-indigo-100">{section.sectionTitle}</div>
 										<ul role="list" className="-mx-2 mt-2 space-y-1">
 											{section?.list?.map((item, idx) => (

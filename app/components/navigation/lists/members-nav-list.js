@@ -5,26 +5,32 @@ import { nanoid } from "nanoid";
 
 export const membersExternalSectionNav = [
 	{
+		id: nanoid(),
 		title: "home",
 		href: "/"
 	},
 	{
+		id: nanoid(),
 		title: "about us",
 		href: "/about-us"
 	},
 	{
+		id: nanoid(),
 		title: "contact us",
 		href: "/contact-us"
 	},
 	{
+		id: nanoid(),
 		title: "pricing",
 		href: "/pricing"
 	},
 	{
+		id: nanoid(),
 		title: "register",
 		href: "/register"
 	},
 	{
+		id: nanoid(),
 		title: "login",
 		href: "/login"
 	}
@@ -32,47 +38,47 @@ export const membersExternalSectionNav = [
 
 export const membersInaternalSectionNav = [
 	{
-		_id: nanoid(),
+		id: nanoid(),
 		sectionTile: "navigation",
 		list: [
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "dashboard",
 				href: "/dashboard",
 				icon: HomeIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "assignments",
 				href: "/assignments",
 				icon: MdOutlineAssignmentInd
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "messages",
 				href: "/messages",
 				icon: EnvelopeIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "meetings",
 				href: "/meetings",
 				icon: CalendarIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "events",
 				href: "/events",
 				icon: TbTimelineEventText
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "Documents",
 				href: "/documents",
 				icon: DocumentDuplicateIcon
 			},
 			{
-				_id: nanoid(),
+				id: nanoid(),
 				name: "Reports",
 				href: "/reports",
 				icon: ChartPieIcon
@@ -96,42 +102,74 @@ export const membersDashboardSectionNav = [
 
 export const membersAssignmentsSectionNav = [
 	{
+		id: nanoid(),
 		title: "daily",
 		href: "/assignments"
 	},
 	{
+		id: nanoid(),
 		title: "weekly",
 		href: "/assignments/weekly"
 	},
 	{
+		id: nanoid(),
 		title: "monthly",
 		href: "/assignments/monthly"
 	},
 	{
+		id: nanoid(),
 		title: "yearly",
 		href: "/assignments/yearly"
 	}
 ];
 
+export const membersSchedulesSectionNav = [
+	{
+		id: nanoid(),
+		title: "daily",
+		href: "/schedules"
+	},
+	{
+		id: nanoid(),
+		title: "weekly",
+		href: "/schedules/weekly"
+	},
+	{
+		id: nanoid(),
+		title: "monthly",
+		href: "/schedules/monthly"
+	},
+	{
+		id: nanoid(),
+		title: "yearly",
+		href: "/schedules/yearly"
+	}
+];
+
 export const membersMessagesSectionNav = [
 	{
+		id: nanoid(),
 		title: "inbox",
 		href: "/messages"
 	},
 	{
+		id: nanoid(),
 		title: "sent",
 		href: "/messages/sent"
 	},
 	{
+		id: nanoid(),
 		title: "draft",
 		href: "/messages/draft"
 	},
 
 	{
+		id: nanoid(),
 		title: "important",
 		href: "/messages/important"
 	},
 	{
+		id: nanoid(),
 		title: "trash",
 		href: "/messages/trash"
 	}
