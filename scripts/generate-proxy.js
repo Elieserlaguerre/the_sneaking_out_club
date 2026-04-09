@@ -190,7 +190,7 @@ const hostname = req.headers.get("host") ?? "";
 const subdomain = hostname?.split(".")[0];
 const port = url.port;
 
-const allowedDomains = [\`localhost:\${port}\`, "thesneakingoutclub.com"];
+const allowedDomains = [\`localhost:\${port}\`, "thesneakingoutclub.com", "the-sneaking-out-club-git-preview-synergistic-enterprises.vercel.app"];
 const isAllowedDomain = allowedDomains.some((domain) => hostname.includes(domain));
 const isValidSubdomain = PLATFORM_ROUTES.some((d) => d.subdomain === subdomain);
 const isNotSubDomain = !isValidSubdomain;

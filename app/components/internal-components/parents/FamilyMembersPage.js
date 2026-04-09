@@ -1,6 +1,6 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { buttonVariants } from "../../shadcn/button";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
@@ -8,11 +8,18 @@ import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
 import EmptyFamilyMembers from "../../empty-states/EmptyFamilyMembers";
 import ManageFamilyMembers from "../../overlays/ManageFamilyMembers";
+import { useGetFamilyMembersQuery, useLazyGetFamilyMembersQuery } from "@/app/lib/redux/data-fetching/parents-api";
+import { useAtomValue } from "jotai";
+import { currentUser } from "@/app/lib/state-management/global-state";
+import toast from "react-hot-toast";
+import FamilyMemberCard from "../../cards/FamilyMemberCard";
 
 export default function FamilyMembersPage() {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
+
+	const user = useAtomValue(currentUser);
 
 	const filterOptions = [
 		{
@@ -108,12 +115,65 @@ export default function FamilyMembersPage() {
 
 	const [openDrawer, setOpenDrawer] = useState(false);
 
+	const [drawerSettings, setDrawerSettings] = useState("newEntry");
+
 	const handleOpenDrawer = () => {
+		setDrawerSettings("newEntry");
+		setOpenDrawer(true);
+	};
+
+	const handleDrawerEditMode = () => {
+		setDrawerSettings("editMode");
 		setOpenDrawer(true);
 	};
 
 	const closeDrawer = () => {
+		setDrawerSettings("newEntry");
 		setOpenDrawer(false);
+	};
+
+	const [getFamilyMembers, getFamilyMembersResults] = useLazyGetFamilyMembersQuery();
+
+	useEffect(() => {
+		if (getFamilyMembersResults.isError) {
+			const message = typeof getFamilyMembersResults.error === "string" ? getFamilyMembersResults.error : getFamilyMembersResults.error.message;
+			toast.error(message);
+		} else if (getFamilyMembersResults.isSuccess) {
+			toast.success(getFamilyMembersResults.data.message);
+
+			const { results } = getFamilyMembersResults.data;
+			// console.log("results", results);
+
+			setFamilyMembers(results.familyMembers);
+			setTotalPages(results.totalPages);
+		}
+	}, [getFamilyMembersResults.isFetching, getFamilyMembersResults.isSuccess, getFamilyMembersResults.isError]);
+
+	useEffect(() => {
+		if (user?._id) getFamilyMembers({ userId: user._id, page, limit, filter: JSON.stringify(filters) });
+	}, [user, page, limit, filters]);
+
+	const handleChanges = (name, value) => {
+		switch (name) {
+			case "status":
+				setFilters((filter) => ({
+					...filter,
+					status: value
+				}));
+				break;
+			case "page size":
+				setLimit(value);
+				break;
+			case "sort":
+				setFilters((filter) => ({
+					...filter,
+					sort: value
+				}));
+				break;
+			default:
+				toast.error("Invalid filter selection.");
+				break;
+		}
 	};
 
 	return (
@@ -181,13 +241,19 @@ export default function FamilyMembersPage() {
 					</Disclosure>
 				</header>
 				<div className="divide-y divide-gray-200 overflow-hidden bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 min-h-screen flex flex-col">
-					<div className="flex-1">{familyMembers.length > 0 ? "display family members" : <EmptyFamilyMembers />}</div>
+					<div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-gray-100">{getFamilyMembersResults.isFetching ? "" : familyMembers.length === 0 ? <EmptyFamilyMembers /> : familyMembers?.map((member) => <FamilyMemberCard key={member?._id} member={member} editFunction={handleDrawerEditMode} />)}</div>
 					<div className={classNames(theme.base, "px-4 py-4 sm:px-6 flex justify-center items-center")}>
 						<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination-black pagination-yellow" />
 					</div>
 				</div>
 				<div className="hidden">
-					<ManageFamilyMembers open={openDrawer} closingFunction={closeDrawer} />
+					<ManageFamilyMembers
+						open={openDrawer}
+						closingFunction={closeDrawer}
+						settings={{
+							mode: drawerSettings
+						}}
+					/>
 				</div>
 			</div>
 		</div>

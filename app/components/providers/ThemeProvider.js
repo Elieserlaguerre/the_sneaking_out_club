@@ -7,15 +7,6 @@ import { createContext, useContext, useMemo } from "react";
 // create context
 const ThemeContext = createContext(null);
 
-export function ThemeProvider({ children, department }) {
-	const theme = useMemo(() => {
-		if (!department) return null;
-		return dynamicLayoutThemeColor(department);
-	}, [department]);
-
-	return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
-}
-
 // hook (we'll export later)
 export const useTheme = () => {
 	const context = useContext(ThemeContext);
@@ -24,3 +15,12 @@ export const useTheme = () => {
 	}
 	return context;
 };
+
+export function ThemeProvider({ children, department }) {
+	const theme = useMemo(() => {
+		if (!department) return null;
+		return dynamicLayoutThemeColor(department);
+	}, [department]);
+
+	return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
+}

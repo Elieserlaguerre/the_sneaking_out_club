@@ -1,6 +1,6 @@
-import cloudinary from "..";
 import { Readable } from "stream";
 import crypto from "crypto";
+import cloudinary from "../..";
 
 export const uploadImage = async (file, subfolder) => {
 	if (!file || file.size === 0) {
@@ -83,9 +83,11 @@ export const deleteSubfolder = async (subfolder) => {
 	if (!subfolder) throw new Error("Subfolder required");
 
 	try {
-		const deleteUploads = await cloudinary.api.delete_resources_by_prefix(`${process.env.CLOUD_NAME}/${subfolder}`);
+		const deleteUploads = await cloudinary.api.delete_resources_by_prefix(subfolder);
 
-		const deletedFolder = await cloudinary.api.delete_folder(`${process.env.CLOUD_NAME}/${subfolder}`);
+		const deletedFolder = await cloudinary.api.delete_folder(subfolder).catch((err) => {
+			console.warn("Folder may not be empty or already deleted:", err.message);
+		});
 
 		return {
 			success: true,
@@ -93,7 +95,9 @@ export const deleteSubfolder = async (subfolder) => {
 			deletedFolder: deletedFolder?.deleted
 		};
 	} catch (error) {
-		throw new Error("Folder deletion failed:", error.message);
+		const errorMessage = error?.message || error?.error?.message || JSON.stringify(error);
+
+		throw new Error(`Folder deletion failed: ${errorMessage}`);
 	}
 };
 
@@ -120,4 +124,14 @@ export function generateCloudinarySignature({ folder, public_id }) {
 		apiKey: process.env.CLOUDINARY_API_KEY,
 		cloudName: process.env.CLOUD_NAME
 	};
+}
+
+export async function generateFileHash(file) {
+	const buffer = await file.arrayBuffer();
+	const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+
+	const hashArray = Array.from(new Uint8Array(hashBuffer));
+	const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+	return hashHex;
 }

@@ -14,8 +14,8 @@ import { currentDepartment, currentUser } from "@/app/lib/state-management/globa
 import { manageFamilyMemberSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
 import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
-import { useAddFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
-import { Loader2 } from "lucide-react";
+import { useAddFamilyMemberMutation, useManageFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
+import { Loader2, Loader2Icon } from "lucide-react";
 import { useTheme } from "../providers/ThemeProvider";
 
 export default function ManageFamilyMembers({ open, closingFunction, settings }) {
@@ -28,6 +28,8 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	const department = useAtomValue(currentDepartment);
 
 	const theme = useTheme();
+
+	const [loading, setLoading] = useState(false);
 
 	const [formContent, setFormContent] = useState({
 		firstName: "",
@@ -77,6 +79,11 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		});
 	};
 
+	const eventTrigger = {
+		newEntry: "NEW_FAMILY_MEMBER",
+		editMode: "USER_PROFILE_UPDATE"
+	};
+
 	const [name, setName] = useState("");
 
 	useEffect(() => {
@@ -106,11 +113,6 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 			id: nanoid(),
 			name: "female",
 			value: "Female"
-		},
-		{
-			id: nanoid(),
-			name: "other",
-			value: "Other"
 		}
 	];
 
@@ -150,9 +152,11 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 
 	console.log("formContent", formContent);
 
-	const [addFamilyMember, addFamilyMemberResults] = useAddFamilyMemberMutation();
+	const [addFamilyMember, addFamilyMemberResults] = useManageFamilyMemberMutation();
 
 	useEffect(() => {
+		setLoading(addFamilyMemberResults.isLoading);
+
 		if (addFamilyMemberResults.isError) {
 			const message = typeof addFamilyMemberResults.error === "string" ? addFamilyMemberResults.error : addFamilyMemberResults.error.message;
 			toast.error(message);
@@ -161,7 +165,8 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 
 			const { results } = addFamilyMemberResults.data;
 
-			// clearForm();
+			clearForm();
+			closingFunction();
 		}
 	}, [addFamilyMemberResults.isSuccess, addFamilyMemberResults.isError]);
 
@@ -173,7 +178,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		if (validation.success) {
 			if (settings?.editMode === true) {
 			} else {
-				addFamilyMember(validation.data);
+				addFamilyMember({ user: validation.data, department: "members", parentId: user?._id, event: eventTrigger[settings?.mode] });
 			}
 		} else {
 			const error = fromZodError(validation.error);
@@ -200,7 +205,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 								<div className="flex-1 flex flex-col overflow-y-hidden max-h-screen">
 									<div className={classNames("px-4 py-[1.61rem] sm:px-6 bg-linear-to-br from-orange-500 to-orange-700")}>
 										<div className="flex items-center justify-between">
-											<DialogTitle className="text-base font-semibold text-white capitalize">Manage family member</DialogTitle>
+											<DialogTitle className="text-base font-semibold text-white capitalize">{settings.mode === "newEntry" ? "create" : settings.mode === "editMode" ? "edit" : "manage"} family member</DialogTitle>
 											<div className="ml-3 flex h-7 items-center">
 												<button type="button" onClick={handleDrwerClosure} className="relative rounded-md bg-transparent text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
 													<span className="absolute -inset-2.5" />
@@ -426,8 +431,14 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 									</div>
 								</div>
 								<div className="flex shrink-0 justify-evenly items-center px-4 py-4">
-									<button type="submit" className={classNames(buttonVariants({ variant: "greenBtn" }))}>
-										submit
+									<button type="submit" disabled={loading} className={classNames(buttonVariants({ variant: "greenBtn" }))}>
+										{loading ? (
+											<>
+												processing... <Loader2Icon className="w-5 h-auto animate-spin inline-block ml-3" />
+											</>
+										) : (
+											"submit"
+										)}
 									</button>
 									<button type="button" onClick={handleDrwerClosure} className={classNames(buttonVariants({ variant: "destructiveBtn" }))}>
 										Cancel

@@ -10,11 +10,11 @@ import UserProvider from "../providers/UserProvider";
 import { Analytics } from "@vercel/analytics/react";
 import { TooltipProvider } from "../shadcn/tooltip";
 import { ThemeProvider } from "../providers/ThemeProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default async function ProvidersLayout({ children }) {
 	const cookieStore = await cookies();
 	const subdomain = cookieStore.get("current_subdomain").value;
-	// console.log("ProvidersLayout.js subdomain", subdomain);
 
 	return (
 		<Fragment>
@@ -36,6 +36,7 @@ export default async function ProvidersLayout({ children }) {
 				</ReduxProvider>
 			</AppRouterCacheProvider>
 			<Analytics />
+			<SpeedInsights />
 		</Fragment>
 	);
 }

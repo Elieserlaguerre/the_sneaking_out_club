@@ -152,7 +152,7 @@ const memberSchema = new Schema(
 				type: Date
 			}
 		},
-		
+
 		family: [
 			{
 				member: {
@@ -164,24 +164,10 @@ const memberSchema = new Schema(
 					type: String,
 					required: true,
 					enum: ["Member", "Parent", "Admin", "Teacher"]
-				}
-			}
-		],
-		roles: [
-			{
+				},
 				role: {
 					type: String,
 					trim: true
-				},
-				creator: {
-					type: ObjectId,
-					required: true,
-					refPath: "creatorType"
-				},
-				creatorType: {
-					type: String,
-					required: true,
-					enum: ["Parent", "Member", "Teacher", "Admin"]
 				}
 			}
 		]

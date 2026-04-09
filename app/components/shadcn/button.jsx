@@ -27,7 +27,8 @@ const buttonVariants = cva("group/button inline-flex shrink-0 items-center justi
 			redCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-red-600 hover:bg-red-500 flex justify-center items-center text-white",
 			WhiteCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-white hover:bg-gray-200 flex justify-center items-center text-gray-900",
 			blackCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-black hover:bg-black/70 flex justify-center items-center text-white",
-			grayCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-gray-500 hover:bg-gray-400 flex justify-center items-center text-white"
+			grayCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-gray-500 hover:bg-gray-400 flex justify-center items-center text-white",
+			blueCircularBtn: "rounded-full p-1 min-w-6 min-h-6 aspect-square bg-blue-500 hover:bg-blue-400 flex justify-center items-center text-white"
 		},
 		size: {
 			default: "",

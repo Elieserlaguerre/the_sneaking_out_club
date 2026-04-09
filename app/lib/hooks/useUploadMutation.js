@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { generateFileHash } from "../cloudinary/helpers/client";
 
 export function useUploadMutation(options) {
 	const folder = options?.folder;
@@ -19,6 +20,13 @@ export function useUploadMutation(options) {
 
 	const trigger = useCallback(
 		async (file, overrideOptions = {}) => {
+			/*
+			==================
+			0. GENERATE FILE HASH
+			==================
+			*/
+			const hash = await generateFileHash(file);
+
 			setIsLoading(true);
 			setIsSuccess(false);
 			setIsError(false);
@@ -32,7 +40,10 @@ export function useUploadMutation(options) {
 			*/
 				const sigRes = await fetch("/api/v1/global/uploads/signature", {
 					method: "POST",
-					body: JSON.stringify(options)
+					body: JSON.stringify({
+						...options,
+						hash
+					})
 				});
 
 				if (!sigRes.ok) {
@@ -43,6 +54,26 @@ export function useUploadMutation(options) {
 
 				const response = await sigRes.json();
 				const { results } = response;
+
+				/*
+				==================================
+				SKIP UPLOAD IF FILE ALREADY EXISTS
+				==================================
+				*/
+				if (results?.existing) {
+					const formatted = {
+						publicId: results.public_id,
+						url: results.url
+					};
+
+					setData({
+						results: formatted,
+						message: "Image already exists"
+					});
+
+					setIsSuccess(true);
+					return formatted;
+				}
 
 				const { signature, timestamp, apiKey, cloudName, subfolder, public_id } = results;
 

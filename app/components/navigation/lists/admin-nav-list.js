@@ -28,7 +28,7 @@ export const adminExternalSectionNav = [
 	}
 ];
 
-export const adminInaternalSectionNav = [
+export const adminInternalSectionNav = [
 	{
 		id: nanoid(),
 		sectionTile: "navigation",

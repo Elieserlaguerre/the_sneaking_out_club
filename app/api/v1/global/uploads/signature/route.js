@@ -1,4 +1,4 @@
-import { generateCloudinarySignature } from "@/app/lib/cloudinary/helpers";
+
 import { NextResponse } from "next/server";
 import db from "@/app/lib/database";
 import Member from "@/app/lib/models/Member";
@@ -6,6 +6,8 @@ import Parent from "@/app/lib/models/Parent";
 import Teacher from "@/app/lib/models/Teacher";
 import Admin from "@/app/lib/models/Admin";
 import Applicant from "@/app/lib/models/Applicant";
+import cloudinary from "@/app/lib/cloudinary";
+import { generateCloudinarySignature } from "@/app/lib/cloudinary/helpers/server";
 
 export async function POST(req) {
 	try {
@@ -14,13 +16,15 @@ export async function POST(req) {
 		data = await req.json();
 		// console.log("data", data);
 
-		const { folder, userId, department } = data;
+		const { folder, userId, department, hash } = data;
 
 		/*
         ========================
         VALIDATE DATA PARAMETERS
         ========================
         */
+
+		if (!hash) return NextResponse.json({ message: "File hash is required." }, { status: 400 });
 
 		if (!folder) return NextResponse.json({ message: "cloudinary subfolder is required for upload signature." }, { status: 400 });
 
@@ -68,9 +72,29 @@ export async function POST(req) {
 
 		const subfolder = user.cloudinarySubfolder;
 
-		// console.log("subfolder", subfolder);
+		let existingResource = null;
 
-		const public_id = `${Date.now()}`;
+		try {
+			existingResource = await cloudinary.api.resource(hash);
+		} catch (err) {
+			// Not found = expected
+		}
+
+		if (existingResource) {
+			return NextResponse.json(
+				{
+					results: {
+						existing: true,
+						publicId: existingResource.public_id,
+						url: existingResource.secure_url
+					},
+					message: "Image already exists"
+				},
+				{ status: 200 }
+			);
+		}
+
+		const public_id = hash;
 
 		/*
 		==================================

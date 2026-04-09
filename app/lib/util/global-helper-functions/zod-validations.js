@@ -99,10 +99,12 @@ export const manageFamilyMemberSchema = z
 				return isNaN(num) ? undefined : num;
 			})
 			.pipe(
-				z.number({
-					required_error: "age is required.",
-					invalid_type_error: "age must be a number"
-				})
+				z
+					.number({
+						required_error: "age is required.",
+						invalid_type_error: "age must be a number"
+					})
+					.max(19, { message: "Only minors can be added to the platform by parents. Adults must register themselves!" })
 			),
 		nationality: z.string().min(1, { message: "nationality is required." }),
 		gender: z.enum(["Male", "Female", "Other"]),
@@ -112,7 +114,38 @@ export const manageFamilyMemberSchema = z
 				publicId: z.string().trim().nonempty({ message: "Image's public Id is required." }),
 				url: z.string().trim().nonempty({ message: "uploaded image file url is required." })
 			})
-			.refine((value) => typeof value === "string", { message: "Please upload a valid image." }),
-		cloudinarySubfolder: z.string().trim().nonempty({ message: "Cloudinary subfolder is required." })
+			.refine((value) => typeof value === "object", { message: "Please upload a valid image." }),
+		cloudinarySubfolder: z.string().trim().optional()
 	})
 	.refine((data) => data.password === data.confirmPassword, { message: "password must match.", path: ["confirmPassword"] });
+
+export const eventSchema = z
+	.object({
+		eventType: z.string().trim().nonempty({ message: "event type is required." }),
+		source: z.string().trim().nonempty({ message: "source ID is required." }),
+
+		LedgerEntry: z.object({
+			create: z.coerce.boolean(),
+			type: z
+				.string()
+				.trim()
+				.nonempty({ message: "ledger entry type is required." })
+				.pipe(z.enum(["single", "double"]))
+		}),
+
+		updateSnapshot: z.coerce.boolean(),
+
+		notifications: z.object({
+			notify: z.coerce.boolean(),
+			event: z.string().optional()
+		})
+	})
+	.superRefine((data, ctx) => {
+		if (data.notifications.notify && !data.notifications.event) {
+			ctx.addIssue({
+				path: ["notifications", "event"],
+				code: "custom",
+				message: "Notification event is required when notify is true."
+			});
+		}
+	});

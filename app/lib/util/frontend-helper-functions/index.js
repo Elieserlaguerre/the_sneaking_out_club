@@ -1,4 +1,4 @@
-import { adminAssignmentsSectionNav, adminDashboardSectionNav, adminDocumentsSectionNav, adminEventsSectionNav, adminExternalSectionNav, adminInaternalSectionNav, adminMeetingSectionNav, adminMessagesSectionNav, adminReportsSectionNav } from "@/app/components/navigation/lists/admin-nav-list";
+import { adminAssignmentsSectionNav, adminDashboardSectionNav, adminDocumentsSectionNav, adminEventsSectionNav, adminExternalSectionNav, adminInaternalSectionNav, adminInternalSectionNav, adminMeetingSectionNav, adminMessagesSectionNav, adminReportsSectionNav } from "@/app/components/navigation/lists/admin-nav-list";
 import { careersAssignmentsSectionNav, careersDashboardSectionNav, careersDocumentsSectionNav, careersEventsSectionNav, careersExternalSectionNav, careersInaternalSectionNav, careersMeetingSectionNav, careersMessagesSectionNav, careersReportsSectionNav } from "@/app/components/navigation/lists/careers-nav-list";
 import { membersAssignmentsSectionNav, membersDashboardSectionNav, membersDocumentsSectionNav, membersEventsSectionNav, membersExternalSectionNav, membersInaternalSectionNav, membersMeetingSectionNav, membersMessagesSectionNav, membersReportsSectionNav, membersSchedulesSectionNav } from "@/app/components/navigation/lists/members-nav-list";
 import { parentFamilySectionNav, parentsAssignmentsSectionNav, parentsDashboardSectionNav, parentsDocumentsSectionNav, parentsEventsSectionNav, parentsExternalSectionNav, parentsInaternalSectionNav, parentsMeetingSectionNav, parentsMessagesSectionNav, parentsReportsSectionNav, parentsSchedulesSectionNav } from "@/app/components/navigation/lists/parents-nav-list";
@@ -488,7 +488,7 @@ export const dynamicInternalNavlist = (department) => {
 		case "teachers":
 			return teachersInaternalSectionNav;
 		case "admin":
-			return adminInaternalSectionNav;
+			return adminInternalSectionNav;
 		case "careers":
 			return careersInaternalSectionNav;
 		default:
@@ -694,4 +694,28 @@ export const dateFormatter = (date) => {
 	} else {
 		return "Invalid date string provided.";
 	}
+};
+
+export const familyRelations = (relation, gender) => {
+	const RELATIONS = {
+		father: { male: "son", female: "daughter" },
+		mother: { male: "son", female: "daughter" },
+		niece: { male: "uncle", female: "aunt" },
+		nephew: { male: "uncle", female: "aunt" },
+		uncle: { male: "nephew", female: "niece" },
+		aunt: { male: "nephew", female: "niece" }
+	};
+
+	const normalizedRelation = relation.toLowerCase();
+	const normalizedGender = gender.toLowerCase();
+
+	if (!RELATIONS[normalizedRelation]) {
+		throw new Error(`Unknown relation: ${relation}`);
+	}
+
+	if (!RELATIONS[normalizedRelation][normalizedGender]) {
+		throw new Error(`Invalid gender: ${gender}`);
+	}
+
+	return RELATIONS[normalizedRelation][normalizedGender];
 };

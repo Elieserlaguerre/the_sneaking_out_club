@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { EVENT_TYPES } from "../util/backend-helper-functions/ledger/variables";
+import { EVENTS } from "../events/events";
 const { Schema } = mongoose;
 const { ObjectId } = Schema;
 
@@ -15,7 +15,7 @@ const ledgerSchema = new Schema(
 		eventType: {
 			type: String,
 			required: true,
-			enum: Object.values(EVENT_TYPES)
+			enum: Object.values(EVENTS)
 		},
 
 		value: {
@@ -32,24 +32,24 @@ const ledgerSchema = new Schema(
 
 		user: {
 			type: ObjectId,
-			required: true,
 			refPath: "userType"
 		},
 
 		userType: {
 			type: String,
-			required: true,
 			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
 		},
 
-		createdBy: {
+		source: {
 			type: ObjectId,
-			refPath: "createdByType"
+			required: true,
+			refPath: "sourceType"
 		},
 
-		createdByType: {
+		sourceType: {
 			type: String,
-			enum: ["Admin", "Teacher", "Parent", "System"]
+			required: true,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant", "System"]
 		}
 	},
 	{ timestamps: true }

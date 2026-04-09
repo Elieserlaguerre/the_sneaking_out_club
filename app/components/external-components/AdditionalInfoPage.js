@@ -180,11 +180,6 @@ export default function AdditionalInfoForm() {
 			id: nanoid(),
 			name: "female",
 			value: "Female"
-		},
-		{
-			id: nanoid(),
-			name: "other",
-			value: "Other"
 		}
 	];
 
