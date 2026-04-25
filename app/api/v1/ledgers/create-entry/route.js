@@ -5,8 +5,8 @@ import LedgerEntry from "@/app/lib/models/Ledger";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
 import Teacher from "@/app/lib/models/Teacher";
-import { processMemberLedgerEffects } from "@/app/lib/util/backend-helper-functions/ledger";
-import { EVENT_COOLDOWNS, EVENT_TYPES, RATE_LIMITED_EVENTS, REPUTATION_WEIGHTS, sourceMapping } from "@/app/lib/util/backend-helper-functions/ledger/variables";
+import { EVENT_COOLDOWNS, EVENT_TYPES, RATE_LIMITED_EVENTS, REPUTATION_WEIGHTS, sourceMapping } from "@/app/lib/util/backend/ledger/variables";
+import { processMemberLedgerEffects } from "@/app/lib/util/backend/ledger";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
