@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useAtomValue } from "jotai";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
-import { dynamicLayoutThemeColor, handleDepartmentThemeColor } from "@/app/lib/util/frontend-helper-functions";
+import { dynamicLayoutThemeColor, handleDepartmentThemeColor } from "@/app/lib/util/frontend";
 
 export default function SectionNavbar({ navList, profile }) {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,13 +63,13 @@ export default function SectionNavbar({ navList, profile }) {
 
 										<PopoverPanel transition="true" className={classNames("absolute inset-x-0 top-20 -z-10 bg-white pt-2 shadow-lg ring-1 ring-gray-900/5 transition data-closed:-translate-y-1 data-closed:opacity-0 data-enter:duration-200 data-leave:duration-150 data-enter:ease-out data-leave:ease-in")}>
 											<div className={classNames(section.panel.nav.length < 4 ? `grid grid-cols-${section.panel.nav.length}` : "grid grid-cols-4", "mx-auto max-w-7xl px-6 py-5 lg:px-8 divide-x divide-gray-400")}>
-												{section.panel.nav.map((nav, i) => (
-													<div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+												{section.panel.nav.map((nav) => (
+													<div key={nav.id} className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
 														{nav.title && <div className="px-4 py-5 sm:px-6">{nav.title}</div>}
 														<div className="px-4 py-5 sm:p-6">
 															<ol className="w-full h-full leading-8">
-																{nav.links.map((link, i) => (
-																	<PopoverButton key={i} as={Link} href={profile?.active ? `${basePath}${link.href}` : link.href} className={classNames(link.href === path ? "bg-indigo-500 text-white" : null, "capitalize font-semibold hover:bg-indigo-500 cursor-pointer hover:text-white block w-full text-left pl-2")}>
+																{nav.links.map((link) => (
+																	<PopoverButton key={link.id} as={Link} href={profile?.active ? `${basePath}${link.href}` : link.href} className={classNames(link.href === path ? "bg-indigo-500 text-white" : null, "capitalize font-semibold hover:bg-indigo-500 cursor-pointer hover:text-white block w-full text-left pl-2")}>
 																		{link.name}
 																	</PopoverButton>
 																))}

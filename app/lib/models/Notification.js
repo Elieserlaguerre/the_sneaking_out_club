@@ -10,7 +10,19 @@ const notificationSchema = new Schema(
 			required: true
 		},
 
-		sender: {
+		event: {
+			type: String,
+			trim: true,
+			required: true
+		},
+
+		message: {
+			type: String,
+			trim: true,
+			required: true
+		},
+
+		from: {
 			type: ObjectId,
 			required: true,
 			refPath: "senderType"
@@ -19,25 +31,19 @@ const notificationSchema = new Schema(
 		senderType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent", "Member"]
+			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
 		},
 
-		receiver: {
+		to: {
 			type: ObjectId,
 			required: true,
-			refPath: "receiverType"
+			refPath: "recipientType"
 		},
 
-		receiverType: {
+		recipientType: {
 			type: String,
 			required: true,
-			enum: ["Admin", "Parent", "Member"]
-		},
-
-		message: {
-			type: String,
-			trim: true,
-			required: true
+			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
 		}
 	},
 	{ timestamps: true }

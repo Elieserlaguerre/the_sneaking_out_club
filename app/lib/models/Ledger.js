@@ -15,29 +15,19 @@ const ledgerSchema = new Schema(
 		eventType: {
 			type: String,
 			required: true,
-			enum: Object.values(EVENTS)
+			enum: Object.values(EVENTS).map((e) => e.event)
 		},
 
 		value: {
 			type: Number,
-			required: true
+			required: true,
+			default: 0
 			// +10, -25, etc.
 		},
 
 		metadata: {
 			type: Schema.Types.Mixed
-			// store anything:
-			// assignmentId, eventId, activityId, perkId, cardColor, value, notes, etc.
-		},
-
-		user: {
-			type: ObjectId,
-			refPath: "userType"
-		},
-
-		userType: {
-			type: String,
-			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
+			// store anything from family events, assignments, club events, activities, perks, cardColor, value, notes, user data, etc.
 		},
 
 		source: {
@@ -55,10 +45,10 @@ const ledgerSchema = new Schema(
 	{ timestamps: true }
 );
 
-ledgerSchema.index({ entity: 1, createdAt: -1 });
-ledgerSchema.index({ entity: 1, eventType: 1, createdAt: -1 });
-ledgerSchema.index({ entity: 1, eventType: 1, "metadata.assignmentId": 1 }, { unique: true, sparse: true });
-ledgerSchema.index({ entity: 1, eventType: 1, "metadata.eventId": 1 }, { unique: true, sparse: true });
-ledgerSchema.index({ entity: 1, eventType: 1, "metadata.idempotencyKey": 1 }, { unique: true, sparse: true });
+ledgerSchema.index({ name: 1, createdAt: -1 });
+ledgerSchema.index({ name: 1, eventType: 1, createdAt: -1 });
+ledgerSchema.index({ name: 1, eventType: 1, "metadata.assignmentId": 1 }, { unique: true, partialFilterExpression: { "metadata.assignmentId": { $exists: true, $ne: null } } });
+ledgerSchema.index({ name: 1, eventType: 1, "metadata.eventId": 1 }, { unique: true, sparse: true });
+ledgerSchema.index({ name: 1, eventType: 1, "metadata.idempotencyKey": 1 }, { unique: true, sparse: true });
 
 export default mongoose.models.Ledger || mongoose.model("Ledger", ledgerSchema);

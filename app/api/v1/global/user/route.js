@@ -1,6 +1,8 @@
 import db from "@/app/lib/database";
 import Admin from "@/app/lib/models/Admin";
 import Applicant from "@/app/lib/models/Applicant";
+import Family from "@/app/lib/models/Family";
+import FamilyTree from "@/app/lib/models/FamilyTree";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
 import Teacher from "@/app/lib/models/Teacher";
@@ -34,7 +36,24 @@ export async function GET(req) {
 
 				return NextResponse.json({ results: user, message: "Current User successfully retrieved." }, { status: 200 });
 			case "parents":
-				user = await Parent.findById({ _id: userId }).select({ password: 0 });
+				user = await Parent.findById({ _id: userId })
+					.select({ password: 0 })
+					.populate([
+						{
+							path: "familyTree",
+							select: {
+								_id: 1,
+								name: 1
+							}
+						},
+						{
+							path: "family",
+							select: {
+								_id: 1,
+								name: 1
+							}
+						}
+					]);
 				user.online = true;
 				user.save();
 

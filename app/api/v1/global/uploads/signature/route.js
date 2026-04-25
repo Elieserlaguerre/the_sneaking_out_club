@@ -1,4 +1,3 @@
-
 import { NextResponse } from "next/server";
 import db from "@/app/lib/database";
 import Member from "@/app/lib/models/Member";
@@ -7,7 +6,7 @@ import Teacher from "@/app/lib/models/Teacher";
 import Admin from "@/app/lib/models/Admin";
 import Applicant from "@/app/lib/models/Applicant";
 import cloudinary from "@/app/lib/cloudinary";
-import { generateCloudinarySignature } from "@/app/lib/cloudinary/helpers/server";
+import { generateCloudinarySignature } from "@/app/lib/cloudinary/helpers/backend";
 
 export async function POST(req) {
 	try {

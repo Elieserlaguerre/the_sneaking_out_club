@@ -1,8 +1,8 @@
 "use client";
 import { useLazyLoginToAccountQuery } from "@/app/lib/redux/data-fetching/global-api";
 import { currentDepartment } from "@/app/lib/state-management/global-state";
-import { dynamicLayoutThemeColor } from "@/app/lib/util/frontend-helper-functions";
-import { loginSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
+import { dynamicLayoutThemeColor } from "@/app/lib/util/frontend";
+import { loginSchema } from "@/app/lib/util/global/zod-validations";
 import { useAtomValue } from "jotai";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";

@@ -87,8 +87,27 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "global image management" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		getUserNotifications: build.query({
+			query: (query) => ({
+				url: "/global/user/notifications",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		deleteUserNotification: build.mutation({
+			query: (formData) => ({
+				url: "/global/user/notifications",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const {useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

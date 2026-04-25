@@ -1,5 +1,5 @@
 import { encryptPassword } from "@/app/lib/auth/helpers";
-import { deleteImage } from "@/app/lib/cloudinary/helpers/server";
+import { deleteImage } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
 import Admin from "@/app/lib/models/Admin";
 import Applicant from "@/app/lib/models/Applicant";

@@ -1,5 +1,4 @@
-
-import { uploadImage, uploadMultipleImages } from "@/app/lib/cloudinary/helpers/server";
+import { uploadImage, uploadMultipleImages } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
 import { NextResponse } from "next/server";
 

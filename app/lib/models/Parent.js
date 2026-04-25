@@ -103,7 +103,21 @@ const parentSchema = new Schema(
 			required: true,
 			default: false
 		},
-		family: [
+		familyTree: {
+			type: ObjectId,
+			ref: "Family_Tree"
+		},
+		family: {
+			type: ObjectId,
+			ref: "Family"
+		},
+		docType: {
+			type: String,
+			trim: true,
+			required: true,
+			default: "Parent"
+		},
+		relation: [
 			{
 				member: {
 					type: ObjectId,
@@ -113,14 +127,33 @@ const parentSchema = new Schema(
 				memberType: {
 					type: String,
 					required: true,
-					enum: ["Member", "Parent", "Admin", "Teacher"]
+					enum: ["Member", "Parent", "Teacher", "Admin"]
 				},
 				role: {
 					type: String,
-					trim: true
+					trim: true,
+					required: true
 				}
 			}
-		]
+		],
+		healthStatus: {
+			type: String,
+			trim: true,
+			required: true,
+			enum: ["healthy", "sick", "recovering", "dead"],
+			default: "healthy"
+		},
+		familyTreeConnected: {
+			type: Boolean,
+			required: true,
+			default: false
+		},
+
+		ConnectedHousehold: {
+			type: Boolean,
+			required: true,
+			default: false
+		}
 	},
 	{ timestamps: true }
 );

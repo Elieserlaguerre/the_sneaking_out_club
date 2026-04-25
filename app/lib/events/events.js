@@ -117,22 +117,26 @@ export const NOTIFICATIONS = {
 
 	NOTIFY_FAMILY_MEMBERS: {
 		eventType: "notifications.new_family_member",
-		message: "New family member has been added to your family tree."
+		title: "family member notification",
+		message: "A new family member has been added to your family tree."
 	},
 
 	NOTIFY_FAMILY_UPDATE: {
 		eventType: "notifications.family_tree_update",
+		title: "family tree update",
 		message: "Your family tree was recently updated."
 	},
 	NOTIFY_FAMILY_REMOVAL: {
 		eventType: "notifications.family_member_removed",
+		title: "family member removed",
 		message: "A member of your family has been removed from your family tree."
 	},
 
 	NOTIFY_FAMILY_USER_UPDATE: {
 		eventType: "notifications.family_user_update",
+		title: "profile update",
 		message: "Your account was recently updated by a family member."
-	},
+	}
 
 	/*
     =========================

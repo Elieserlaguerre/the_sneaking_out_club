@@ -2,21 +2,21 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import React, { Fragment, useEffect, useState } from "react";
-import { buttonVariants } from "../shadcn/button";
-import { states } from "@/app/lib/util/frontend-helper-functions";
+import { buttonVariants } from "../../shadcn/button";
+import { states } from "@/app/lib/util/frontend";
 import { CameraIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import ImageCard from "../cards/ImageCard";
-import { calculateAge } from "@/app/lib/util/global-helper-functions";
+import { calculateAge } from "@/app/lib/util/global";
 import { useUploadMutation } from "@/app/lib/hooks/useUploadMutation";
 import { useAtomValue } from "jotai";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
-import { manageFamilyMemberSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
+import { manageFamilyMemberSchema } from "@/app/lib/util/global/zod-validations";
 import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
-import { useAddFamilyMemberMutation, useManageFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
+import { useManageFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
 import { Loader2, Loader2Icon } from "lucide-react";
-import { useTheme } from "../providers/ThemeProvider";
+import { useTheme } from "../../providers/ThemeProvider";
+import ImageCard from "../../cards/ImageCard";
 
 export default function ManageFamilyMembers({ open, closingFunction, settings }) {
 	function classNames(...classes) {
@@ -24,6 +24,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	}
 
 	const user = useAtomValue(currentUser);
+	console.log("user", user);
 
 	const department = useAtomValue(currentDepartment);
 
@@ -34,6 +35,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	const [formContent, setFormContent] = useState({
 		firstName: "",
 		lastName: "",
+		memberType: "",
 		email: "",
 		phone: "",
 		password: "",
@@ -58,6 +60,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		setFormContent({
 			firstName: "",
 			lastName: "",
+			memberType: "",
 			email: "",
 			phone: "",
 			password: "",
@@ -106,13 +109,18 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	const gender = [
 		{
 			id: nanoid(),
+			name: "select one",
+			value: "select one"
+		},
+		{
+			id: nanoid(),
 			name: "male",
-			value: "Male"
+			value: "male"
 		},
 		{
 			id: nanoid(),
 			name: "female",
-			value: "Female"
+			value: "female"
 		}
 	];
 
@@ -173,18 +181,24 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const validation = manageFamilyMemberSchema.safeParse(formContent);
+		try {
+			const validation = manageFamilyMemberSchema.safeParse(formContent);
 
-		if (validation.success) {
-			if (settings?.editMode === true) {
+			if (validation.success) {
+				if (settings?.editMode === true) {
+					if (!user.family) throw new Error("You cannot add a family member without creating a household.");
+				} else {
+					if (formContent.memberType === "platform user" || (formContent.memberType === "household member" && !user.family)) throw new Error("You cannot add a family member without creating a household.");
+					addFamilyMember({ user: validation.data, department: "members", parentId: user?._id, event: eventTrigger[settings?.mode] });
+				}
 			} else {
-				addFamilyMember({ user: validation.data, department: "members", parentId: user?._id, event: eventTrigger[settings?.mode] });
-			}
-		} else {
-			const error = fromZodError(validation.error);
-			console.log("error", error);
+				const error = fromZodError(validation.error);
+				console.log("error", error);
 
-			error.details.map((error) => toast.error(error.message));
+				error.details.map((error) => toast.error(error.message));
+			}
+		} catch (error) {
+			toast.error(error.message);
 		}
 	};
 
@@ -192,6 +206,35 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		clearForm();
 		closingFunction();
 	};
+
+	const memberType = [
+		{
+			id: nanoid(),
+			name: "select one",
+			value: "select one"
+		},
+		{
+			id: nanoid(),
+			name: "ancestor",
+			value: "ancestor"
+		},
+		{
+			id: nanoid(),
+			name: "root family member",
+			value: "root family member"
+		},
+
+		{
+			id: nanoid(),
+			name: "household member",
+			value: "household member"
+		},
+		{
+			id: nanoid(),
+			name: "platform user",
+			value: "platform user"
+		}
+	];
 
 	return (
 		<Dialog open={open} onClose={handleDrwerClosure} className="relative z-50">
@@ -234,104 +277,129 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 												</div>
 											</div>
 
-											<div className="">
-												<label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													Email
-												</label>
-												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.email} type="email" name="email" id="email" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
-											<div className="">
-												<label htmlFor="phone" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													Phone number
-												</label>
-												<div className="relative mt-2.5">
-													<input onChange={handleChanges} value={formContent.phone} type="tel" name="phone" id="phone" className="block w-full rounded-md border-0 px-3.5 py-2 pl-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
 											<div>
-												<label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													password
+												<label htmlFor="memberType" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+													member type
 												</label>
 												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.password} type="password" name="password" id="password" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+													<select onChange={handleChanges} type="text" name="memberType" value={formContent.memberType} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+														{memberType.map((type) => (
+															<option key={type.id} value={type.value}>
+																{type.name}
+															</option>
+														))}
+													</select>
 												</div>
 											</div>
-											<div>
-												<label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													confirm password
-												</label>
-												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.confirmPassword} type="password" name="confirmPassword" id="confirmPassword" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
-											<div className="sm:col-span-2">
-												<label htmlFor="address1" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													address 1
-												</label>
-												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.address1} type="text" name="address1" id="address1" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
-											<div className="sm:col-span-2">
-												<label htmlFor="address2" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													address 2
-												</label>
-												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.address2} type="text" name="address2" id="address2" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
-
-											<div className="sm:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4 md:gap-y-0">
-												<div>
-													<label htmlFor="city" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-														city
-													</label>
-													<div className="mt-2.5">
-														<input onChange={handleChanges} value={formContent.city} type="text" name="city" id="city" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-													</div>
-												</div>
-												<div>
-													<label htmlFor="state" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-														state
-													</label>
-													<div className="mt-2.5 relative ">
-														<select onChange={handleChanges} value={formContent.state} id="state" name="state" className="block w-full rounded-md border-0 px-3.5 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-															<option>select a state</option>
-															{states.map((state) => (
-																<option key={state.name} value={state.name}>
-																	{state.abbreviation}
-																</option>
-															))}
-														</select>
-													</div>
-												</div>
-												<div>
-													<label htmlFor="zipCode" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-														zip code
-													</label>
-													<div className="mt-2.5">
-														<input onChange={handleChanges} value={formContent.zipCode} type="text" name="zipCode" id="zipCode" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-													</div>
-												</div>
-											</div>
-											<div className="mt-2.5">
-												<label htmlFor="country" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													country
-												</label>
-												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.country} type="text" name="country" id="country" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-												</div>
-											</div>
-											<div className="mt-2.5">
+											<div className="">
 												<label htmlFor="relation" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
 													relation
 												</label>
 												<div className="mt-2.5">
-													<input onChange={handleChanges} value={formContent.relation} type="text" name="relation" id="relation" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+													<input onChange={handleChanges} value={formContent.relation} type="text" name="relation" id="relation" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 capitalize" />
 												</div>
 											</div>
+
+											{formContent.memberType !== "ancestor" && (
+												<Fragment>
+													<div className="">
+														<label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															Email
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.email} type="email" name="email" id="email" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+													<div className="">
+														<label htmlFor="phone" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															Phone number
+														</label>
+														<div className="relative mt-2.5">
+															<input onChange={handleChanges} value={formContent.phone} type="tel" name="phone" id="phone" className="block w-full rounded-md border-0 px-3.5 py-2 pl-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+												</Fragment>
+											)}
+
+											{formContent.memberType === "platform user" && (
+												<Fragment>
+													<div>
+														<label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															password
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.password} type="password" name="password" id="password" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+													<div>
+														<label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															confirm password
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.confirmPassword} type="password" name="confirmPassword" id="confirmPassword" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+													<div className="sm:col-span-2">
+														<label htmlFor="address1" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															address 1
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.address1} type="text" name="address1" id="address1" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+													<div className="sm:col-span-2">
+														<label htmlFor="address2" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															address 2
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.address2} type="text" name="address2" id="address2" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+
+													<div className="sm:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-4 md:gap-y-0">
+														<div>
+															<label htmlFor="city" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+																city
+															</label>
+															<div className="mt-2.5">
+																<input onChange={handleChanges} value={formContent.city} type="text" name="city" id="city" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+															</div>
+														</div>
+														<div>
+															<label htmlFor="state" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+																state
+															</label>
+															<div className="mt-2.5 relative ">
+																<select onChange={handleChanges} value={formContent.state} id="state" name="state" className="block w-full rounded-md border-0 px-3.5 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+																	<option>select a state</option>
+																	{states.map((state) => (
+																		<option key={state.name} value={state.name}>
+																			{state.abbreviation}
+																		</option>
+																	))}
+																</select>
+															</div>
+														</div>
+														<div>
+															<label htmlFor="zipCode" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+																zip code
+															</label>
+															<div className="mt-2.5">
+																<input onChange={handleChanges} value={formContent.zipCode} type="text" name="zipCode" id="zipCode" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+															</div>
+														</div>
+													</div>
+													<div className="mt-2.5 sm:col-span-full">
+														<label htmlFor="country" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+															country
+														</label>
+														<div className="mt-2.5">
+															<input onChange={handleChanges} value={formContent.country} type="text" name="country" id="country" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+														</div>
+													</div>
+												</Fragment>
+											)}
+
 											<div className="col-span-full grid grid-cols-1 sm:grid-cols-2 gap-2 gap-x-8">
 												<div className="flex flex-col min-h-fit p-px border border-gray-400 rounded-md divide-y divide-gray-200 overflow-hidden">
 													<div className="p-4">
@@ -386,8 +454,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 														</label>
 														<div className="mt-2.5">
 															<select onChange={handleChanges} value={formContent.gender} type="text" name="gender" id="gender" className="block w-full rounded-md border-0 px-3.5 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 capitalize">
-																<option>gender</option>
-																{gender.map((gender, i) => (
+																{gender.map((gender) => (
 																	<option key={gender.id} value={gender.value}>
 																		{gender.name}
 																	</option>
@@ -415,9 +482,10 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 													</div>
 												</div>
 											</div>
-											<div className="flex p-px sm:col-span-full">
-												<div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-4">
-													<div className="col-span-full">
+
+											{formContent.memberType === "platform user" && (
+												<div className="flex p-px col-span-full">
+													<div className="w-full">
 														<label htmlFor="introduction" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
 															introduction
 														</label>
@@ -426,7 +494,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 														</div>
 													</div>
 												</div>
-											</div>
+											)}
 										</div>
 									</div>
 								</div>

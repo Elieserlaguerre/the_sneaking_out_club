@@ -1,6 +1,6 @@
 "use client";
 
-import { dynamicLayoutThemeColor } from "@/app/lib/util/frontend-helper-functions";
+import { dynamicLayoutThemeColor } from "@/app/lib/util/frontend";
 import React from "react";
 import { createContext, useContext, useMemo } from "react";
 

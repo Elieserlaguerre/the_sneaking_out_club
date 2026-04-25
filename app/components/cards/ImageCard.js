@@ -42,7 +42,7 @@ export default function ImageCard({ image, settings }) {
 				return <Image src={image?.url} width={image?.width ?? 300} height={image?.height ?? 300} className={classNames(settings?.styles?.image)} alt={settings.alt} loading="eager" />;
 			} else {
 				if (image) return <img src={image?.url} className={classNames(settings?.styles?.image)} alt={settings.alt} />;
-				else return <div className="size-full bg-gray-300" />;
+				else return <div className={classNames(settings?.styles?.background, "size-full")} />;
 			}
 		}
 	};

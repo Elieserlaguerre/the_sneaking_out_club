@@ -1,14 +1,16 @@
 import "@/app/lib/events/register-handlers";
 import { encryptPassword } from "@/app/lib/auth/helpers";
-import { deleteSubfolder } from "@/app/lib/cloudinary/helpers/server";
+import { deleteImage, deleteSubfolder } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
 import { eventBus } from "@/app/lib/events/eventBus";
 import { EVENTS } from "@/app/lib/events/events";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
-import { familyRelations } from "@/app/lib/util/frontend-helper-functions";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
+import Ancestor from "@/app/lib/models/Ancestor";
+import FamilyTree from "@/app/lib/models/FamilyTree";
+import FamilyMembership from "@/app/lib/models/FamilyMembership";
 
 export async function POST(req) {
 	try {
@@ -31,50 +33,75 @@ export async function POST(req) {
 
 		if (!parentId) return NextResponse.json({ message: "parent Id is required." }, { status: 400 });
 
-		const userAlreadyExist = await Member.findOne({ email: user.email });
+		const parent = await Parent.findById({ _id: parentId });
 
-		if (userAlreadyExist) return NextResponse.json({ message: "user already exist." }, { status: 400 });
+		if (!parent) return NextResponse.json({ message: "current user could not be found." }, { status: 404 });
+
+		const familyTree = await FamilyTree.findById({ _id: parent.familyTree });
+
+		if (!familyTree) return NextResponse.json({ message: "cannot add family members without a family tree." }, { status: 400 });
 
 		/*
 		===============
 		CREATE NEW USER
 		===============
 		*/
-
-		const newUser = {
-			...user,
-			cloudinarySubfolder: `the_sneaking_out_club/${slugify(`${user.firstName} ${user.lastName}`)}/${department}`
-		};
-
 		let createdUser;
 
-		newUser.password = await encryptPassword(user.password);
+		switch (user.memberType) {
+			case "ancestor":
+				const ancestor = await Ancestor.create({
+					...user,
+					creator: parent._id,
+					relation: [
+						{
+							member: parent._id,
+							memberType: parent.docType,
+							role: user.relation
+						}
+					]
+				});
 
-		createdUser = await Member.create(newUser);
+				if (familyTree.creator.toString() === parentId) {
+					familyTree.lineage.push(ancestor._id);
+					await familyTree.save();
+				}
 
-		/*
-		====================
-		UPDATE FAMILY FIELDS
-		====================
-		*/
+				break;
+			case "root family member":
+				const familyMember = await FamilyMembership.create({
+					...user,
+					familyTree: familyTree._id,
+					creator: parent._id,
+					relation: [
+						{
+							member: parent._id,
+							memberType: parent.docType,
+							role: user.relation
+						}
+					]
+				});
 
-		const parent = await Parent.findById({ _id: parentId });
+				if (familyTree.creator.toString() === parentId) {
+					familyTree.rootFamily.push({ member: familyMember?._id, memberType: familyMember.docType });
+					await familyTree.save();
+				}
+				break;
+			case "household member":
+				break;
+			case "platform user":
+				const newUser = {
+					...user,
+					cloudinarySubfolder: `the_sneaking_out_club/${slugify(`${user.firstName} ${user.lastName}`)}/${department}`
+				};
 
-		createdUser.family.push({
-			member: parent._id,
-			memberType: "Parent",
-			role: familyRelations(user.relation, parent.gender)
-		});
+				newUser.password = await encryptPassword(user.password);
 
-		await createdUser.save();
-
-		parent.family.push({
-			member: createdUser._id,
-			memberType: "Member",
-			role: user.relation
-		});
-
-		await parent.save();
+				createdUser = await Member.create(newUser);
+				break;
+			default:
+				throw new Error("family member type not recognized.");
+		}
 
 		/*
 		==============
@@ -83,29 +110,36 @@ export async function POST(req) {
 		*/
 
 		// new event
-		const newEvent = {
-			eventType: EVENTS[data.event].event,
-			source: parent._id.toString(),
-			sourceType: "Parent",
-			metaData: {
-				ledgerName: "family",
-				user: createdUser._id,
-				userType: "Member"
-			},
-			LedgerEntry: {
-				create: true,
-				type: "single"
-			},
-			updateSnapshot: false,
-			notifications: {
-				notify: true,
-				event: EVENTS[data.event].notification
-			}
-		};
+		// const newEvent = {
+		// 	eventType: EVENTS[data.event].event,
+		// 	ledgerEntry: {
+		// 		create: true,
+		// 		type: "single",
+		// 		updateSnapshot: false
+		// 	},
+		// 	notifications: {
+		// 		notify: parent.family.length > 0,
+		// 		event: EVENTS[data.event].notification,
+		// 		list: parent.family.map((individual) => ({
+		// 			_id: individual._id.toString(),
+		// 			from: parent._id.toString(),
+		// 			senderType: parent.userType,
+		// 			to: individual.member.toString(),
+		// 			recipientType: individual.userType
+		// 		}))
+		// 	},
+		// 	metaData: {
+		// 		source: parent._id.toString(),
+		// 		sourceType: "Parent",
+		// 		ledgerName: "family",
+		// 		user: createdUser._id.toString(),
+		// 		userType: "Member"
+		// 	}
+		// };
 
 		// console.log("newEvent", newEvent);
 
-		eventBus.emit(EVENTS[data.event].event, newEvent);
+		// eventBus.emit(EVENTS[data.event].event, newEvent);
 
 		return NextResponse.json({ results: createdUser, message: "New user was successfully created: " }, { status: 200 });
 	} catch (error) {
@@ -131,13 +165,11 @@ export async function GET(req) {
 		const filter = JSON.parse(data.filter);
 
 		const parent = await Parent.findById({ _id: userId }).select({ family: 1 });
-		const family = parent.family.map((family) => family.member);
-		// console.log("family", family);
 
 		let page, limit, skip, totalDocuments, totalPages, options, sort;
 
 		options = {
-			_id: { $in: family },
+			_id: parent.family,
 			status: filter.status
 		};
 
@@ -159,7 +191,7 @@ export async function GET(req) {
 			familyMembers
 		};
 
-		// console.log("results", results);
+		console.log("results test", results);
 
 		return NextResponse.json({ results, message: "Family members sucessfully retrieved." }, { status: 200 });
 	} catch (error) {
@@ -185,25 +217,49 @@ export async function PATCH(req) {
 export async function DELETE(req) {
 	try {
 		await db.connect();
-		let data;
+		let data, user, subfolderDeleted;
 		data = await req.json();
 		// console.log("data", data);
 
-		const { userId } = data;
+		const { userId, docType } = data;
 
 		if (!userId) return NextResponse.json({ message: "userId is missing" }, { status: 404 });
+		if (!docType) return NextResponse.json({ message: "docType is missing" }, { status: 404 });
 
-		const user = await Member.findById({ _id: userId });
+		switch (docType) {
+			case "Member":
+				user = await Member.findById({ _id: userId });
 
-		if (!user) {
-			return NextResponse.json({ message: "User not found" }, { status: 404 });
+				if (!user) {
+					return NextResponse.json({ message: "User not found" }, { status: 404 });
+				}
+
+				subfolderDeleted = await deleteSubfolder(user.cloudinarySubfolder);
+
+				if (subfolderDeleted.success) await user.deleteOne();
+				break;
+
+			case "Family_Membership":
+				user = await FamilyMembership.findById({ _id: userId });
+
+				if (!user) {
+					return NextResponse.json({ message: "User not found" }, { status: 404 });
+				}
+
+				subfolderDeleted = await deleteImage(user?.image?.publicId);
+
+				if (subfolderDeleted.success) await user.deleteOne();
+
+				break;
+			default:
+				break;
 		}
 
-		const subfolderDeleted = await deleteSubfolder(user.cloudinarySubfolder);
-
-		console.log("subfolderDeleted", subfolderDeleted);
-
-		if (subfolderDeleted.success) await user.deleteOne();
+		/*
+		==============
+		TRIGGER EVENTS
+		==============
+		*/
 
 		return NextResponse.json({ message: "User has been deleted." }, { status: 200 });
 	} catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { scrollToTop } from "@/app/lib/util/frontend-helper-functions";
+import { scrollToTop } from "@/app/lib/util/frontend";
 import { PLATFORM_INFRASTRUCTURE } from "@/scripts/platform-infrastructure.js";
 
 const social = [

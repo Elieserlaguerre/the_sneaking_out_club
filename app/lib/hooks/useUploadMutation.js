@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { generateFileHash } from "../cloudinary/helpers/client";
+import { generateFileHash } from "../cloudinary/helpers/frontend";
 
 export function useUploadMutation(options) {
 	const folder = options?.folder;

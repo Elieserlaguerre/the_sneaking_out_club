@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild } from "@headlessui/react";
 import { Bars3Icon, BellIcon, ChevronUpIcon, Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon, UserCircleIcon } from "@heroicons/react/20/solid";
-import { dynamicInternalNavlist, signCurrentUserOut } from "@/app/lib/util/frontend-helper-functions";
+import { dynamicInternalNavlist, signCurrentUserOut } from "@/app/lib/util/frontend";
 import { useAtom, useAtomValue } from "jotai";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { PLATFORM_INFRASTRUCTURE } from "@/scripts/platform-infrastructure";
 import { usePathname, useRouter } from "next/navigation";
 import { nanoid } from "nanoid";
 import { useTheme } from "../providers/ThemeProvider";
+import ViewNotifications from "../overlays/drawers/ViewNotifications";
 
 const userNavigation = [
 	{ id: nanoid(), name: "Your profile", href: "#", type: "link" },
@@ -53,6 +54,16 @@ export default function InternalLayout({ children }) {
 			setUser("");
 			router.push("/login");
 		}
+	};
+
+	const [openNotificationDrawer, setOpenNotificationDrawer] = useState(false);
+
+	const handleOpeningNotificationDrawer = () => {
+		setOpenNotificationDrawer(true);
+	};
+
+	const closeNotificationDrawer = () => {
+		setOpenNotificationDrawer(false);
 	};
 
 	return (
@@ -193,7 +204,7 @@ export default function InternalLayout({ children }) {
 
 						<div className="flex justify-end gap-x-4 self-stretch lg:gap-x-6">
 							<div className="flex items-center gap-x-4 lg:gap-x-6">
-								<button type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-whie hover:bg-gray-400 rounded-full cursor-pointer group">
+								<button onClick={handleOpeningNotificationDrawer} type="button" className="-m-2.5 p-2.5 text-gray-400 hover:text-whie hover:bg-gray-400 rounded-full cursor-pointer group">
 									<span className="sr-only">View notifications</span>
 									<BellIcon aria-hidden="true" className="size-6 fill-white border-white group-hover:animate-ping" />
 								</button>
@@ -236,6 +247,9 @@ export default function InternalLayout({ children }) {
 					</div>
 
 					<main className="min-h-screen">{children}</main>
+				</div>
+				<div className="hidden">
+					<ViewNotifications open={openNotificationDrawer} closingFunction={closeNotificationDrawer} />
 				</div>
 			</div>
 		)

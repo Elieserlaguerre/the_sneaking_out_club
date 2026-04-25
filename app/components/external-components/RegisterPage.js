@@ -5,9 +5,9 @@ import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
 import { Loader2 } from "lucide-react";
 import { buttonVariants } from "../shadcn/button";
-import { states } from "@/app/lib/util/frontend-helper-functions";
+import { states } from "@/app/lib/util/frontend";
 import { useUserRegistrationMutation } from "@/app/lib/redux/data-fetching/global-api";
-import { registrationFormSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
+import { registrationFormSchema } from "@/app/lib/util/global/zod-validations";
 import { useAtomValue } from "jotai";
 import { currentDepartment } from "@/app/lib/state-management/global-state";
 

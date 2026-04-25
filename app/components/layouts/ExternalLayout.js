@@ -2,7 +2,7 @@
 import React from "react";
 import Navbar from "../navigation/components/Navbar";
 import Footer from "../navigation/components/Footer";
-import { dynamicExternalNavlist } from "@/app/lib/util/frontend-helper-functions";
+import { dynamicExternalNavlist } from "@/app/lib/util/frontend";
 import { useAtomValue } from "jotai";
 import { currentDepartment } from "@/app/lib/state-management/global-state";
 

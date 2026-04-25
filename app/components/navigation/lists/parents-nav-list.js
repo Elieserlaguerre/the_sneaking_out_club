@@ -115,22 +115,37 @@ export const parentsDashboardSectionNav = [
 export const parentFamilySectionNav = [
 	{
 		id: nanoid(),
-		title: "members",
+		title: "family tree",
 		href: "/family"
 	},
 	{
 		id: nanoid(),
-		title: "plans",
+		title: "family branches",
+		href: "/family/branches"
+	},
+	{
+		id: nanoid(),
+		title: "family members",
+		href: "/family/members"
+	},
+	{
+		id: nanoid(),
+		title: "family search",
+		href: "/family/search"
+	},
+	{
+		id: nanoid(),
+		title: "family plans",
 		href: "/family/plans"
 	},
 	{
 		id: nanoid(),
-		title: "health",
+		title: "family health",
 		href: "/family/health"
 	},
 	{
 		id: nanoid(),
-		title: "estate",
+		title: "family estate",
 		href: "/family/estate"
 	}
 ];

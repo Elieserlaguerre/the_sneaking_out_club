@@ -5,7 +5,7 @@ import { useAtomValue } from "jotai";
 import React from "react";
 import SectionNavbar from "../navigation/components/SectionNavbar";
 import { usePathname } from "next/navigation";
-import { dynamicInternalAppSections } from "@/app/lib/util/frontend-helper-functions";
+import { dynamicInternalAppSections } from "@/app/lib/util/frontend";
 
 export default function SectionLayout({ children }) {
 	const department = useAtomValue(currentDepartment);

@@ -7,12 +7,12 @@ import { nanoid } from "nanoid";
 import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
 import EmptyFamilyMembers from "../../empty-states/EmptyFamilyMembers";
-import ManageFamilyMembers from "../../overlays/ManageFamilyMembers";
 import { useGetFamilyMembersQuery, useLazyGetFamilyMembersQuery } from "@/app/lib/redux/data-fetching/parents-api";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import toast from "react-hot-toast";
 import FamilyMemberCard from "../../cards/FamilyMemberCard";
+import ManageFamilyMembers from "../../overlays/drawers/ManageFamilyMembers";
 
 export default function FamilyMembersPage() {
 	function classNames(...classes) {
@@ -20,8 +20,40 @@ export default function FamilyMembersPage() {
 	}
 
 	const user = useAtomValue(currentUser);
+	// console.log("user", user);
 
 	const filterOptions = [
+		{
+			id: nanoid(),
+			title: "member type",
+			list: [
+				{
+					id: nanoid(),
+					value: "all members",
+					label: "all members"
+				},
+				{
+					id: nanoid(),
+					value: "ancestors",
+					label: "ancestors"
+				},
+				{
+					id: nanoid(),
+					value: "root family member",
+					label: "root family member"
+				},
+				{
+					id: nanoid(),
+					value: "household member",
+					label: "household member"
+				},
+				{
+					id: nanoid(),
+					value: "platform user",
+					label: "platform user"
+				}
+			]
+		},
 		{
 			id: nanoid(),
 			title: "status",
@@ -99,10 +131,11 @@ export default function FamilyMembersPage() {
 
 	const [page, setPage] = useState(0);
 	const [totalPages, setTotalPages] = useState(0);
-	const [limit, setLimit] = useState(filterOptions[1].list[0].value);
+	const [limit, setLimit] = useState(filterOptions[2].list[0].value);
 	const [filters, setFilters] = useState({
-		status: filterOptions[0].list[0].value,
-		sort: filterOptions[2].list[0].value
+		memberType: filterOptions[0].list[0].value,
+		status: filterOptions[1].list[0].value,
+		sort: filterOptions[3].list[0].value
 	});
 
 	const handlePagination = (_, page) => {
@@ -155,6 +188,12 @@ export default function FamilyMembersPage() {
 
 	const handleChanges = (name, value) => {
 		switch (name) {
+			case "member type":
+				setFilters((filter) => ({
+					...filter,
+					memberType: value
+				}));
+				break;
 			case "status":
 				setFilters((filter) => ({
 					...filter,
@@ -215,7 +254,7 @@ export default function FamilyMembersPage() {
 									</div>
 								</div>
 								<DisclosurePanel className="border-t border-gray-200 py-10 bg-gray-300">
-									<div className="mx-auto grid max-w-7xl grid-cols-3 gap-x-4 px-4 text-sm sm:px-6 md:gap-x-6 lg:px-8">
+									<div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4 gap-x-4 px-4 text-sm sm:px-6 md:gap-x-6 lg:px-8">
 										{filterOptions.map((filter) => (
 											<fieldset key={filter?.id}>
 												<legend className="block font-medium capitalize bg-white text-gray-900 rounded-md px-3.5 py-2.5 text-sm shadow-sm w-full text-center ">{filter?.title}</legend>
@@ -227,7 +266,7 @@ export default function FamilyMembersPage() {
 																handleChanges(filter.title, option.value);
 																close();
 															}}
-															className={classNames(option.value === filters?.status || option.value === filters?.sort || option.value === limit ? buttonVariants({ variant: "blueBtn" }) : buttonVariants({ variant: "ghostBtn" }), "w-full hover:bg-blue-500 hover:text-white")}>
+															className={classNames(option.value === filters?.memberType || option.value === filters?.status || option.value === filters?.sort || option.value === limit ? buttonVariants({ variant: "blueBtn" }) : buttonVariants({ variant: "ghostBtn" }), "w-full hover:bg-blue-500 hover:text-white")}>
 															{option.label}
 														</button>
 													))}
@@ -241,9 +280,9 @@ export default function FamilyMembersPage() {
 					</Disclosure>
 				</header>
 				<div className="divide-y divide-gray-200 overflow-hidden bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 min-h-screen flex flex-col">
-					<div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-gray-100">{getFamilyMembersResults.isFetching ? "" : familyMembers.length === 0 ? <EmptyFamilyMembers /> : familyMembers?.map((member) => <FamilyMemberCard key={member?._id} member={member} editFunction={handleDrawerEditMode} />)}</div>
+					<div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 bg-gray-200 gap-2">{getFamilyMembersResults.isFetching ? "" : familyMembers.length === 0 ? <EmptyFamilyMembers /> : familyMembers?.map((member) => <FamilyMemberCard key={member?._id} member={member} editFunction={handleDrawerEditMode} />)}</div>
 					<div className={classNames(theme.base, "px-4 py-4 sm:px-6 flex justify-center items-center")}>
-						<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination-black pagination-yellow" />
+						<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination_black pagination_yellow-highlight" />
 					</div>
 				</div>
 				<div className="hidden">

@@ -104,6 +104,13 @@ const applicantSchema = new Schema(
 			type: Boolean,
 			required: true,
 			default: false
+		},
+
+		userType: {
+			type: String,
+			trim: true,
+			required: true,
+			default: "Applicant"
 		}
 	},
 	{ timestamps: true }

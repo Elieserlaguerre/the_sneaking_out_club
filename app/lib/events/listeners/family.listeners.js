@@ -1,5 +1,6 @@
 import { eventBus } from "../eventBus";
-import { handleFamilyMemberRemovalEvent, handleNewFamilyMemberEvent, handleUpdateFamilyTreeEvent, handleUserProfileUpdateEvent } from "../handlers/familyMembers.handler";
+import { handleFamilyMemberRemovalEvent, handleNewFamilyMemberEvent, handleUpdateFamilyTreeEvent, handleUserProfileUpdateEvent } from "../handlers/family";
+
 
 /*
     =======================

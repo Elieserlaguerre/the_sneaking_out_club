@@ -4,7 +4,7 @@ import { EnvelopeIcon, MapPinIcon, PhoneIcon } from "@heroicons/react/24/outline
 import { useAtomValue } from "jotai";
 import { buttonVariants } from "../shadcn/button";
 import { useEffect, useState } from "react";
-import { contactUsSchema } from "@/app/lib/util/global-helper-functions/zod-validations";
+import { contactUsSchema } from "@/app/lib/util/global/zod-validations";
 import { useContactUsMutation } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import { fromZodError } from "zod-validation-error";

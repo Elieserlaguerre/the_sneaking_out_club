@@ -1,0 +1,33 @@
+@import "swiper/css/bundle";
+
+@layer components {
+	.swiper__container {
+		@apply w-full h-full rounded-lg cursor-pointer
+           [&:hover_.swiper-button-prev]:grid
+           [&:hover_.swiper-button-next]:grid;
+	}
+
+	.swiper__container .swiper-button-prev,
+	.swiper__container .swiper-button-next {
+		@apply text-white scale-75 w-14 h-24 px-2 py-3 rounded-sm
+           transition-all duration-200
+           bg-[rgba(102,102,102,0.354)]
+           hidden place-items-center;
+	}
+
+	/* xl breakpoint = 1280px */
+	@media (max-width: 1280px) {
+		.swiper__container .swiper-button-prev,
+		.swiper__container .swiper-button-next {
+			@apply grid;
+		}
+	}
+
+	.swiper__container .swiper-button-prev {
+		@apply -left-3.25;
+	}
+
+	.swiper__container .swiper-button-next {
+		@apply -right-3.25;
+	}
+}
