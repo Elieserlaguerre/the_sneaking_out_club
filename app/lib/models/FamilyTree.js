@@ -40,7 +40,7 @@ const familyTreeSchema = new Schema(
 		lineage: [
 			{
 				type: ObjectId,
-				ref: "Ancestor"
+				ref: "Family_Member"
 			}
 		],
 
@@ -55,7 +55,7 @@ const familyTreeSchema = new Schema(
 				memberType: {
 					type: String,
 					required: true,
-					enum: ["Member", "Parent", "Teacher", "Admin", "Family_Membership"]
+					enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 				}
 			}
 		],
@@ -77,17 +77,31 @@ const familyTreeSchema = new Schema(
 		// FAMILY IDENTITY
 		familyHead: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "familyHeadType"
+		},
+		familyHeadType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		spouse: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "spouseType"
+		},
+
+		spouseType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		founder: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "founderType"
+		},
+
+		founderType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		established: {

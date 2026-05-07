@@ -190,24 +190,40 @@ const memberSchema = new Schema(
 				}
 			}
 		],
-		healthStatus: {
+		health: {
+			type: ObjectId,
+			ref: "Health"
+		},
+
+		creator: {
+			type: ObjectId,
+			refPath: "creatorType"
+		},
+		creatorType: {
 			type: String,
-			trim: true,
-			required: true,
-			enum: ["healthy", "sick", "recovering", "dead"],
-			default: "healthy"
+			enum: ["Parent", "Admin"]
 		},
-
-		familyTreeConnected: {
-			type: Boolean,
-			required: true,
-			default: false
-		},
-
-		ConnectedHousehold: {
-			type: Boolean,
-			required: true,
-			default: false
+		connections: {
+			type: [
+				{
+					member: {
+						type: ObjectId,
+						required: true,
+						refPath: "connections.memberType"
+					},
+					memberType: {
+						type: String,
+						required: true,
+						enum: ["Member", "Parent", "Teacher", "Admin"]
+					},
+					favored: {
+						type: Boolean,
+						required: true,
+						default: false
+					}
+				}
+			],
+			default: []
 		}
 	},
 	{ timestamps: true }

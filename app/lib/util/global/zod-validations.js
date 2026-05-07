@@ -77,12 +77,14 @@ SHARE FIELDS
 ==============
 */
 const baseSchema = z.object({
-	firstName: z.string().trim().min(1, { message: "first name is required." }),
-	lastName: z.string().trim().min(1, { message: "last name is required." }),
-	memberType: z.enum(["select one", "ancestor", "root family member", "household member", "platform user"]).refine((val) => val !== "select one", { message: "member type is required." }),
+	firstName: z.string().trim().nonempty({ message: "first name is required." }),
+	lastName: z.string().trim().nonempty({ message: "last name is required." }),
+	memberType: z.enum(["ancestor", "root family member", "household member", "platform user"]),
+	familyTree: z.string().trim().nonempty({ message: "family tree is required." }),
 	nationality: z.string().trim().nonempty({ message: "nationality is required." }),
 	relation: z.string().trim().nonempty({ message: "relation is required." }),
-	gender: z.enum(["select one", "male", "female"]).refine((value) => value !== "select one", { message: "gender is required." }),
+	gender: z.enum(["male", "female"]),
+	creator: z.string().trim().nonempty({ message: "document creator is required." }),
 
 	//keep address information optional for non-platform users.
 	address1: z.string().trim().optional(),
@@ -123,6 +125,7 @@ const platformUserSchema = baseSchema
 		zipCode: z.string().trim().nonempty({ message: "zip code is required." }),
 		country: z.string().trim().nonempty({ message: "country is required." }),
 		introduction: z.string().trim().nonempty({ message: "Introduction is required." }),
+		family: z.string().trim().nonempty({ message: "family required." }),
 		// keep your existing image logic
 		image: z
 			.any()
@@ -161,14 +164,14 @@ const platformUserSchema = baseSchema
 	*/
 
 const nonPlatformUserSchema = baseSchema.extend({
-	memberType: z.enum(["ancestor", "root family member", "household member"]),
+	memberType: z.enum(["ancestor", "root family member", "household member"]).refine((val) => val !== "select one", { message: "member type is required." }),
 	email: z.string().optional(),
 	phone: z.string().optional(),
 	password: z.string().optional(),
 	confirmPassword: z.string().optional(),
 	introduction: z.string().optional(),
 	dateOfBirth: z.string().optional(),
-	age: z.number().optional(),
+	age: z.union([z.string().optional(), z.number().optional()]),
 	nationality: z.string().optional()
 });
 
@@ -181,41 +184,35 @@ export const manageFamilyMemberSchema = z.discriminatedUnion("memberType", [plat
 
 export const eventSchema = z
 	.object({
-		eventType: z.string().trim().nonempty({ message: "event type is required." }),
-
 		ledgerEntry: z.object({
 			create: z.coerce.boolean(),
+			event: z.string().trim().nonempty({ message: "event type is required." }),
 			type: z
 				.string()
 				.trim()
 				.nonempty({ message: "ledger entry type is required." })
 				.pipe(z.enum(["single", "double"])),
-			updateSnapshot: z.coerce.boolean()
+			updateSnapshot: z.coerce.boolean(),
+			metaData: z.any().optional()
 		}),
 
 		notifications: z.object({
-			notify: z.coerce.boolean(),
+			create: z.coerce.boolean(),
 			event: z.string().optional(),
 			list: z
 				.array(
 					z.object({
-						_id: z.string().trim().nonempty({ message: "id is required." }),
-						from: z.string().trim().nonempty({ message: "Notification sender's ID is required." }),
+						_id: z.string().optional(),
+						sender: z.string().trim().nonempty({ message: "sender's ID is required for notifications." }),
 						senderType: z.string().trim().nonempty({ message: "Sender type is required for notifications." }),
-						to: z.string().trim().nonempty({ message: "Recipient Id is required for notifications." }),
+						recipient: z.string().trim().nonempty({ message: "Recipient Id is required for notifications." }),
 						recipientType: z.string().trim().nonempty({ message: "Recipient type is required for notifications." })
 					})
 				)
-				.nonempty({ message: "notification list is required." })
-		}),
-
-		metaData: z.object({
-			source: z.string().trim().nonempty({ message: "source ID is required." }),
-			sourceType: z
-				.string()
-				.trim()
-				.nonempty({ message: "Source type is required." })
-				.pipe(z.enum(["Member", "Parent", "Teacher", "Admin", "Applicant"]))
+				.nonempty({ message: "notification list is required." }),
+			metaData: z.any().optional(),
+			creator: z.string().trim().nonempty({ message: "notification creator is required." }),
+			creatorType: z.string().trim().nonempty({ message: "notification creator type is required." })
 		})
 	})
 	.superRefine((data, ctx) => {
@@ -260,4 +257,36 @@ export const manageHouseholdSchema = z.object({
 	childFamilies: z.array(z.any()).optional(),
 	established: z.coerce.date(),
 	creator: z.string().trim().nonempty({ message: "household creator is required." })
+});
+
+export const FamilyTreeSearchSchema = z.object({
+	query: z.string().trim().nonempty({ message: "search query is required." }),
+	filter: z.object({
+		actions: z.string().trim().nonempty({ message: "filter action is required." }),
+		sort: z.string().optional()
+	}),
+	section: z.string().trim().nonempty({ message: "platform section is required for search query." }),
+	user: z.string().trim().nonempty({ message: "user ID is required." }),
+	userType: z.string().trim().nonempty({ message: "user type is required for search query." }),
+	page: z.coerce.number(),
+	limit: z.coerce.number()
+});
+
+export const notificationSchema = z.object({
+	title: z.string().trim().nonempty({ message: "notification title is required." }),
+	event: z.string().trim().nonempty({ message: "notification event is required." }),
+	message: z.string().trim().nonempty({ message: "notification message is required." }),
+	sender: z.string().trim().nonempty({ message: "notification sender is required." }),
+	senderType: z.string().trim().nonempty({ message: "notification sender type is required." }),
+	recipient: z.string().trim().nonempty({ message: "notification recipient is required." }),
+	recipientType: z.string().trim().nonempty({ message: "notification recipient type is required." }),
+	metaData: z.any().optional()
+});
+
+export const connectionSearchSchema = z.object({
+	query: z.string().trim().nonempty({ message: "query is required." }),
+	section: z.string().trim().nonempty({ message: "section is required." }),
+	userId: z.string().trim().nonempty({ message: "user ID is required." }),
+	userType: z.string().trim().nonempty({ message: "user type is required." }),
+	platformSection: z.string().trim().nonempty({ message: "platform section is required." })
 });

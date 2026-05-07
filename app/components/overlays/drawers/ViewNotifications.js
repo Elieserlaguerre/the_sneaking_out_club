@@ -7,10 +7,11 @@ import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Dialog, DialogPanel, DialogTitle, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery } from "@/app/lib/redux/data-fetching/global-api";
+import { ArrowPathIcon, EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { useCancelFriendRequestMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useNotificationResponseMutation } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import EmptyNotifications from "../../empty-states/EmptyNotifications";
+import { add, milliseconds } from "date-fns";
 
 export default function ViewNotifications({ open, closingFunction }) {
 	function classNames(...classes) {
@@ -54,7 +55,7 @@ export default function ViewNotifications({ open, closingFunction }) {
 		setPage(page);
 	};
 
-	const [getNotifications, getNotificationsResults] = useLazyGetUserNotificationsQuery();
+	const [getNotifications, getNotificationsResults] = useLazyGetUserNotificationsQuery({ pollingInterval: milliseconds({ minutes: 5 }) });
 
 	useEffect(() => {
 		if (getNotificationsResults.isError) {
@@ -88,6 +89,61 @@ export default function ViewNotifications({ open, closingFunction }) {
 		}
 	}, [deleteNotificationResults.isLoading, deleteNotificationResults.isSuccess, deleteNotificationResults.isError]);
 
+	const [response, responseResults] = useNotificationResponseMutation();
+
+	useEffect(() => {
+		if (responseResults.isError) {
+			const message = typeof responseResults.error === "string" ? responseResults.error : responseResults.error.message;
+			toast.error(message);
+		} else if (responseResults.isSuccess) {
+			toast.success(responseResults.data.message);
+		}
+	}, [responseResults.isLoading, responseResults.isSuccess, responseResults.isError]);
+
+	const handleNotificationResponse = (decision, notification) => {
+		switch (decision) {
+			case "accept":
+				response({
+					response: decision,
+					sender: user._id,
+					senderType: user.docType,
+					recipient: notification.sender._id,
+					recipientType: notification.sender.docType,
+					notificationId: notification._id,
+					event: "FRIEND_REQUEST_ACCEPTED"
+				});
+				break;
+			case "decline":
+				response({
+					response: decision,
+					sender: user._id,
+					senderType: user.docType,
+					recipient: notification.sender._id,
+					recipientType: notification.sender.docType,
+					notificationId: notification._id,
+					event: "FRIEND_REQUEST_DENIED"
+				});
+				break;
+			default:
+				throw new Error("Notification response not authorized.");
+		}
+	};
+
+	const refreshNotifications = () => {
+		getNotifications({ userId: user._id, page, limit, filters: JSON.stringify(filters), department });
+	};
+
+	const [cancelRequest, cancelRequestResults] = useCancelFriendRequestMutation();
+
+	useEffect(() => {
+		if (cancelRequestResults.isError) {
+			const message = typeof cancelRequestResults.error === "string" ? cancelRequestResults.error : cancelRequestResults.error.message;
+			toast.error(message);
+		} else if (cancelRequestResults.isSuccess) {
+			toast.success(cancelRequestResults.data.message);
+		}
+	}, [cancelRequestResults.isLoading, cancelRequestResults.isSuccess, cancelRequestResults.isError]);
+
 	return (
 		<Dialog open={open} onClose={closingFunction} className="relative z-50">
 			<div className="fixed inset-0" />
@@ -96,11 +152,14 @@ export default function ViewNotifications({ open, closingFunction }) {
 				<div className="absolute inset-0 overflow-hidden">
 					<div className="pointer-events-none fixed inset-y-0 top-16 right-0 flex max-w-lg xl:pl-16">
 						<DialogPanel transition className="pointer-events-auto w-screen xl:max-w-2xl transform transition duration-500 ease-in-out data-closed:translate-x-full sm:duration-700">
-							<form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+							<div className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
 								<div className="flex-1 flex flex-col overflow-y-hidden max-h-screen">
 									<div className={classNames(theme.base, "px-4 py-[1.61rem] sm:px-6 bg-black")}>
 										<div className="flex items-center justify-between">
-											<DialogTitle className="text-base font-semibold text-white capitalize">notifications</DialogTitle>
+											<DialogTitle className="text-base font-semibold text-white capitalize flex gap-1.5 items-center">
+												notifications
+												<ArrowPathIcon onClick={refreshNotifications} className="size-5 cursor-pointer" />
+											</DialogTitle>
 											<div className="ml-3 flex h-7 items-center">
 												<button type="button" onClick={closingFunction} className="relative rounded-md bg-transparent text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
 													<span className="absolute -inset-2.5" />
@@ -120,11 +179,30 @@ export default function ViewNotifications({ open, closingFunction }) {
 												) : (
 													notifications.map((notification) => (
 														<li key={notification._id} className="flex justify-between gap-x-6 py-5">
-															<div className="flex min-w-0 gap-x-4">
-																<img alt="" src={notification.from.image.url} className="size-12 flex-none rounded-full bg-gray-50 dark:bg-gray-800 dark:outline dark:-outline-offset-1 dark:outline-white/10 object-cover" />
+															<div className="flex-auto flex min-w-0 gap-x-4">
+																<img alt="" src={notification?.sender?.image?.url} className="size-12 flex-none rounded-full bg-gray-50 dark:bg-gray-800 dark:outline dark:-outline-offset-1 dark:outline-white/10 object-cover" />
 																<div className="min-w-0 flex-auto">
 																	<p className="text-sm/6 font-semibold text-gray-900 dark:text-white capitalize">{notification.title}</p>
 																	<p className="mt-1 flex text-xs/5 text-gray-500 dark:text-gray-400">{notification.message}</p>
+
+																	{notification.event === "notifications.friend_request" && notification.creator !== user?._id && (
+																		<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+																			<button type="button" onClick={() => handleNotificationResponse("accept", notification)} className={classNames(buttonVariants({ variant: "greenBtn" }), "flex-auto")}>
+																				accept
+																			</button>
+																			<button type="button" onClick={() => handleNotificationResponse("decline", notification)} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto")}>
+																				decline
+																			</button>
+																		</div>
+																	)}
+
+																	{notification.event === "notifications.friend_request" && notification.creator === user?._id && (
+																		<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+																			<button type="button" onClick={() => cancelRequest({ notificationId: notification._id, action: "cancel request" })} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto")}>
+																				cancel request
+																			</button>
+																		</div>
+																	)}
 																</div>
 															</div>
 															<div className="flex shrink-0 items-start gap-x-6">
@@ -134,9 +212,9 @@ export default function ViewNotifications({ open, closingFunction }) {
 																		<span className="sr-only">Open options</span>
 																		<EllipsisVerticalIcon aria-hidden="true" className="size-5" />
 																	</MenuButton>
-																	<MenuItems transition className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg outline outline-gray-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+																	<MenuItems transition className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white p-2 shadow-lg outline outline-gray-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 flex flex-col justify-center items-center">
 																		<MenuItem>
-																			<button onClick={() => deleteNotification({ notificationId: notification._id })} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "w-full")}>
+																			<button type="button" onClick={() => deleteNotification({ notificationId: notification._id, action: "delete" })} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "w-full")}>
 																				delete<span className="sr-only">notification</span>
 																			</button>
 																		</MenuItem>
@@ -153,7 +231,7 @@ export default function ViewNotifications({ open, closingFunction }) {
 								<div className={classNames(theme.base, "flex shrink-0 justify-evenly items-center px-4 py-4")}>
 									<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination__black-background pagination__yellow-highlight" />
 								</div>
-							</form>
+							</div>
 						</DialogPanel>
 					</div>
 				</div>

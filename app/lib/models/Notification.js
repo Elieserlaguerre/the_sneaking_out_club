@@ -22,7 +22,7 @@ const notificationSchema = new Schema(
 			required: true
 		},
 
-		from: {
+		sender: {
 			type: ObjectId,
 			required: true,
 			refPath: "senderType"
@@ -34,13 +34,39 @@ const notificationSchema = new Schema(
 			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
 		},
 
-		to: {
+		recipient: {
 			type: ObjectId,
 			required: true,
 			refPath: "recipientType"
 		},
 
 		recipientType: {
+			type: String,
+			required: true,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
+		},
+		docType: {
+			type: String,
+			required: true,
+			default: "Notification"
+		},
+
+		metaData: {
+			type: Schema.Types.Mixed
+		},
+
+		status: {
+			type: String,
+			trim: true,
+			enum: ["seen", "unseen"],
+			default: "unseen"
+		},
+		creator: {
+			type: ObjectId,
+			required: true,
+			refPath: "creatorType"
+		},
+		creatorType: {
 			type: String,
 			required: true,
 			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]

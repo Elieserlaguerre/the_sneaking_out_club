@@ -61,7 +61,9 @@ export const PLATFORM_ROUTES = [
       "family",
       "meetings",
       "messages",
-      "reports"
+      "reports",
+      "schedules",
+      "view"
     ]
   },
   {

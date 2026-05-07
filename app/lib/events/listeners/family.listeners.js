@@ -1,12 +1,11 @@
 import { eventBus } from "../eventBus";
 import { handleFamilyMemberRemovalEvent, handleNewFamilyMemberEvent, handleUpdateFamilyTreeEvent, handleUserProfileUpdateEvent } from "../handlers/family";
 
-
 /*
     =======================
     FAMILY MEMBER LISTENERS
     =======================
-    */
+*/
 
 eventBus.on("family.new_member_added", handleNewFamilyMemberEvent);
 
@@ -35,7 +34,6 @@ eventBus.on("family.user_profile_update", handleUserProfileUpdateEvent);
     FAMILY HEALTH LISTENERS
     =======================
     */
-
 
 // eventBus.on("family.new_health_profile", "");
 // eventBus.on("family.health_profile_updated", "");

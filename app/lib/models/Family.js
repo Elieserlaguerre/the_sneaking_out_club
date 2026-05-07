@@ -11,17 +11,21 @@ const familySchema = new Schema(
 			unique: true
 		},
 
+		motto: {
+			type: String,
+			trim: true
+		},
+
 		familyTree: {
 			type: ObjectId,
 			ref: "Family_Tree",
 			required: true
 		},
 
-		// The family you came from
+		// The parent family of a child family branch
 		parentFamily: {
 			type: ObjectId,
-			ref: "Family",
-			default: null
+			ref: "Family"
 		},
 
 		members: [
@@ -53,20 +57,34 @@ const familySchema = new Schema(
 			default: 0
 		},
 
-		// FAMILY IDENTITY
 		familyHead: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "familyHeadType"
+		},
+		
+		familyHeadType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		spouse: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "spouseType"
+		},
+
+		spouseType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		founder: {
 			type: ObjectId,
-			ref: "Parent"
+			refPath: "founderType"
+		},
+
+		founderType: {
+			type: String,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Family_Member"]
 		},
 
 		established: {
@@ -89,11 +107,6 @@ const familySchema = new Schema(
 			height: {
 				type: Number
 			}
-		},
-
-		motto: {
-			type: String,
-			trim: true
 		},
 
 		origin: {

@@ -186,6 +186,28 @@ const teacherSchema = new Schema(
 			type: Boolean,
 			required: true,
 			default: false
+		},
+		connections: {
+			type: [
+				{
+					member: {
+						type: ObjectId,
+						required: true,
+						refPath: "connections.memberType"
+					},
+					memberType: {
+						type: String,
+						required: true,
+						enum: ["Member", "Parent", "Teacher", "Admin"]
+					},
+					favored: {
+						type: Boolean,
+						required: true,
+						default: false
+					}
+				}
+			],
+			default: []
 		}
 	},
 	{ timestamps: true }

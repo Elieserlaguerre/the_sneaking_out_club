@@ -1,6 +1,6 @@
 import { deleteImage } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
-import Ancestor from "@/app/lib/models/Ancestor";
+import FamilyMember from "@/app/lib/models/FamilyMember";
 import FamilyTree from "@/app/lib/models/FamilyTree";
 import { NextResponse } from "next/server";
 
@@ -35,9 +35,9 @@ export async function GET(req) {
 		page = parseInt(data.page) || 1;
 		limit = parseInt(data.limit) || 10;
 		skip = (page - 1) * limit;
-		totalDocuments = await Ancestor.countDocuments(options);
+		totalDocuments = await FamilyMember.countDocuments(options);
 		totalPages = Math.ceil(totalDocuments / limit);
-		const ancestors = await Ancestor.find(options).skip(skip).limit(limit).sort(sort);
+		const ancestors = await FamilyMember.find(options).skip(skip).limit(limit).sort(sort);
 
 		const results = {
 			totalPages,
@@ -72,7 +72,7 @@ export async function PATCH(req) {
 
 		if (!familyTree) return NextResponse.json({ message: "family tree not found." }, { status: 404 });
 
-		const ancestor = await Ancestor.findById({ _id: ancestorId });
+		const ancestor = await FamilyMember.findById({ _id: ancestorId });
 
 		if (!ancestor) return NextResponse.json({ message: "Ancestor could not be found." }, { status: 404 });
 
@@ -111,7 +111,7 @@ export async function DELETE(req) {
 
 		const { ancestorId, treeId } = data;
 
-		const ancestor = await Ancestor.findById({ _id: ancestorId });
+		const ancestor = await FamilyMember.findById({ _id: ancestorId });
 		const familyTree = await FamilyTree.findById({ _id: treeId });
 
 		if (ancestor?.image?.publicId) {

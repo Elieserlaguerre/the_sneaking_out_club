@@ -101,14 +101,34 @@ export const parentsInaternalSectionNav = [
 
 export const parentsDashboardSectionNav = [
 	{
-		component: {
-			hideMobileButton: true,
-			elements: (
-				<div className="w-full h-full flex justify-center items-center">
-					<h1 className="uppercase font-bold tracking-widest">parents dashboard</h1>
-				</div>
-			)
-		}
+		id: nanoid(),
+		title: "summary",
+		href: "/dashboard"
+	},
+	{
+		id: nanoid(),
+		title: "posts",
+		href: "/dashboard/posts"
+	},
+	{
+		id: nanoid(),
+		title: "reels",
+		href: "/dashboard/reels"
+	},
+	{
+		id: nanoid(),
+		title: "connections",
+		href: "/dashboard/connections"
+	},
+	{
+		id: nanoid(),
+		title: "club store",
+		href: "/dashboard/store"
+	},
+	{
+		id: nanoid(),
+		title: "programs",
+		href: "/dashboard/programs"
 	}
 ];
 
@@ -127,11 +147,6 @@ export const parentFamilySectionNav = [
 		id: nanoid(),
 		title: "family members",
 		href: "/family/members"
-	},
-	{
-		id: nanoid(),
-		title: "family search",
-		href: "/family/search"
 	},
 	{
 		id: nanoid(),

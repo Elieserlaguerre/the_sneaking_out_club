@@ -106,8 +106,54 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "global user notifications" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		notificationResponse: build.mutation({
+			query: (formData) => ({
+				url: "/global/user/notifications",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		cancelFriendRequest: build.mutation({
+			query: (formData) => ({
+				url: "/global/user/notifications",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		createSearchHistory: build.mutation({
+			query: (formData) => ({
+				url: "/global/search-history",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global search history" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getSearchHistory: build.query({
+			query: (query) => ({
+				url: "/global/search-history",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global search history" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		deleteSearchHistory: build.mutation({
+			query: (formData) => ({
+				url: "/global/search-history",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global search history" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const {useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

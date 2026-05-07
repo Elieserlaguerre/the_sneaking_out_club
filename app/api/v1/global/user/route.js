@@ -2,6 +2,7 @@ import db from "@/app/lib/database";
 import Admin from "@/app/lib/models/Admin";
 import Applicant from "@/app/lib/models/Applicant";
 import Family from "@/app/lib/models/Family";
+import FamilyMembership from "@/app/lib/models/FamilyMember";
 import FamilyTree from "@/app/lib/models/FamilyTree";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
@@ -39,20 +40,19 @@ export async function GET(req) {
 				user = await Parent.findById({ _id: userId })
 					.select({ password: 0 })
 					.populate([
+						"familyTree",
 						{
 							path: "familyTree",
-							select: {
-								_id: 1,
-								name: 1
-							}
+							populate: [
+								"lineage",
+								"branches",
+								{
+									path: "rootFamily",
+									populate: ["member"]
+								}
+							]
 						},
-						{
-							path: "family",
-							select: {
-								_id: 1,
-								name: 1
-							}
-						}
+						"family"
 					]);
 				user.online = true;
 				user.save();

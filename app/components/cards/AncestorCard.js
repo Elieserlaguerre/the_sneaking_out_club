@@ -103,7 +103,7 @@ export default function AncestorCard({ ancestor, tree }) {
 					</div>
 					<div className="w-full mt-3">
 						<dt className="sr-only capitalize font-semibold text-nowrap">name</dt>
-						<dd className="capitalize">
+						<dd className="capitalize text-nowrap">
 							{ancestor.firstName} {ancestor.lastName}
 						</dd>
 					</div>

@@ -13,7 +13,7 @@ import { currentDepartment, currentUser } from "@/app/lib/state-management/globa
 import { manageFamilyMemberSchema } from "@/app/lib/util/global/zod-validations";
 import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
-import { useManageFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
+import { useCreateFamilyMemberMutation, useUpdateFamilyMemberMutation } from "@/app/lib/redux/data-fetching/parents-api";
 import { Loader2, Loader2Icon } from "lucide-react";
 import { useTheme } from "../../providers/ThemeProvider";
 import ImageCard from "../../cards/ImageCard";
@@ -35,6 +35,8 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 	const [formContent, setFormContent] = useState({
 		firstName: "",
 		lastName: "",
+		familyTree: "",
+		family: "",
 		memberType: "",
 		email: "",
 		phone: "",
@@ -53,13 +55,16 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		gender: "",
 		introduction: "",
 		image: "",
-		cloudinarySubfolder: ""
+		cloudinarySubfolder: "",
+		creator: ""
 	});
 
 	const clearForm = () => {
 		setFormContent({
 			firstName: "",
 			lastName: "",
+			familyTree: "",
+			family: "",
 			memberType: "",
 			email: "",
 			phone: "",
@@ -78,7 +83,8 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 			gender: "",
 			introduction: "",
 			image: "",
-			cloudinarySubfolder: ""
+			cloudinarySubfolder: "",
+			creator: ""
 		});
 	};
 
@@ -110,7 +116,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		{
 			id: nanoid(),
 			name: "select one",
-			value: "select one"
+			value: ""
 		},
 		{
 			id: nanoid(),
@@ -160,23 +166,32 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 
 	console.log("formContent", formContent);
 
-	const [addFamilyMember, addFamilyMemberResults] = useManageFamilyMemberMutation();
+	const [createFamilyMember, createFamilyMemberResults] = useCreateFamilyMemberMutation();
 
 	useEffect(() => {
-		setLoading(addFamilyMemberResults.isLoading);
+		setLoading(createFamilyMemberResults.isLoading);
 
-		if (addFamilyMemberResults.isError) {
-			const message = typeof addFamilyMemberResults.error === "string" ? addFamilyMemberResults.error : addFamilyMemberResults.error.message;
+		if (createFamilyMemberResults.isError) {
+			const message = typeof createFamilyMemberResults.error === "string" ? createFamilyMemberResults.error : createFamilyMemberResults.error.message;
 			toast.error(message);
-		} else if (addFamilyMemberResults.isSuccess) {
-			toast.success(addFamilyMemberResults.data.message);
-
-			const { results } = addFamilyMemberResults.data;
+		} else if (createFamilyMemberResults.isSuccess) {
+			toast.success(createFamilyMemberResults.data.message);
 
 			clearForm();
 			closingFunction();
 		}
-	}, [addFamilyMemberResults.isSuccess, addFamilyMemberResults.isError]);
+	}, [createFamilyMemberResults.isSuccess, createFamilyMemberResults.isError]);
+
+	const [updateFamilyMember, updateFamilyMemberResults] = useUpdateFamilyMemberMutation();
+
+	useEffect(() => {
+		if (updateFamilyMemberResults.isError) {
+			const message = typeof updateFamilyMemberResults.error === "string" ? updateFamilyMemberResults.error : updateFamilyMemberResults.error.message;
+			toast.error(message);
+		} else if (updateFamilyMemberResults.isSuccess) {
+			toast.success(updateFamilyMemberResults.data.message);
+		}
+	}, [updateFamilyMemberResults.isLoading, updateFamilyMemberResults.isSuccess, updateFamilyMemberResults.isError]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -185,11 +200,12 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 			const validation = manageFamilyMemberSchema.safeParse(formContent);
 
 			if (validation.success) {
-				if (settings?.editMode === true) {
-					if (!user.family) throw new Error("You cannot add a family member without creating a household.");
+				if (settings?.edit === true) {
+					if (!user.familyTree && !user.family) throw new Error("You cannot edit a family member without creating a family tree and household.");
+					updateFamilyMember({ update: validation.data, memberId: settings.selectedDocument._id, memberType: settings.selectedDocument.docType });
 				} else {
-					if (formContent.memberType === "platform user" || (formContent.memberType === "household member" && !user.family)) throw new Error("You cannot add a family member without creating a household.");
-					addFamilyMember({ user: validation.data, department: "members", parentId: user?._id, event: eventTrigger[settings?.mode] });
+					if ((formContent.memberType === "platform user" && !user.family) || (formContent.memberType === "household member" && !user.family)) throw new Error("You cannot add a family member without creating a household.");
+					createFamilyMember({ user: validation.data, event: eventTrigger[settings?.mode] });
 				}
 			} else {
 				const error = fromZodError(validation.error);
@@ -236,6 +252,40 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 		}
 	];
 
+	useEffect(() => {
+		if (settings.edit === true && settings.selectedDocument) {
+			setFormContent((content) => ({
+				...content,
+				firstName: settings?.selectedDocument?.firstName ?? "",
+				lastName: settings?.selectedDocument?.lastName ?? "",
+				familyTree: settings?.selectedDocument?.familyTree ?? "",
+				family: settings?.selectedDocument?.family ?? "",
+				memberType: settings?.selectedDocument?.memberType ?? "",
+				email: settings?.selectedDocument?.email ?? "",
+				phone: settings?.selectedDocument?.phone ?? "",
+				password: settings?.selectedDocument?.password ?? "",
+				confirmPassword: settings?.selectedDocument?.confirmPassword ?? "",
+				address1: settings?.selectedDocument?.address1 ?? "",
+				address2: settings?.selectedDocument?.address2 ?? "",
+				city: settings?.selectedDocument?.city ?? "",
+				state: settings?.selectedDocument?.state ?? "",
+				zipCode: settings?.selectedDocument?.zipCode ?? "",
+				country: settings?.selectedDocument?.country ?? "",
+				relation: settings?.selectedDocument?.relation?.find((family) => family.member === user._id)?.role ?? "",
+				dateOfBirth: settings?.selectedDocument?.dateOfBirth ?? "",
+				age: settings?.selectedDocument?.age ?? "",
+				nationality: settings?.selectedDocument?.nationality ?? "",
+				gender: settings?.selectedDocument?.gender ?? "",
+				introduction: settings?.selectedDocument?.introduction ?? "",
+				image: settings?.selectedDocument?.image ?? "",
+				cloudinarySubfolder: settings?.selectedDocument?.cloudinarySubfolder ?? "",
+				creator: settings?.selectedDocument?.creator ?? ""
+			}));
+		} else {
+			clearForm();
+		}
+	}, [settings.edit, settings.selectedDocument]);
+
 	return (
 		<Dialog open={open} onClose={handleDrwerClosure} className="relative z-50">
 			<div className="fixed inset-0" />
@@ -248,7 +298,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 								<div className="flex-1 flex flex-col overflow-y-hidden max-h-screen">
 									<div className={classNames("px-4 py-[1.61rem] sm:px-6 bg-linear-to-br from-orange-500 to-orange-700")}>
 										<div className="flex items-center justify-between">
-											<DialogTitle className="text-base font-semibold text-white capitalize">{settings.mode === "newEntry" ? "create" : settings.mode === "editMode" ? "edit" : "manage"} family member</DialogTitle>
+											<DialogTitle className="text-base font-semibold text-white capitalize">{settings.edit ? "edit" : "create"} family member</DialogTitle>
 											<div className="ml-3 flex h-7 items-center">
 												<button type="button" onClick={handleDrwerClosure} className="relative rounded-md bg-transparent text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
 													<span className="absolute -inset-2.5" />
@@ -260,6 +310,20 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 									</div>
 									<div className="divide-y divide-gray-200 px-4 sm:px-6 grow overflow-y-auto pb-4">
 										<div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 pt-6">
+											<div className="col-span-full">
+												<label htmlFor="memberType" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+													member type
+												</label>
+												<div className="mt-2.5">
+													<select onChange={handleChanges} type="text" name="memberType" value={formContent.memberType} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+														{memberType.map((type) => (
+															<option key={type.id} value={type.value}>
+																{type.name}
+															</option>
+														))}
+													</select>
+												</div>
+											</div>
 											<div>
 												<label htmlFor="firstName" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
 													First name
@@ -278,20 +342,32 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 											</div>
 
 											<div>
-												<label htmlFor="memberType" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
-													member type
+												<label htmlFor="familyTree" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+													family tree
 												</label>
 												<div className="mt-2.5">
-													<select onChange={handleChanges} type="text" name="memberType" value={formContent.memberType} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-														{memberType.map((type) => (
-															<option key={type.id} value={type.value}>
-																{type.name}
+													<select onChange={handleChanges} type="text" name="familyTree" value={formContent.familyTree} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+														<option value={""}>select one</option>
+														<option value={user?.familyTree?._id}>{user?.familyTree?.name}</option>
+													</select>
+												</div>
+											</div>
+											<div>
+												<label htmlFor="family" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+													family
+												</label>
+												<div className="mt-2.5">
+													<select onChange={handleChanges} type="text" name="family" value={formContent.family} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+														<option value={""}>select one</option>
+														{user?.familyTree?.branches.map((family) => (
+															<option key={family._id} value={family?._id}>
+																{family?.name}
 															</option>
 														))}
 													</select>
 												</div>
 											</div>
-											<div className="">
+											<div className={classNames("")}>
 												<label htmlFor="relation" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
 													relation
 												</label>
@@ -299,8 +375,19 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 													<input onChange={handleChanges} value={formContent.relation} type="text" name="relation" id="relation" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 capitalize" />
 												</div>
 											</div>
+											<div>
+												<label htmlFor="creator" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
+													creator
+												</label>
+												<div className="mt-2.5">
+													<select onChange={handleChanges} type="text" name="creator" value={formContent.creator} id="lastName" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 capitalize">
+														<option value={""}>select one</option>
+														<option value={user?._id}>{user?.name}</option>
+													</select>
+												</div>
+											</div>
 
-											{formContent.memberType !== "ancestor" && (
+											{formContent.memberType !== "" && formContent.memberType !== "ancestor" && (
 												<Fragment>
 													<div className="">
 														<label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900 capitalize">
@@ -444,7 +531,7 @@ export default function ManageFamilyMembers({ open, closingFunction, settings })
 															age
 														</label>
 														<div className="mt-2.5">
-															<input readOnly={true} value={formContent.age} type="text" name="age" id="age" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+															<input readOnly={true} value={formContent?.age ?? ""} type="text" name="age" id="age" className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
 														</div>
 													</div>
 

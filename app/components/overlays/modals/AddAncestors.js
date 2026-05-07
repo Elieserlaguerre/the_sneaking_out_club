@@ -27,8 +27,6 @@ export default function AddAncestors({ open, closingFunction, tree }) {
 			const message = typeof getAncestorsResults.error === "string" ? getAncestorsResults.error : getAncestorsResults.error.message;
 			toast.error(message);
 		} else if (getAncestorsResults.isSuccess) {
-			// toast.success(getAncestorsResults.data.message);
-
 			const { results } = getAncestorsResults.data;
 
 			setTotalPages(results?.totalPages ?? 0);

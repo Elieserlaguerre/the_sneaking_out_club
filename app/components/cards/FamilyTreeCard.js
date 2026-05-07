@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ImageCard from "./ImageCard";
-import { EllipsisHorizontalIcon, PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
+import { EllipsisHorizontalIcon, EyeIcon, PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { buttonVariants } from "../shadcn/button";
 import { nanoid } from "nanoid";
@@ -21,78 +21,35 @@ export default function FamilyTreeCard({ tree, editFunction }) {
 	const menuOptions = [
 		{
 			id: nanoid(),
-			label: "ancestor",
+			label: "profile",
 			variant: "ghostBtn",
 			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
-		},
-		{
-			id: nanoid(),
-			label: "root family member",
-			variant: "ghostBtn",
-			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
-		},
-		{
-			id: nanoid(),
-			label: "family branches",
-			variant: "ghostBtn",
-			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
-		},
-		{
-			id: nanoid(),
-			label: "family head",
-			variant: "ghostBtn",
-			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
-		},
-		{
-			id: nanoid(),
-			label: "spouse",
-			variant: "ghostBtn",
-			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
-		},
-		{
-			id: nanoid(),
-			label: "founder",
-			variant: "ghostBtn",
-			baseStyle: `hover:${theme.sectionNavbar.root} hover:text-white p-1.5`,
-			icon: PlusIcon
+			icon: EyeIcon,
+			type: "link",
+			destination: "#"
 		},
 		{
 			id: nanoid(),
 			label: "edit family tree",
 			variant: "ghostBtn",
 			baseStyle: "hover:bg-yellow-500 hover:text-white p-1.5",
-			icon: PencilIcon
+			icon: PencilIcon,
+			type: "button"
 		},
 		{
 			id: nanoid(),
 			label: "delete family tree",
 			variant: "ghostBtn",
 			baseStyle: "hover:bg-red-500 hover:text-white p-1.5",
-			icon: TrashIcon
+			icon: TrashIcon,
+			type: "button"
 		}
 	];
 
 	const handleMenuOptionActions = (action) => {
 		switch (action) {
-			case "ancestor":
+			case "profile":
 				router.push("/family/members");
-				break;
-			case "root family member":
-				router.push("/family/members");
-				break;
-			case "family branches":
-				router.push("/family/branch");
-				break;
-			case "family head":
-				break;
-			case "spouse":
-				break;
-			case "founder":
 				break;
 			case "edit family tree":
 				editFunction(tree);
@@ -166,13 +123,7 @@ export default function FamilyTreeCard({ tree, editFunction }) {
 					<div className="grid grid-cols-2">
 						<label className="sr-only">total families</label>
 						<dt className="capitalize text-sm text-right">total families</dt>
-						<dd className="text-sm text-gray-900">{tree.totalFamilies}</dd>
-					</div>
-
-					<div className="grid grid-cols-2">
-						<dt className="sr-only">total members</dt>
-						<dt className="capitalize text-sm text-right">total members</dt>
-						<dd className="text-sm text-gray-900">{tree.totalMembers}</dd>
+						<dd className="text-sm text-gray-900">{tree.branches.length}</dd>
 					</div>
 				</dl>
 			</div>

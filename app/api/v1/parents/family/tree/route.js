@@ -1,10 +1,10 @@
 import { deleteImage } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
-import Ancestor from "@/app/lib/models/Ancestor";
 import Family from "@/app/lib/models/Family";
-import FamilyMembership from "@/app/lib/models/FamilyMembership";
+import FamilyMember from "@/app/lib/models/FamilyMember";
 import FamilyTree from "@/app/lib/models/FamilyTree";
 import Parent from "@/app/lib/models/Parent";
+import SearchQuery from "@/app/lib/models/SearchQuery";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
 
@@ -13,7 +13,6 @@ export async function POST(req) {
 		await db.connect();
 		let data;
 		data = await req.json();
-		// console.log("data", data);
 
 		const userId = data?.creator;
 		if (!userId) throw new Error("user ID is required.");
@@ -22,7 +21,6 @@ export async function POST(req) {
 			...data,
 			slug: slugify(data.name)
 		});
-		// console.log("family Tree", familyTree);
 
 		const parent = await Parent.findById({ _id: userId });
 		parent.familyTree = familyTree._id;
@@ -42,7 +40,6 @@ export async function GET(req) {
 		await db.connect();
 		let query, data;
 		query = await req.nextUrl.searchParams;
-		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
 		// console.log("data", data);
@@ -52,7 +49,7 @@ export async function GET(req) {
 		let page, limit, skip, totalDocuments, totalPages, options, sort, familyTrees, results;
 
 		page = parseInt(data.page) || 1;
-		limit = parseInt(data.limit) || 10;
+		limit = parseInt(data.limit) || 25;
 		skip = (page - 1) * limit;
 
 		switch (filter.actions) {
@@ -69,11 +66,18 @@ export async function GET(req) {
 						populate: {
 							path: "member"
 						}
-					}
+					},
+					"founder",
+					"familyHead",
+					"spouse"
 				]);
-				// console.log("familyTree", familyTree);
 
-				return NextResponse.json({ results: familyTree, message: "family trees successfully retrieved." }, { status: 200 });
+				results = {
+					actions: filter.actions,
+					familyTree
+				};
+
+				return NextResponse.json({ results, message: "family trees successfully retrieved." }, { status: 200 });
 			case "all family trees":
 				options = {};
 				totalDocuments = await FamilyTree.countDocuments(options);
@@ -82,20 +86,35 @@ export async function GET(req) {
 				familyTrees = await FamilyTree.find(options).skip(skip).limit(limit).sort(sort);
 				results = {
 					totalPages,
+					actions: filter.actions,
 					familyTrees
 				};
 
 				return NextResponse.json({ results, message: "family trees successfully retrieved." }, { status: 200 });
 			case "search family trees":
-				options = {};
+				const searchTerms = data.query.split(" ").filter(Boolean);
+
+				options = {
+					$or: searchTerms.map((term) => ({
+						name: { $regex: term, $options: "i" }
+					}))
+				};
 				totalDocuments = await FamilyTree.countDocuments(options);
 				totalPages = Math.ceil(totalDocuments / limit);
 
 				familyTrees = await FamilyTree.find(options).skip(skip).limit(limit).sort(sort);
 				results = {
 					totalPages,
+					actions: filter.actions,
 					familyTrees
 				};
+
+				const queryExists = await SearchQuery.findOne({ query: data.query, section: data.section, user: data.user, userType: data.userType });
+				console.log("queryExists", queryExists);
+
+				if (!queryExists) {
+					await SearchQuery.create(data);
+				}
 
 				return NextResponse.json({ results, message: "family trees successfully retrieved." }, { status: 200 });
 			default:
@@ -112,14 +131,12 @@ export async function PATCH(req) {
 		await db.connect();
 		let data;
 		data = await req.json();
-		// console.log("data", data);
 
 		const { update, treeId } = data;
 
 		if (!treeId) throw new Error("family tree id is required.");
 
 		const familyTree = await FamilyTree.findByIdAndUpdate({ _id: treeId }, update, { true: true });
-		// console.log("family tree", familyTree);
 
 		return NextResponse.json({ message: "Family tree successfully updated." }, { status: 200 });
 	} catch (error) {

@@ -29,9 +29,9 @@ export async function POST(req) {
 		await parent.save();
 
 		familyTree.branches.push(family._id);
-        await familyTree.save();
-        
-        /*
+		await familyTree.save();
+
+		/*
         ==================================================
         SEND NOTIFICATION ABOUT NEW FAMILY BRANCH ADDITION
         ==================================================
@@ -54,7 +54,7 @@ export async function GET(req) {
 		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
-		// console.log("data", data);
+		console.log("data", data);
 
 		const { userId } = data;
 
@@ -62,15 +62,20 @@ export async function GET(req) {
 
 		const filters = JSON.parse(data.filter);
 
-		let page, limit, skip, totalDocuments, totalPages, options, sort, branches, results;
+		let page, limit, skip, totalDocuments, totalPages, options, sort, families, results;
 
 		switch (filters.actions) {
-			case "my household":
-				const household = await Family.findOne({ creator: userId });
-				if (!household) return NextResponse.json({ message: "household not found." }, { status: 404 });
+			case "my family":
+				const family = await Family.findOne({ creator: userId });
+				if (!family) return NextResponse.json({ message: "family not found." }, { status: 404 });
 
-				return NextResponse.json({ results: household, message: "house successfully retrieved." }, { status: 200 });
-			case "all households":
+				results = {
+					actions: filters.actions,
+					family
+				};
+
+				return NextResponse.json({ results, message: "your family successfully retrieved." }, { status: 200 });
+			case "all families":
 				options = {};
 
 				page = parseInt(data.page) || 1;
@@ -78,13 +83,14 @@ export async function GET(req) {
 				skip = (page - 1) * limit;
 				totalDocuments = await Family.countDocuments(options);
 				totalPages = Math.ceil(totalDocuments / limit);
-				branches = await Family.find(options).skip(skip).limit(limit).sort(sort);
+				families = await Family.find(options).skip(skip).limit(limit).sort(sort);
 				results = {
+					actions: filters.actions,
 					totalPages,
-					branches
+					families
 				};
 				return NextResponse.json({ results, message: "family branches successfully retrieved" }, { status: 200 });
-			case "search households":
+			case "search families":
 				options = {
 					name: data.query
 				};
@@ -94,11 +100,13 @@ export async function GET(req) {
 				skip = (page - 1) * limit;
 				totalDocuments = await Family.countDocuments(options);
 				totalPages = Math.ceil(totalDocuments / limit);
-				branches = await Family.find(options).skip(skip).limit(limit).sort(sort);
+				families = await Family.find(options).skip(skip).limit(limit).sort(sort);
 				results = {
+					actions: filters.actions,
 					totalPages,
-					branches
+					families
 				};
+				
 				return NextResponse.json({ results, message: "Get route successfully accessed." }, { status: 200 });
 			default:
 				throw new Error("filter action is not authorized.");
@@ -115,6 +123,13 @@ export async function PATCH(req) {
 		let data;
 		data = await req.json();
 		console.log("data", data);
+
+		const { familyId, update } = data;
+		if (!familyId) return NextResponse.json({ message: "family ID not found" }, { status: 404 });
+		if (!update) return NextResponse.json({ message: "family update data is required." }, { status: 400 });
+
+		const family = await Family.findByIdAndUpdate({ _id: familyId }, update, { new: true });
+		if (!family) return NextResponse.json({ message: "famiy household not found." }, { status: 404 });
 
 		return NextResponse.json({ message: "House was successfully updated." }, { status: 200 });
 	} catch (error) {

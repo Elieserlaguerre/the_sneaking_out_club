@@ -1,5 +1,26 @@
 export const EVENTS = {
 	/*
+	==============
+	FRIEND REQUEST
+	==============
+	*/
+
+	FRIEND_REQUEST: {
+		event: "user.friend_request",
+		notification: "FRIEND_REQUEST"
+	},
+
+	FRIEND_REQUEST_ACCEPTED: {
+		event: "user.request_accepted",
+		notification: "REQUEST_ACCEPTED"
+	},
+
+	FRIEND_REQUEST_DENIED: {
+		event: "user.request_denied",
+		notification: "REQUEST_DENIED"
+	},
+
+	/*
     ====================
     FAMILY MEMBER EVENTS
     ====================
@@ -110,116 +131,53 @@ export const EVENTS = {
 
 export const NOTIFICATIONS = {
 	/*
+	==============
+	FRIEND REQUEST
+	==============
+	*/
+
+	FRIEND_REQUEST: {
+		event: "notifications.friend_request",
+		title: "friend request",
+		message: "you have a new friend request"
+	},
+	REQUEST_ACCEPTED: {
+		event: "notifications.request_accepted",
+		title: "friend request accepted",
+		message: "friend request was accepted"
+	},
+	REQUEST_DENIED: {
+		event: "notifications.request_denied",
+		title: "friend request denied",
+		message: "friend request was denied"
+	},
+
+	/*
     ===========================
     FAMILY MEMBER NOTIFICATIONS
     ===========================
     */
 
 	NOTIFY_FAMILY_MEMBERS: {
-		eventType: "notifications.new_family_member",
+		event: "notifications.new_family_member",
 		title: "family member notification",
 		message: "A new family member has been added to your family tree."
 	},
 
 	NOTIFY_FAMILY_UPDATE: {
-		eventType: "notifications.family_tree_update",
+		event: "notifications.family_tree_update",
 		title: "family tree update",
 		message: "Your family tree was recently updated."
 	},
 	NOTIFY_FAMILY_REMOVAL: {
-		eventType: "notifications.family_member_removed",
+		event: "notifications.family_member_removed",
 		title: "family member removed",
 		message: "A member of your family has been removed from your family tree."
 	},
 
 	NOTIFY_FAMILY_USER_UPDATE: {
-		eventType: "notifications.family_user_update",
+		event: "notifications.family_user_update",
 		title: "profile update",
 		message: "Your account was recently updated by a family member."
 	}
-
-	/*
-    =========================
-    FAMILY PLAN NOTIFICATIONS
-    =========================
-    */
-
-	// "family.new_family_plan": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.new_plan_goal": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.goal_updated": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.goal_removed": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.new_plan_participant": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.plan_participan_removed": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.deleted_family_plan": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-
-	/*
-    ===========================
-    FAMILY HEALTH NOTIFICATIONS
-    ===========================
-    */
-	// "family.new_health_profile": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.health_profile_updated": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.health_profile_deleted": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-
-	/*
-    ===========================
-    FAMILY ESTATE NOTIFICATIONS
-    ===========================
-    */
-	// "family.new_family_estate": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.estate_updated": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "family.estate_deleted": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-
-	/*
-    ========================
-    ASSIGNMENT NOTIFICATIONS
-    ========================
-    */
-	// "assignments.new_assignment": {
-	// 	eventType: "",
-	// 	message: ""
-	// },
-	// "assignments.assigned_to_user": {
-	// 	eventType: "",
-	// 	message: ""
-	// }
 };

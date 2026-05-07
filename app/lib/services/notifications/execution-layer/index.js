@@ -2,10 +2,10 @@ import Notification from "@/app/lib/models/Notification";
 import { buildNotificationObject } from "../builder-layer";
 
 export const createNotifications = async (data, session) => {
-	const { notify, event, list } = data?.notifications;
+	const { create, event, list } = data;
 
 	try {
-		if (!notify) throw new Error("notify settings is required for notifications.");
+		if (!create) throw new Error("create settings is required for notifications.");
 		if (!event) throw new Error("event type is required for notifications.");
 		if (!list) throw new Error("notification list is required to send notifications.");
 		if (!session) throw new Error("session is reuired to send notifications.");

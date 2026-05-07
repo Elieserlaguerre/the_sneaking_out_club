@@ -2,6 +2,7 @@ import { deleteImage } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
 import Family from "@/app/lib/models/Family";
 import FamilyTree from "@/app/lib/models/FamilyTree";
+import Parent from "@/app/lib/models/Parent";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -23,13 +24,15 @@ export async function GET(req) {
 		const familyTree = await FamilyTree.findById({ _id: treeId });
 		if (!familyTree) return NextResponse.json({ message: "family tree not found." }, { status: 404 });
 
+		const parent = await Parent.findById({ _id: familyTree.creator });
+
 		const filter = JSON.parse(data?.filters);
 
 		let page, limit, skip, totalDocuments, totalPages, options, sort;
 
 		options = {
-			familyTree: treeId,
-			_id: { $nin: familyTree.branches }
+			_id: { $nin: familyTree.branches },
+			$or: [{ familyTree: treeId }, { creator: parent?._id }]
 		};
 
 		if (filter.sort === "newest") sort = { createdAt: -1 };

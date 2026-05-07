@@ -4,12 +4,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { buttonVariants } from "../shadcn/button";
-import { useDeleteFamilyBranchMutation, useManageFamilyBranchesMutation } from "@/app/lib/redux/data-fetching/parents-api";
 import toast from "react-hot-toast";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
+import { useDeleteFamilyTreeBranchMutation, useManageFamilyTreeBranchesMutation } from "@/app/lib/redux/data-fetching/parents-api";
 
-export default function FamilyBranchCard({ family, settings }) {
+export default function FamilyBranchCard({ family, tree, settings }) {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
@@ -19,17 +19,17 @@ export default function FamilyBranchCard({ family, settings }) {
 	const handleFamilyMembership = (action) => {
 		switch (action) {
 			case "add":
-				manageBranches({ action, treeId: family.familyTree, branchId: family._id });
+				manageBranches({ action, treeId: tree._id, branchId: family._id });
 				break;
 			case "remove":
-				manageBranches({ action, treeId: family.familyTree, branchId: family._id });
+				manageBranches({ action, treeId: tree._id, branchId: family._id });
 				break;
 			default:
 				throw new Error("family membership action is not recognized.");
 		}
 	};
 
-	const [manageBranches, manageBranchesResults] = useManageFamilyBranchesMutation();
+	const [manageBranches, manageBranchesResults] = useManageFamilyTreeBranchesMutation();
 
 	useEffect(() => {
 		if (manageBranchesResults.isError) {
@@ -40,7 +40,7 @@ export default function FamilyBranchCard({ family, settings }) {
 		}
 	}, [manageBranchesResults.isLoading, manageBranchesResults.isSuccess, manageBranchesResults.isError]);
 
-	const [deleteHousehold, deleteHouseholdResults] = useDeleteFamilyBranchMutation();
+	const [deleteHousehold, deleteHouseholdResults] = useDeleteFamilyTreeBranchMutation();
 
 	useEffect(() => {
 		if (deleteHouseholdResults.isError) {
@@ -52,7 +52,7 @@ export default function FamilyBranchCard({ family, settings }) {
 	}, [deleteHouseholdResults.isLoading, deleteHouseholdResults.isSuccess, deleteHouseholdResults.isError]);
 
 	const handleBranchDeletion = () => {
-		if (family.creator !== user._id) toast.error("You are not authorized to delete this family branch.");
+		if (family.creator !== user._id) return toast.error("You are not authorized to delete this family branch.");
 		deleteHousehold({ familyId: family._id });
 	};
 

@@ -1,4 +1,4 @@
-import FamilyMembersPage from "@/app/components/internal-components/parents/FamilyMembersPage";
+import FamilyMembersPage from "@/app/components/internal-components/parents/family/FamilyMembersPage";
 import React from "react";
 
 export default function page() {

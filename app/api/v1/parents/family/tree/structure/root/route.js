@@ -1,7 +1,8 @@
 import { deleteImage } from "@/app/lib/cloudinary/helpers/backend";
 import db from "@/app/lib/database";
 import Admin from "@/app/lib/models/Admin";
-import FamilyMembership from "@/app/lib/models/FamilyMembership";
+import FamilyMember from "@/app/lib/models/FamilyMember";
+import FamilyMembership from "@/app/lib/models/FamilyMember";
 import FamilyTree from "@/app/lib/models/FamilyTree";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
@@ -37,17 +38,18 @@ export async function GET(req) {
 		let page, limit, skip, options, sort;
 
 		options = {
-			familyTree: treeId,
-			_id: { $nin: rootFamilyIds }
+			$or: [{ familyTree: treeId }, { creator: parentId }],
+			_id: { $nin: rootFamilyIds },
+			type: { $ne: "ancestor" }
 		};
 
 		page = parseInt(data.page) || 1;
 		limit = parseInt(data.limit) || 10;
 		skip = (page - 1) * limit;
 
-		const [familyMemberships, members, parents, teachers, admins] = await Promise.all([FamilyMembership.find(options), Member.find(options), Parent.find(options), Teacher.find(options), Admin.find(options)]);
+		const [familyMembers, members, parents, teachers, admins] = await Promise.all([FamilyMember.find(options), Member.find(options), Parent.find(options), Teacher.find(options), Admin.find(options)]);
 
-		const rootFamily = [].concat(familyMemberships, members, parents, teachers, admins);
+		const rootFamily = [].concat(familyMembers, members, parents, teachers, admins);
 		// console.log("rootFamily", rootFamily);
 
 		rootFamily.sort((a, b) => {
@@ -64,7 +66,7 @@ export async function GET(req) {
 			rootFamily: paginated
 		};
 
-		console.log("results", results);
+		// console.log("results", results);
 
 		return NextResponse.json({ results, message: "get root family members" }, { status: 200 });
 	} catch (error) {
@@ -118,8 +120,8 @@ export async function PATCH(req) {
 						throw new Error("membership action is not recognized.");
 				}
 				break;
-			case "Family_Membership":
-				rootMember = await FamilyMembership.findById({ _id: memberId });
+			case "Family_Member":
+				rootMember = await FamilyMember.findById({ _id: memberId });
 				if (!rootMember) return NextResponse.json({ message: "user not be found." }, { status: 404 });
 
 				switch (action) {

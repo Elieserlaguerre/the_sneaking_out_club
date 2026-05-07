@@ -27,7 +27,7 @@ export const handleNewFamilyMemberEvent = async (data) => {
 				console.log("Event Results:", ledgerResults.message);
 				const { notifications } = data;
 
-				if (notifications.notify === true) {
+				if (notifications.create === true) {
 					const notificationResults = await createNotifications(data, session);
 					if (notificationResults.succes === true) {
 						console.log("Notifications Message:", notificationResults.message);

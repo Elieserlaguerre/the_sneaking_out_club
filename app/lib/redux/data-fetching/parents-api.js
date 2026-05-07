@@ -3,9 +3,9 @@ import { multiTenantApi } from "./root-api";
 export const parentApi = multiTenantApi.injectEndpoints({
 	overrideExisting: true,
 	endpoints: (build) => ({
-		manageFamilyMember: build.mutation({
+		createFamilyMember: build.mutation({
 			query: (formData) => ({
-				url: "/parents/family",
+				url: "/parents/family/members",
 				method: "POST",
 				body: formData
 			}),
@@ -14,7 +14,7 @@ export const parentApi = multiTenantApi.injectEndpoints({
 		}),
 		getFamilyMembers: build.query({
 			query: (query) => ({
-				url: "/parents/family",
+				url: "/parents/family/members",
 				method: "GET",
 				params: query
 			}),
@@ -24,7 +24,7 @@ export const parentApi = multiTenantApi.injectEndpoints({
 		}),
 		updateFamilyMember: build.mutation({
 			query: (formData) => ({
-				url: "/parents/family",
+				url: "/parents/family/members",
 				method: "PATCH",
 				body: formData
 			}),
@@ -33,7 +33,7 @@ export const parentApi = multiTenantApi.injectEndpoints({
 		}),
 		deleteFamilyMember: build.mutation({
 			query: (formData) => ({
-				url: "/parents/family",
+				url: "/parents/family/members",
 				method: "DELETE",
 				body: formData
 			}),
@@ -55,7 +55,7 @@ export const parentApi = multiTenantApi.injectEndpoints({
 				method: "GET",
 				params: query
 			}),
-			providesTags: [{ type: "parents family tree management" }],
+			providesTags: [{ type: "parents family tree management" }, { type: "parents search history" }, { type: "parents search history" }],
 			transformErrorResponse: (results) => results.data.message,
 			keepUnusedDataFor: 0
 		}),
@@ -140,7 +140,16 @@ export const parentApi = multiTenantApi.injectEndpoints({
 				method: "POST",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "parent family branches" }],
+			invalidatesTags: [{ type: "parents family branches" }, { type: "global current user" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		editHousehold: build.mutation({
+			query: (formData) => ({
+				url: "/parents/family/branches",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents family branches" }, { type: "global current user" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
 		getHouseholds: build.query({
@@ -149,7 +158,7 @@ export const parentApi = multiTenantApi.injectEndpoints({
 				method: "GET",
 				params: query
 			}),
-			providesTags: [{ type: "parent family branches" }],
+			providesTags: [{ type: "parents family branches" }],
 			transformErrorResponse: (results) => results.data.message,
 			keepUnusedDataFor: 0
 		}),
@@ -159,29 +168,85 @@ export const parentApi = multiTenantApi.injectEndpoints({
 				method: "GET",
 				params: query
 			}),
-			providesTags: [{ type: "parent family tree branches" }],
+			providesTags: [{ type: "parents family tree branches" }],
 			transformErrorResponse: (results) => results.data.message,
 			keepUnusedDataFor: 0
 		}),
-		manageFamilyBranches: build.mutation({
+		manageFamilyTreeBranches: build.mutation({
 			query: (formData) => ({
 				url: "/parents/family/tree/structure/branches",
 				method: "PATCH",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "parent family tree branches" }, { type: "parents family tree management" }],
+			invalidatesTags: [{ type: "parents family tree branches" }, { type: "parents family tree management" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
-		deleteFamilyBranch: build.mutation({
+		deleteFamilyTreeBranch: build.mutation({
 			query: (formData) => ({
 				url: "/parents/family/tree/structure/branches",
 				method: "DELETE",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "parent family tree branches" }, { type: "parents family tree management" }],
+			invalidatesTags: [{ type: "parents family tree branches" }, { type: "parents family tree management" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getFamilyTreeLeadershipCandidates: build.query({
+			query: (query) => ({
+				url: "/parents/family/tree/structure/leadership",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "parents family tree leadership" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		manageFamilyTreeLeadership: build.mutation({
+			query: (formData) => ({
+				url: "/parents/family/tree/structure/leadership",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents family tree leadership" }, { type: "parents family tree management" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getConnections: build.query({
+			query: (query) => ({
+				url: "/parents/dashboard/connections",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "parents connections" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		sendFriendRequest: build.mutation({
+			query: (formData) => ({
+				url: "/parents/dashboard/connections",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents connections" }, { type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		manageFavoriteConnections: build.mutation({
+			query: (formData) => ({
+				url: "/parents/dashboard/connections",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents connections" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		unfriend: build.mutation({
+			query: (formData) => ({
+				url: "/parents/dashboard/connections",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents connections" }],
 			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useDeleteFamilyBranchMutation, useManageFamilyBranchesMutation, useLazyGetFamilyTreeBranchesQuery, useLazyGetHouseholdsQuery, useCreateHouseholdMutation, useDeleteRootFamilyMemberMutation, useManageRootFamilyMembershipMutation, useLazyGetRootFamilyQuery, useDeleteAncestorMutation, useManageAncestorMembershipMutation, useLazyGetAncestorsQuery, useUpdateFamilyTreeMutation, useDeleteFamilyTreeMutation, useLazyGetFamilyTreeQuery, useCreateFamilyTreeMutation, useDeleteFamilyMemberMutation, useUpdateFamilyMemberMutation, useManageFamilyMemberMutation, useLazyGetFamilyMembersQuery } = parentApi;
+export const { useUnfriendMutation, useManageFavoriteConnectionsMutation, useSendFriendRequestMutation, useLazyGetConnectionsQuery, useEditHouseholdMutation, useManageFamilyTreeLeadershipMutation, useLazyGetFamilyTreeLeadershipCandidatesQuery, useDeleteFamilyTreeBranchMutation, useManageFamilyTreeBranchesMutation, useLazyGetFamilyTreeBranchesQuery, useLazyGetHouseholdsQuery, useCreateHouseholdMutation, useDeleteRootFamilyMemberMutation, useManageRootFamilyMembershipMutation, useLazyGetRootFamilyQuery, useDeleteAncestorMutation, useManageAncestorMembershipMutation, useLazyGetAncestorsQuery, useUpdateFamilyTreeMutation, useDeleteFamilyTreeMutation, useLazyGetFamilyTreeQuery, useCreateFamilyTreeMutation, useDeleteFamilyMemberMutation, useUpdateFamilyMemberMutation, useCreateFamilyMemberMutation, useLazyGetFamilyMembersQuery } = parentApi;

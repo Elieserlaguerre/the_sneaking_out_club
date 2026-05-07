@@ -10,7 +10,9 @@ import { nanoid } from "nanoid";
 import { manageHouseholdSchema } from "@/app/lib/util/global/zod-validations";
 import { fromZodError } from "zod-validation-error";
 import toast from "react-hot-toast";
-import { useCreateHouseholdMutation } from "@/app/lib/redux/data-fetching/parents-api";
+import { useCreateHouseholdMutation, useEditHouseholdMutation } from "@/app/lib/redux/data-fetching/parents-api";
+import ImageCard from "../../cards/ImageCard";
+import { format } from "date-fns";
 
 export default function ManageHousehold({ open, closingFunction, settings }) {
 	function classNames(...classes) {
@@ -83,13 +85,27 @@ export default function ManageHousehold({ open, closingFunction, settings }) {
 		}
 	}, [uploadImageResults.isSuccess, uploadImageResults.isError]);
 
+	const [editHousehold, editHouseholdResults] = useEditHouseholdMutation();
+
+	useEffect(() => {
+		if (editHouseholdResults.isError) {
+			const message = typeof editHouseholdResults.error === "string" ? editHouseholdResults.error : editHouseholdResults.error.message;
+			toast.error(message);
+		} else if (editHouseholdResults.isSuccess) {
+			toast.success(editHouseholdResults.data.message);
+			clearForm();
+			closingFunction();
+		}
+	}, [editHouseholdResults.isLoading, editHouseholdResults.isSuccess, editHouseholdResults.isError]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		const validation = manageHouseholdSchema.safeParse(formContent);
 
 		if (validation.success) {
-			createHousehold(validation.data);
+			if (settings.edit === true) editHousehold({ familyId: settings.selectedDocument._id, update: validation.data, currentUser: user._id });
+			else createHousehold(validation.data);
 		} else {
 			const error = fromZodError(validation.error);
 			error.details.map((error) => toast.error(error.message));
@@ -168,6 +184,26 @@ export default function ManageHousehold({ open, closingFunction, settings }) {
 		}
 	}, [createHouseholdResults.isLoading, createHouseholdResults.isSuccess, createHouseholdResults.isError]);
 
+	useEffect(() => {
+		if (settings.selectedDocument) {
+			setFormContent((content) => ({
+				...content,
+				name: settings?.selectedDocument?.name,
+				motto: settings?.selectedDocument?.motto,
+				origin: settings?.selectedDocument?.origin,
+				crest: settings?.selectedDocument?.crest,
+				familyTree: settings?.selectedDocument?.familyTree,
+				members: settings?.selectedDocument?.members ?? [],
+				childFamilies: settings?.selectedDocument?.childFamilies ?? [],
+				generationLevel: settings?.selectedDocument.generationLevel,
+				established: settings?.selectedDocument.established,
+				creator: settings?.selectedDocument.creator
+			}));
+		} else {
+			if (settings.edit === false) clearForm();
+		}
+	}, [settings.edit, settings.selectedDocument]);
+
 	return (
 		<Dialog open={open} onClose={closingFunction} className="relative z-50">
 			<div className="fixed inset-0" />
@@ -180,7 +216,7 @@ export default function ManageHousehold({ open, closingFunction, settings }) {
 								<div className="flex-1 flex flex-col overflow-y-hidden max-h-screen">
 									<div className={classNames("px-4 py-[1.61rem] sm:px-6 bg-linear-to-br from-orange-500 to-orange-700")}>
 										<div className="flex items-center justify-between">
-											<DialogTitle className="text-base font-semibold text-white capitalize">manage family branch</DialogTitle>
+											<DialogTitle className="text-base font-semibold text-white capitalize">{settings.edit ? "edit" : "create"} household</DialogTitle>
 											<div className="ml-3 flex h-7 items-center">
 												<button type="button" onClick={closingFunction} className="relative rounded-md bg-transparent text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
 													<span className="absolute -inset-2.5" />
@@ -267,6 +303,22 @@ export default function ManageHousehold({ open, closingFunction, settings }) {
 														<option>select one</option>
 														<option value={user?._id}>{user?.name}</option>
 													</select>
+												</div>
+											</div>
+
+											<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+												<div className="px-4 py-5 sm:px-6 text-center font-medium text-sm/6 capitalize">family crest</div>
+												<div className="py-5">
+													<ImageCard
+														image={formContent.crest}
+														settings={{
+															alt: "family crest image",
+															styles: {
+																image: "object-contain object-center",
+																background: "aspect-square"
+															}
+														}}
+													/>
 												</div>
 											</div>
 										</div>
