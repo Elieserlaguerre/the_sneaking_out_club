@@ -1,18 +1,18 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import React, { useEffect, useState } from "react";
-import { buttonVariants } from "../../../shadcn/button";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import { useTheme } from "../../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
-import EmptyFamilyMembers from "../../../empty-states/EmptyFamilyMembers";
-import { useGetFamilyMembersQuery, useLazyGetFamilyMembersQuery } from "@/app/lib/redux/data-fetching/parents-api";
+import { useLazyGetFamilyMembersQuery } from "@/app/lib/redux/data-fetching/parents-api";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import toast from "react-hot-toast";
-import FamilyMemberCard from "../../../cards/FamilyMemberCard";
-import ManageFamilyMembers from "../../../overlays/drawers/ManageFamilyMembers";
+import { buttonVariants } from "@/app/components/shadcn/button";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import EmptyFamilyMembers from "@/app/components/empty-states/EmptyFamilyMembers";
+import FamilyMemberCard from "@/app/components/cards/FamilyMemberCard";
+import ManageFamilyMembers from "@/app/components/overlays/drawers/ManageFamilyMembers";
 
 export default function FamilyMembersPage() {
 	function classNames(...classes) {

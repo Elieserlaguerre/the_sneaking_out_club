@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { buttonVariants } from "../../shadcn/button";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
-import EmptyFamilyPlanState from "../../empty-states/EmptyFamilyPlans";
+import { buttonVariants } from "@/app/components/shadcn/button";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import EmptyFamilyPlan from "@/app/components/empty-states/EmptyFamilyPlans";
 
 export default function FamilyPlansPage() {
 	function classNames(...classes) {
@@ -180,7 +180,7 @@ export default function FamilyPlansPage() {
 					</Disclosure>
 				</header>
 				<div className="divide-y divide-gray-200 overflow-hidden bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 min-h-screen flex flex-col">
-					<div className="flex-1">{familyPlans.length > 0 ? "display family plans" : <EmptyFamilyPlanState />}</div>
+					<div className="flex-1">{familyPlans.length > 0 ? "display family plans" : <EmptyFamilyPlan />}</div>
 					<div className={classNames(theme.base, "px-4 py-4 sm:px-6 flex justify-center items-center")}>
 						<Pagination count={totalPages} defaultPage={page} siblingCount={0} variant="outlined" onChange={handlePagination} className="pagination-black pagination-yellow" />
 					</div>

@@ -1,20 +1,20 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
-import { buttonVariants } from "../../../shadcn/button";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import { useTheme } from "../../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
-import EmptyFamilyMembers from "../../../empty-states/EmptyFamilyMembers";
 import { useLazyGetHouseholdsQuery } from "@/app/lib/redux/data-fetching/parents-api";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import toast from "react-hot-toast";
-import FamilyMemberCard from "../../../cards/FamilyMemberCard";
-import ManageHousehold from "../../../overlays/drawers/ManageHousehold";
 import { scrollToTop } from "@/app/lib/util/frontend";
 import FamilyProfile from "./FamilyProfile";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import EmptyFamilyMembers from "@/app/components/empty-states/EmptyFamilyMembers";
+import FamilyMemberCard from "@/app/components/cards/FamilyMemberCard";
+import ManageHousehold from "@/app/components/overlays/drawers/ManageHousehold";
+import { buttonVariants } from "@/app/components/shadcn/button";
 
 export default function FamilyBranchesPage() {
 	function classNames(...classes) {

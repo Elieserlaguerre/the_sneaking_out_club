@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { buttonVariants } from "../../shadcn/button";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
-import EmptyFamilyHealthState from "../../empty-states/EmptyFamilyHealth.js";
-import EmptyFamilyEstate from "../../empty-states/EmptyFamilyEstate";
+import EmptyFamilyEstate from "@/app/components/empty-states/EmptyFamilyEstate";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import { buttonVariants } from "@/app/components/shadcn/button";
 
 export default function FamilyEstatePage() {
 	function classNames(...classes) {

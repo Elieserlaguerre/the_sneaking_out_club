@@ -1,21 +1,21 @@
 "use client";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import React, { Fragment, useEffect, useState } from "react";
-import { buttonVariants } from "../../../shadcn/button";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { nanoid } from "nanoid";
-import { useTheme } from "../../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
 import { useLazyGetFamilyTreeQuery } from "@/app/lib/redux/data-fetching/parents-api";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import toast from "react-hot-toast";
-import EmptyFamilyTree from "../../../empty-states/EmptyFamilyTree";
-import ManageFamilyTree from "../../../overlays/drawers/ManageFamilyTree";
-import FamilyTreeCard from "../../../cards/FamilyTreeCard";
-import FamilyTreeProfile from "./FamilyTreeProfile";
 import { scrollToTop } from "@/app/lib/util/frontend";
-import FamilyTreeSearch from "../../../overlays/drawers/FamilyTreeSearch";
+import { buttonVariants } from "@/app/components/shadcn/button";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import EmptyFamilyTree from "@/app/components/empty-states/EmptyFamilyTree";
+import ManageFamilyTree from "@/app/components/overlays/drawers/ManageFamilyTree";
+import FamilyTreeCard from "@/app/components/cards/FamilyTreeCard";
+import FamilyTreeSearch from "@/app/components/overlays/drawers/FamilyTreeSearch";
+import FamilyTreeProfile from "./FamilyTreeProfile";
 
 export default function FamilyTreePage() {
 	function classNames(...classes) {

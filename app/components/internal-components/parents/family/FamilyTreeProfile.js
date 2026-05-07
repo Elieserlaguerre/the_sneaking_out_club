@@ -1,27 +1,27 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useTheme } from "../../../providers/ThemeProvider";
-import ImageCard from "../../../cards/ImageCard";
 import { EllipsisHorizontalIcon, EllipsisVerticalIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { buttonVariants } from "../../../shadcn/button";
 import { format } from "date-fns";
 import { calculateAge } from "@/app/lib/util/global";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { useDeleteFamilyTreeMutation, useManageFamilyTreeLeadershipMutation } from "@/app/lib/redux/data-fetching/parents-api";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
-import AddAncestors from "../../../overlays/modals/AddAncestors";
-import AddRootFamilyMembers from "../../../overlays/modals/AddRootFamilyMember";
-import AddFamilyBranch from "../../../overlays/modals/AddFamilyBranch";
-import ManageFamilyTreeLeadership from "../../../overlays/modals/ManageFamilyTreeLeadership";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
 import { nanoid } from "nanoid";
-import FamilyMembershipSkeleton from "../../../loading-skeletons/FamilyMembershipSkeleton";
 import toast from "react-hot-toast";
-import AncestorCard from "../../../cards/AncestorCard";
-import RootMemberCard from "../../../cards/RootMemberCard";
-import FamilyBranchCard from "../../../cards/FamilyBranchCard";
+import { useTheme } from "@/app/components/providers/ThemeProvider";
+import ImageCard from "@/app/components/cards/ImageCard";
+import { buttonVariants } from "@/app/components/shadcn/button";
+import AddAncestors from "@/app/components/overlays/modals/AddAncestors";
+import AddRootFamilyMembers from "@/app/components/overlays/modals/AddRootFamilyMember";
+import AddFamilyBranch from "@/app/components/overlays/modals/AddFamilyBranch";
+import AncestorCard from "@/app/components/cards/AncestorCard";
+import RootMemberCard from "@/app/components/cards/RootMemberCard";
+import FamilyBranchCard from "@/app/components/cards/FamilyBranchCard";
+import FamilyMembershipSkeleton from "@/app/components/loading-skeletons/FamilyMembershipSkeleton";
+import ManageFamilyTreeLeadership from "@/app/components/overlays/modals/ManageFamilyTreeLeadership";
 
 export default function FamilyTreeProfile({ tree, editFunction }) {
 	function classNames(...classes) {
