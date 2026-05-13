@@ -176,7 +176,7 @@ export default function ParentDashboard() {
 	return (
 		<div className="relative bg-gray-200">
 			<div className={classNames(theme.base, "capitalize h-96")} />
-			<div className="w-11/12 mx-auto grid grid-cols-7 -mt-32 lg:-mt-64 gap-2.5">
+			<div className="w-11/12 mx-auto grid grid-cols-7 -mt-32 lg:-mt-64 gap-8">
 				<div className="col-span-full lg:col-span-5 max-w-2xl px-4 sm:px-6 lg:px-8 lg:pt-8 lg:max-w-7xl min-h-screen flex flex-col justify-between gap-2.5 bg-white rounded-t-md">
 					<span className="sr-only">parents dashboard</span>
 					<section className="grid grid-cols-1 lg:grid-cols-4">

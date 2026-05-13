@@ -152,8 +152,36 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "global search history" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		reactToPost: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents post" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getMyReactions: build.query({
+			query: (query) => ({
+				url: "/global/posts",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global reactions" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		saveItem: build.mutation({
+			query: (formData) => ({
+				url: "/global/saved-items",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved items" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const {useSaveItemMutation, useLazyGetMyReactionsQuery, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

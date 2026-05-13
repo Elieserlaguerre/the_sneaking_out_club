@@ -11,16 +11,4 @@ export function calculateAge(dateString) {
 	}
 }
 
-export function mapConnectionsByType(connections = []) {
-	return connections.reduce((acc, conn) => {
-		const { memberType, member } = conn;
 
-		if (!acc[memberType]) {
-			acc[memberType] = [];
-		}
-
-		acc[memberType].push(member);
-
-		return acc;
-	}, {});
-}

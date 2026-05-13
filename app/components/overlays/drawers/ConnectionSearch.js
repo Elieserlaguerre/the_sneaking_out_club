@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { buttonVariants } from "../../shadcn/button";
 import { Dialog, DialogPanel, DialogTitle, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EllipsisVerticalIcon, TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import toast from "react-hot-toast";
@@ -13,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery } from "@/app/lib/redux/data-fetching/global-api";
 import { useLazyGetConnectionsQuery } from "@/app/lib/redux/data-fetching/parents-api";
 import { nanoid } from "nanoid";
+import { buttonVariants } from "../../shadcn/button";
 
 export default function ConnectionSearch({ open, closingFunction, updateFunction, page, limit, filters }) {
 	function classNames(...classes) {

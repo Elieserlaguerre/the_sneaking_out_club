@@ -161,21 +161,8 @@ const adminSchema = new Schema(
 		connections: {
 			type: [
 				{
-					member: {
-						type: ObjectId,
-						required: true,
-						refPath: "connections.memberType"
-					},
-					memberType: {
-						type: String,
-						required: true,
-						enum: ["Member", "Parent", "Teacher", "Admin"]
-					},
-					favored: {
-						type: Boolean,
-						required: true,
-						default: false
-					}
+					type: ObjectId,
+					ref: "Connection"
 				}
 			],
 			default: []

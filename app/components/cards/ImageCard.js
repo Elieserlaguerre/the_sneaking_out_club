@@ -28,8 +28,6 @@ export default function ImageCard({ image, settings }) {
 		publicId: z.string().trim().nonempty({ message: "publicId is required." })
 	});
 
-	console.log("image", image);
-
 	const dynamicImageDisplay = () => {
 		const fileValidation = fileSchema.safeParse(image);
 

@@ -12,6 +12,7 @@ import "@/app/lib/events/register-handlers";
 import { MODEL_MAP } from "@/app/lib/util/backend/variables";
 import { nanoid } from "nanoid";
 import SearchQuery from "@/app/lib/models/SearchQuery";
+import Connection from "@/app/lib/models/Connection";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +40,6 @@ export async function GET(req) {
 
 		if (!currentUser) return NextResponse.json({ message: "user not found." }, { status: 404 });
 
-		const currentConnections = currentUser.connections.map((connection) => connection.member);
-
 		const filters = JSON.parse(data.filters);
 
 		let page, limit, skip, totalDocuments, totalPages, options, sort, connections, results, filteredConnections, paginatedResults;
@@ -57,34 +56,46 @@ export async function GET(req) {
 
 		switch (filters.options) {
 			case "my connections":
-				filteredConnections = currentUser.connections.filter((connection) => connection.favored === false);
-				paginatedResults = arrayPagination(filteredConnections, page, limit, sort);
+				options = {
+					_id: {
+						$ne: currentUser._id
+					},
+					favored: false
+				};
+
+				totalDocuments = await Connection.countDocuments(options);
+				totalPages = Math.ceil(totalDocuments / limit);
+				connections = await Connection.find(options).skip(skip).limit(limit).sort(sort);
 
 				results = {
-					totalPages: paginatedResults.totalPages,
-					connections: paginatedResults.data,
-					total: paginatedResults.total
+					totalPages,
+					connections
 				};
 
 				// console.log("my connections", results);
 
 				break;
 			case "favorite connections":
-				filteredConnections = currentUser.connections.filter((connection) => connection.favored === true);
+				options = {
+					_id: {
+						$ne: currentUser._id
+					},
+					favored: true
+				};
 
-				paginatedResults = arrayPagination(filteredConnections, page, limit, sort);
+				totalDocuments = await Connection.countDocuments(options);
+				totalPages = Math.ceil(totalDocuments / limit);
+				connections = await Connection.find(options).skip(skip).limit(limit).sort(sort);
 
 				results = {
-					totalPages: paginatedResults.totalPages,
-					connections: paginatedResults.data,
-					total: paginatedResults.total
+					totalPages,
+					connections
 				};
 				break;
 			case "user search":
 				options = {
 					_id: {
-						$ne: currentUser._id,
-						$nin: currentConnections
+						$ne: currentUser._id
 					}
 				};
 
@@ -99,8 +110,7 @@ export async function GET(req) {
 			case "parent search":
 				options = {
 					_id: {
-						$ne: currentUser._id,
-						$nin: currentConnections
+						$ne: currentUser._id
 					}
 				};
 
@@ -115,8 +125,7 @@ export async function GET(req) {
 			case "teacher search":
 				options = {
 					_id: {
-						$ne: currentUser._id,
-						$nin: currentConnections
+						$ne: currentUser._id
 					}
 				};
 
@@ -170,7 +179,7 @@ export async function GET(req) {
 				throw new Error("filter option not authorized.");
 		}
 
-		console.log("results", results);
+		// console.log("results", results);
 
 		return NextResponse.json({ results, message: "connections retrieved." }, { status: 200 });
 	} catch (error) {
@@ -286,7 +295,7 @@ export async function DELETE(req) {
 		await db.connect();
 		let data;
 		data = await req.json();
-		console.log("data", data);
+		// console.log("data", data);
 
 		const { userId, connectionId } = data;
 
@@ -320,7 +329,7 @@ export async function DELETE(req) {
 		removedIndividual.connections.pull(target);
 		await removedIndividual.save();
 
-		console.log("currentUser", currentUser);
+		// console.log("currentUser", currentUser);
 
 		return NextResponse.json({ message: "connection deleted." }, { status: 200 });
 	} catch (error) {

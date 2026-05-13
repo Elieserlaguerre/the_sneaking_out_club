@@ -1,6 +1,7 @@
 import Admin from "../../models/Admin";
 import Member from "../../models/Member";
 import Parent from "../../models/Parent";
+import Post from "../../models/Post";
 import Teacher from "../../models/Teacher";
 
 export const USER_MODEL = {
@@ -17,3 +18,8 @@ export const MODEL_MAP = {
 	Teacher,
 	Admin
 };
+
+
+export const CONTENT_MAP = {
+	Post
+}

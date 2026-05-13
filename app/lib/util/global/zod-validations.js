@@ -290,3 +290,78 @@ export const connectionSearchSchema = z.object({
 	userType: z.string().trim().nonempty({ message: "user type is required." }),
 	platformSection: z.string().trim().nonempty({ message: "platform section is required." })
 });
+
+/*
+==================
+SHARED POST FIELDS
+==================
+*/
+
+const basePostSchema = z.object({
+	creator: z.string().trim().nonempty({
+		message: "creator is required."
+	}),
+
+	creatorType: z.string().trim().nonempty({
+		message: "creator type is required."
+	})
+});
+
+/*
+================
+TEXT POST SCHEMA
+================
+*/
+
+const textPostSchema = basePostSchema.extend({
+	type: z.literal("text"),
+
+	caption: z.string().trim().nonempty({
+		message: "post message is required."
+	})
+});
+
+/*
+=================
+MEDIA POST SCHEMA
+=================
+*/
+const imagePostSchema = basePostSchema.extend({
+	type: z.literal("image"),
+
+	caption: z.string().optional(),
+
+	media: z.object({
+		publicId: z.string(),
+		url: z.string(),
+		width: z.number().optional(),
+		height: z.number().optional()
+	}),
+
+	format: z.string().optional()
+});
+
+const videoPostSchema = basePostSchema.extend({
+	type: z.literal("video"),
+
+	caption: z.string().optional(),
+
+	media: z.object({
+		publicId: z.string(),
+		url: z.string(),
+		width: z.number().optional(),
+		height: z.number().optional()
+	}),
+
+	duration: z.coerce.number(),
+
+	format: z.string().optional()
+});
+
+/*
+==============================
+FIELD COMPILATION & FILTRATION
+==============================
+*/
+
+export const postSchema = z.discriminatedUnion("type", [textPostSchema, imagePostSchema, videoPostSchema]);

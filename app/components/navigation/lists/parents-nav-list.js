@@ -122,7 +122,7 @@ export const parentsDashboardSectionNav = [
 	},
 	{
 		id: nanoid(),
-		title: "club store",
+		title: "store",
 		href: "/dashboard/store"
 	},
 	{

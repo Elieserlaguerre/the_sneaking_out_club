@@ -245,8 +245,37 @@ export const parentApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "parents connections" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		getPrograms: build.query({
+			query: (query) => ({
+				url: "/parents/dashboard/programs",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "parents programs" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		createPost: build.mutation({
+			query: (formData) => ({
+				url: "/parents/dashboard/posts",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "parents post" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getPosts: build.query({
+			query: (query) => ({
+				url: "/parents/dashboard/posts",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "parents post" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
 		})
 	})
 });
 
-export const { useUnfriendMutation, useManageFavoriteConnectionsMutation, useSendFriendRequestMutation, useLazyGetConnectionsQuery, useEditHouseholdMutation, useManageFamilyTreeLeadershipMutation, useLazyGetFamilyTreeLeadershipCandidatesQuery, useDeleteFamilyTreeBranchMutation, useManageFamilyTreeBranchesMutation, useLazyGetFamilyTreeBranchesQuery, useLazyGetHouseholdsQuery, useCreateHouseholdMutation, useDeleteRootFamilyMemberMutation, useManageRootFamilyMembershipMutation, useLazyGetRootFamilyQuery, useDeleteAncestorMutation, useManageAncestorMembershipMutation, useLazyGetAncestorsQuery, useUpdateFamilyTreeMutation, useDeleteFamilyTreeMutation, useLazyGetFamilyTreeQuery, useCreateFamilyTreeMutation, useDeleteFamilyMemberMutation, useUpdateFamilyMemberMutation, useCreateFamilyMemberMutation, useLazyGetFamilyMembersQuery } = parentApi;
+export const { useLazyGetPostsQuery, useCreatePostMutation, useGetProgramsQuery, useUnfriendMutation, useManageFavoriteConnectionsMutation, useSendFriendRequestMutation, useLazyGetConnectionsQuery, useEditHouseholdMutation, useManageFamilyTreeLeadershipMutation, useLazyGetFamilyTreeLeadershipCandidatesQuery, useDeleteFamilyTreeBranchMutation, useManageFamilyTreeBranchesMutation, useLazyGetFamilyTreeBranchesQuery, useLazyGetHouseholdsQuery, useCreateHouseholdMutation, useDeleteRootFamilyMemberMutation, useManageRootFamilyMembershipMutation, useLazyGetRootFamilyQuery, useDeleteAncestorMutation, useManageAncestorMembershipMutation, useLazyGetAncestorsQuery, useUpdateFamilyTreeMutation, useDeleteFamilyTreeMutation, useLazyGetFamilyTreeQuery, useCreateFamilyTreeMutation, useDeleteFamilyMemberMutation, useUpdateFamilyMemberMutation, useCreateFamilyMemberMutation, useLazyGetFamilyMembersQuery } = parentApi;
