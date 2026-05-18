@@ -3,6 +3,7 @@ import { careersAssignmentsSectionNav, careersDashboardSectionNav, careersDocume
 import { membersAssignmentsSectionNav, membersDashboardSectionNav, membersDocumentsSectionNav, membersEventsSectionNav, membersExternalSectionNav, membersInaternalSectionNav, membersMeetingSectionNav, membersMessagesSectionNav, membersReportsSectionNav, membersSchedulesSectionNav } from "@/app/components/navigation/lists/members-nav-list";
 import { parentFamilySectionNav, parentsAssignmentsSectionNav, parentsDashboardSectionNav, parentsDocumentsSectionNav, parentsEventsSectionNav, parentsExternalSectionNav, parentsInaternalSectionNav, parentsMeetingSectionNav, parentsMessagesSectionNav, parentsReportsSectionNav, parentsSchedulesSectionNav } from "@/app/components/navigation/lists/parents-nav-list";
 import { teachersAssignmentsSectionNav, teachersDashboardSectionNav, teachersDocumentsSectionNav, teachersEventsSectionNav, teachersExternalSectionNav, teachersInaternalSectionNav, teachersMeetingSectionNav, teachersMessagesSectionNav, teachersReportsSectionNav } from "@/app/components/navigation/lists/teachers-nav-list";
+import { differenceInDays, format, formatDistanceToNowStrict } from "date-fns";
 import { nanoid } from "nanoid";
 import { signOut } from "next-auth/react";
 
@@ -719,3 +720,22 @@ export const familyRelations = (relation, gender) => {
 
 	return RELATIONS[normalizedRelation][normalizedGender];
 };
+
+export function formatPostDate(date, settings) {
+	const now = new Date();
+	const targetDate = new Date(date);
+
+	const daysDifference = differenceInDays(now, targetDate);
+
+	// Older than 7 days
+	if (daysDifference >= 7 && settings?.comments !== true) {
+		return format(targetDate, "MMM d 'at' h:mm a");
+	}
+
+	const relative = formatDistanceToNowStrict(targetDate, {
+		addSuffix: false
+	});
+
+	// Convert words into Facebook-style shorthand
+	return relative.replace(" seconds", "s").replace(" second", "s").replace(" minutes", "m").replace(" minute", "m").replace(" hours", "h").replace(" hour", "h").replace(" days", "d").replace(" day", "d").replace(" months", "M").replace(" month", "M").replace(" years", "yrs").replace(" year", "yr");
+}

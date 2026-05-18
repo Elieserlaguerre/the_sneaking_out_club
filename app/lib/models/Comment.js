@@ -6,8 +6,7 @@ const commentSchema = new Schema(
 	{
 		post: {
 			type: ObjectId,
-			ref: "Post",
-			required: true
+			ref: "Post"
 		},
 
 		parentComment: {
@@ -16,7 +15,7 @@ const commentSchema = new Schema(
 			default: null
 		},
 
-		content: {
+		message: {
 			type: String,
 			required: true,
 			maxlength: 2000
@@ -55,6 +54,11 @@ const commentSchema = new Schema(
 				default: 0
 			},
 
+			wow: {
+				type: Number,
+				default: 0
+			},
+
 			angry: {
 				type: Number,
 				default: 0
@@ -64,6 +68,11 @@ const commentSchema = new Schema(
 				type: Number,
 				default: 0
 			}
+		},
+
+		totalReactions: {
+			type: Number,
+			default: 0
 		},
 
 		replyCount: {

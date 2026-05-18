@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ImageCard from "./ImageCard";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { EllipsisHorizontalIcon, XMarkIcon } from "@heroicons/react/20/solid";
@@ -9,12 +9,12 @@ import { IoArrowRedoOutline } from "react-icons/io5";
 import { nanoid } from "nanoid";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
-import { format } from "date-fns";
-import { Popover } from "@mui/material";
-import { Popper, Fade, Paper } from "@mui/material";
+import { Popper, Fade } from "@mui/material";
 import toast from "react-hot-toast";
 import { useLazyGetMyReactionsQuery, useReactToPostMutation, useSaveItemMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { EMOJI_MAP } from "@/app/lib/util/frontend/variables";
+import PostComment from "../overlays/modals/PostComment";
+import { formatPostDate } from "@/app/lib/util/frontend";
 
 export default function PostCard({ post }) {
 	function classNames(...classes) {
@@ -177,6 +177,16 @@ export default function PostCard({ post }) {
 		}
 	};
 
+	const [openCommentModal, setOpenCommentModal] = useState(false);
+
+	const openComments = () => {
+		setOpenCommentModal(true);
+	};
+
+	const closeComments = () => {
+		setOpenCommentModal(false);
+	};
+
 	return (
 		<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
 			<div className="px-4 py-5 sm:px-6 flex flex-col justify-evenly">
@@ -198,7 +208,7 @@ export default function PostCard({ post }) {
 							<p className="capitalize text-sm font-medium">
 								{post?.creator?.firstName} {post?.creator?.lastName}
 							</p>
-							<p className="capitalize text-sm font-medium">{format(post?.createdAt, "MM/dd/yyyy")}</p>
+							<p className="capitalize text-sm font-medium">{formatPostDate(post.createdAt)}</p>
 						</div>
 					</div>
 
@@ -279,7 +289,7 @@ export default function PostCard({ post }) {
 						<dd>{post?.totalReactions ?? 0}</dd>
 					</div>
 					<div className="flex justify-evenly items-center gap-1">
-						<dt>
+						<dt onClick={openComments}>
 							<ChatBubbleBottomCenterTextIcon className="size-6 cursor-pointer" />
 						</dt>
 						<dd>{post?.commentCount ?? 0}</dd>
@@ -291,7 +301,9 @@ export default function PostCard({ post }) {
 						<dd>{post?.shareCount ?? 0}</dd>
 					</div>
 				</dl>
-				<div className="border border-black"></div>
+				<div className="hidden">
+					<PostComment post={post} open={openCommentModal} closingFunction={closeComments} />
+				</div>
 			</div>
 		</div>
 	);

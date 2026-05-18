@@ -180,8 +180,36 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "global saved items" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		createComment: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/comments",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global comments" }, { type: "parents post" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getPostComments: build.query({
+			query: (query) => ({
+				url: "/global/posts/comments",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global comments" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		reactToComment: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/comments",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global comments" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const {useSaveItemMutation, useLazyGetMyReactionsQuery, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const { useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useLazyGetMyReactionsQuery, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

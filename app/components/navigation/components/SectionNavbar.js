@@ -34,7 +34,7 @@ export default function SectionNavbar({ navList, profile }) {
 
 	return (
 		<div className={classNames(theme.sectionNavbar.root)}>
-			<header className="relative isolate z-40">
+			<header className="relative isolate z-10">
 				<nav aria-label="Global" className={classNames(navList.length > 15 ? "max-w-full" : "max-w-7xl", "mx-auto flex items-center justify-end lg:justify-start p-6 lg:px-8 gap-4")}>
 					<div className={classNames(hideMobileButton ? "hidden" : "flex lg:hidden")}>
 						<button type="button" onClick={() => setMobileMenuOpen(true)} className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">

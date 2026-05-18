@@ -365,3 +365,10 @@ FIELD COMPILATION & FILTRATION
 */
 
 export const postSchema = z.discriminatedUnion("type", [textPostSchema, imagePostSchema, videoPostSchema]);
+
+export const commentSchema = z.object({
+	post: z.string().trim().nonempty({ message: "post ID is required." }),
+	message: z.string().trim().nonempty({ message: "comment message is required." }),
+	creator: z.string().trim().nonempty({ message: "comment creator is required." }),
+	creatorType: z.string().trim().nonempty({ message: "creator type is required." })
+});

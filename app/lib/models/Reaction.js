@@ -6,8 +6,13 @@ const reactionSchema = new Schema(
 	{
 		post: {
 			type: ObjectId,
-			required: true,
 			ref: "Post"
+		},
+
+		comment: {
+			type: ObjectId,
+			ref: "Comment",
+			default: null
 		},
 
 		user: {
@@ -39,5 +44,41 @@ const reactionSchema = new Schema(
 );
 
 reactionSchema.index({ post: 1, user: 1 }, { unique: true });
+
+/*
+====================
+POST REACTIONS
+====================
+One reaction per user per post
+====================
+*/
+
+reactionSchema.index(
+	{ post: 1, user: 1 },
+	{
+		unique: true,
+		partialFilterExpression: {
+			post: { $exists: true, $ne: null }
+		}
+	}
+);
+
+/*
+====================
+COMMENT REACTIONS
+====================
+One reaction per user per comment
+====================
+*/
+
+reactionSchema.index(
+	{ comment: 1, user: 1 },
+	{
+		unique: true,
+		partialFilterExpression: {
+			comment: { $exists: true, $ne: null }
+		}
+	}
+);
 
 export default mongoose.models.Reaction || mongoose.model("Reaction", reactionSchema);
