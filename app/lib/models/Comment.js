@@ -6,7 +6,8 @@ const commentSchema = new Schema(
 	{
 		post: {
 			type: ObjectId,
-			ref: "Post"
+			ref: "Post",
+			require: true
 		},
 
 		parentComment: {

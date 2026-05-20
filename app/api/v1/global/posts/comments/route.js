@@ -46,7 +46,8 @@ export async function GET(req) {
 		let page, limit, skip, totalDocuments, totalPages, options, sort;
 
 		options = {
-			post: data.post
+			post: data.post,
+			parentComment: null
 		};
 
 		const filters = JSON.parse(data.filters);
@@ -105,6 +106,34 @@ export async function GET(req) {
 		});
 
 		/*
+		==================
+		GET RESPONSE COUNT
+		==================
+		*/
+
+		const responseCounts = await Comment.aggregate([
+			{
+				$match: {
+					parentComment: {
+						$in: commentIds
+					}
+				}
+			},
+			{
+				$group: {
+					_id: "$parentComment",
+					count: { $sum: 1 }
+				}
+			}
+		]);
+
+		const responseCountMap = {};
+
+		responseCounts.forEach((reply) => {
+			responseCountMap[reply._id.toString()] = reply.count;
+		});
+
+		/*
 		=========================
 		MERGE COMMENTS + REACTION
 		=========================
@@ -112,7 +141,8 @@ export async function GET(req) {
 
 		const formattedComments = comments.map((comment) => ({
 			...comment,
-			reaction: reactionMap[comment._id.toString()] || null
+			reaction: reactionMap[comment._id.toString()] || null,
+			responseCount: responseCountMap[comment._id.toString()] || 0
 		}));
 
 		const results = {
@@ -120,7 +150,7 @@ export async function GET(req) {
 			comments: formattedComments
 		};
 
-		// console.log("results", results);
+		console.log("results", results);
 
 		return NextResponse.json({ results, message: "comments successfully retrieved." }, { status: 200 });
 	} catch (error) {
@@ -174,6 +204,27 @@ export async function PATCH(req) {
 		return NextResponse.json({ results: reaction, message: "Comment reaction successfully updated." }, { status: 200 });
 	} catch (error) {
 		console.log("PATCH route error:", error.message);
+		return NextResponse.json({ message: error.message }, { status: 500 });
+	}
+}
+
+export async function PUT(req) {
+	try {
+		await db.connect();
+		let data;
+		data = await req.json();
+		console.log("data", data);
+
+		//find the parent comment.
+		const parentComment = await Comment.findById({ _id: data.parentComment });
+
+		//if the parent comment exists then create the response, else send an error message.
+		if (parentComment) await Comment.create(data);
+		else return NextResponse.json({ message: "parent comment not found." }, { status: 404 });
+
+		return NextResponse.json({ message: "response succesfully posted." }, { status: 200 });
+	} catch (error) {
+		console.log("PUT route error:", error.message);
 		return NextResponse.json({ message: error.message }, { status: 500 });
 	}
 }

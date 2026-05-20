@@ -1,5 +1,5 @@
 "use client";
-import { useCreateCommentMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useCreateCommentMutation, useRespondToCommentsMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { nanoid } from "nanoid";
 import React, { useEffect, useState } from "react";
 import ImageCard from "./ImageCard";
@@ -9,6 +9,8 @@ import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import toast from "react-hot-toast";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { responseSchema } from "@/app/lib/util/global/zod-validations";
+import { fromZodError } from "zod-validation-error";
 
 export default function ResponseCard({ comment, cancelFunction }) {
 	function classNames(...classes) {
@@ -16,6 +18,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 	}
 
 	const [formContent, setFormContent] = useState({
+		post: "",
 		parentComment: "",
 		message: "",
 		creator: "",
@@ -24,6 +27,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 
 	const clearForm = () => {
 		setFormContent({
+			post: "",
 			parentComment: "",
 			message: "",
 			creator: "",
@@ -36,6 +40,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 	useEffect(() => {
 		if (user) {
 			setFormContent({
+				post: comment?.post,
 				parentComment: comment?._id,
 				message: "",
 				creator: user?._id,
@@ -73,7 +78,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 		setPage(page);
 	};
 
-	const cancelResponse = () => {
+	const closeResponseComponent = () => {
 		clearForm();
 		cancelFunction();
 	};
@@ -93,6 +98,32 @@ export default function ResponseCard({ comment, cancelFunction }) {
 			icon: CameraIcon
 		}
 	];
+
+	const [respond, responseResults] = useRespondToCommentsMutation();
+
+	useEffect(() => {
+		if (responseResults.isError) {
+			const message = typeof responseResults.error === "string" ? responseResults.error : responseResults.error.message;
+			toast.error(message);
+		} else if (responseResults.isSuccess) {
+			toast.success(responseResults.data.message);
+
+			closeResponseComponent();
+		}
+	}, [responseResults.isLoading, responseResults.isSuccess, responseResults.isError]);
+
+	const submitResponse = (e) => {
+		e.preventDefault();
+
+		const validation = responseSchema.safeParse(formContent);
+
+		if (validation.success) {
+			respond(validation.data);
+		} else {
+			const error = fromZodError(validation.error);
+			error.details.map((error) => toast.error(error.message));
+		}
+	};
 
 	return (
 		<div className="size-full flex justify-between items-start gap-1.5">
@@ -120,7 +151,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 							</MenuButton>
 							<MenuItems transition className="absolute right-0 z-30 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-gray-200 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in grid grid-cols-1 gap-1 p-1">
 								<MenuItem>
-									<button onClick={cancelResponse} type="button" className={classNames(buttonVariants({ variant: "destructiveBtn" }))}>
+									<button onClick={closeResponseComponent} type="button" className={classNames(buttonVariants({ variant: "destructiveBtn" }))}>
 										cancel
 									</button>
 								</MenuItem>
@@ -141,7 +172,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 					</dl>
 
 					<div className="flex justify-evenly items-center gap-0.5">
-						<button type="button" className={classNames(buttonVariants({ variant: "greenCircularBtn" }), "text-sm text-gray-600 font-medium border border-white -mr-2.5 z-16")}>
+						<button type="button" onClick={submitResponse} className={classNames(buttonVariants({ variant: "greenCircularBtn" }), "text-sm text-gray-600 font-medium border border-white -mr-2.5 z-16")}>
 							<PaperAirplaneIcon className="size-3" />
 						</button>
 					</div>

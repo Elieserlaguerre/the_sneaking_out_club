@@ -372,3 +372,11 @@ export const commentSchema = z.object({
 	creator: z.string().trim().nonempty({ message: "comment creator is required." }),
 	creatorType: z.string().trim().nonempty({ message: "creator type is required." })
 });
+
+export const responseSchema = z.object({
+	post: z.string().trim().nonempty({ message: "post ID is required." }),
+	parentComment: z.string().trim().nonempty({ message: "parent comment is required." }),
+	message: z.string().trim().nonempty({ message: "message is required." }),
+	creator: z.string().trim().nonempty({ message: "response creator is required." }),
+	creatorType: z.string().trim().nonempty({ message: "creator type is required." })
+});

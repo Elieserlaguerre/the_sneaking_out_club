@@ -1,5 +1,5 @@
 "use client";
-import { useCreateCommentMutation, useLazyGetPostCommentsQuery, useReactToCommentMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useLazyGetCommentRepliesQuery, useReactToCommentMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { Fade, Popper } from "@mui/material";
 import { nanoid } from "nanoid";
 import React, { useEffect, useState } from "react";
@@ -22,71 +22,6 @@ export default function CommentCard({ comment }) {
 	}
 
 	const user = useAtomValue(currentUser);
-
-	const [createComment, createCommentResults] = useCreateCommentMutation();
-
-	useEffect(() => {
-		if (createCommentResults.isError) {
-			const message = typeof createCommentResults.error === "string" ? createCommentResults.error : createCommentResults.error.message;
-			toast.error(message);
-		} else if (createCommentResults.isSuccess) {
-			// toast.success(createCommentResults.data.message);
-			clearForm();
-		}
-	}, [createCommentResults.isLoading, createCommentResults.isSuccess, createCommentResults.isError]);
-
-	const pageSizes = [
-		{
-			id: nanoid(),
-			value: 10
-		},
-		{
-			id: nanoid(),
-			value: 20
-		},
-		{
-			id: nanoid(),
-			value: 30
-		},
-		{
-			id: nanoid(),
-			value: 40
-		}
-	];
-	const [page, setPage] = useState(1);
-	const [totalPages, setTotalPages] = useState(0);
-	const [limit, setLimit] = useState(pageSizes[0].value);
-	const [filters, setFilters] = useState({
-		sort: "newest"
-	});
-
-	const handlePagination = (_, page) => {
-		setPage(page);
-	};
-
-	const [comments, setComments] = useState([]);
-
-	const [getComments, getCommentsResults] = useLazyGetPostCommentsQuery();
-
-	useEffect(() => {
-		if (getCommentsResults.isError) {
-			const message = typeof getCommentsResults.error === "string" ? getCommentsResults.error : getCommentsResults.error.message;
-			toast.error(message);
-		} else if (getCommentsResults.isSuccess) {
-			// toast.success(getCommentsResults.data.message);
-
-			const { results } = getCommentsResults.data;
-
-			setTotalPages(results?.totalPages ?? 0);
-			setComments(results?.comments ?? []);
-		}
-	}, [getCommentsResults.isFetching, getCommentsResults.isSuccess, getCommentsResults.isError]);
-
-	// useEffect(() => {
-	// 	if (open === true) {
-	// 		getComments({ post: post?._id, page, limit, filters: JSON.stringify(filters), userId: user?._id });
-	// 	}
-	// }, []);
 
 	const [popperData, setPopperData] = useState({
 		anchor: null,
@@ -145,6 +80,66 @@ export default function CommentCard({ comment }) {
 		setReply((prev) => !prev);
 	};
 
+	const pageSizes = [
+		{
+			id: nanoid(),
+			value: 10
+		},
+		{
+			id: nanoid(),
+			value: 20
+		},
+		{
+			id: nanoid(),
+			value: 30
+		},
+		{
+			id: nanoid(),
+			value: 40
+		}
+	];
+	const [page, setPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(0);
+	const [limit, setLimit] = useState(pageSizes[0].value);
+	const [filters, setFilters] = useState({
+		sort: "newest"
+	});
+
+	const handlePagination = (_, page) => {
+		setPage(page);
+	};
+
+	const [replies, setReplies] = useState([]);
+	const [openResponseContainer, setOpenResponseContainer] = useState(false);
+
+	const [getReplies, getRepliesResults] = useLazyGetCommentRepliesQuery();
+
+	useEffect(() => {
+		if (getRepliesResults.isError) {
+			const message = typeof getRepliesResults.error === "string" ? getRepliesResults.error : getRepliesResults.error.message;
+			toast.error(message);
+		} else if (getRepliesResults.isSuccess) {
+			// toast.success(getRepliesResults.data.message);
+			const { results } = getRepliesResults.data;
+			setOpenResponseContainer(true);
+			setReplies(results?.comments ?? []);
+		}
+	}, [getRepliesResults.isFetching, getRepliesResults.isSuccess, getRepliesResults.isError]);
+
+	const handleReplyQueries = () => {
+		getReplies({ post: comment.post, comment: comment._id, page, limit, filters: JSON.stringify(filters), userId: user._id });
+	};
+
+	const responsePrompts = (responseLength) => {
+		if (responseLength > 1) {
+			if (openResponseContainer === true) return <span>Get more resplies</span>;
+			else return <span onClick={handleReplyQueries}>View all {responseLength} replies</span>;
+		} else {
+			if (openResponseContainer === true) return <span onClick={() => setOpenResponseContainer(false)}>Hide response</span>;
+			return <span onClick={handleReplyQueries}>View response</span>;
+		}
+	};
+
 	return (
 		<div className="size-full flex justify-between items-start gap-1.5">
 			<div className="size-9 border border-gray-500 rounded-full flex justify-center items-center overflow-clip">
@@ -174,8 +169,16 @@ export default function CommentCard({ comment }) {
 							</MenuButton>
 							<MenuItems transition className="absolute right-0 z-20 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-gray-200 shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in grid grid-cols-1 gap-1 p-1">
 								<MenuItem>
-									<button className={classNames(buttonVariants({ variant: "yellowBtn" }))}>report comment</button>
+									<button className={classNames(buttonVariants({ variant: "blueBtn" }))}>report comment</button>
 								</MenuItem>
+								{openResponseContainer && (
+									<MenuItem>
+										<button onClick={() => setOpenResponseContainer(false)} className={classNames(buttonVariants({ variant: "yellowBtn" }))}>
+											hide responses
+										</button>
+									</MenuItem>
+								)}
+
 								{comment.creator._id === user._id && (
 									<MenuItem>
 										<button className={classNames(buttonVariants({ variant: "destructiveBtn" }))}>delete comment </button>
@@ -281,6 +284,18 @@ export default function CommentCard({ comment }) {
 				{reply && (
 					<div className="ml-8 mt-4 group">
 						<ResponseCard comment={comment} cancelFunction={replyToComment} />
+					</div>
+				)}
+				{comment.responseCount > 0 && (
+					<div className="rounded-lg bg-white shadow-sm mt-2">
+						{openResponseContainer && (
+							<div className="px-4 py-5 sm:p-6 flex flex-col gap-1.5">
+								{replies?.map((comment) => (
+									<CommentCard key={comment._id} comment={comment} />
+								))}
+							</div>
+						)}
+						<div className="text-left text-sm font-medium text-gray-600 cursor-pointer hover:underline">{responsePrompts(replies.length)}</div>
 					</div>
 				)}
 			</div>
