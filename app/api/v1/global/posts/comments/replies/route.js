@@ -13,7 +13,7 @@ export async function GET(req) {
 		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
-		console.log("data", data);
+		// console.log("data", data);
 
 		let page, limit, skip, totalDocuments, totalPages, options, sort;
 
@@ -122,7 +122,7 @@ export async function GET(req) {
 			comments: formattedComments
 		};
 
-		console.log("results", results);
+		// console.log("results", results);
 
 		return NextResponse.json({ results, message: "replies successfully retrieved" }, { status: 200 });
 	} catch (error) {

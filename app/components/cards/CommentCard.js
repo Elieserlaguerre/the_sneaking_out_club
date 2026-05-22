@@ -122,6 +122,7 @@ export default function CommentCard({ comment }) {
 			// toast.success(getRepliesResults.data.message);
 			const { results } = getRepliesResults.data;
 			setOpenResponseContainer(true);
+			setTotalPages(results?.totalPages ?? 0);
 			setReplies(results?.comments ?? []);
 		}
 	}, [getRepliesResults.isFetching, getRepliesResults.isSuccess, getRepliesResults.isError]);

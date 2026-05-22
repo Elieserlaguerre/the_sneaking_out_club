@@ -11,8 +11,6 @@ import { currentUser } from "@/app/lib/state-management/global-state";
 import { useCreateCommentMutation, useLazyGetPostCommentsQuery, useReactToCommentMutation } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
-import { formatPostDate } from "@/app/lib/util/frontend";
-import { Fade, Popper } from "@mui/material";
 import { fromZodError } from "zod-validation-error";
 import CommentCard from "../../cards/CommentCard";
 
@@ -101,19 +99,19 @@ export default function PostComment({ post, open, closingFunction }) {
 	const pageSizes = [
 		{
 			id: nanoid(),
-			value: 25
+			value: 10
 		},
 		{
 			id: nanoid(),
-			value: 50
+			value: 20
 		},
 		{
 			id: nanoid(),
-			value: 75
+			value: 30
 		},
 		{
 			id: nanoid(),
-			value: 100
+			value: 40
 		}
 	];
 	const [page, setPage] = useState(1);

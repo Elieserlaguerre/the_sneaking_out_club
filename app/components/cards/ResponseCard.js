@@ -49,35 +49,6 @@ export default function ResponseCard({ comment, cancelFunction }) {
 		}
 	}, [user, comment]);
 
-	const pageSizes = [
-		{
-			id: nanoid(),
-			value: 10
-		},
-		{
-			id: nanoid(),
-			value: 20
-		},
-		{
-			id: nanoid(),
-			value: 30
-		},
-		{
-			id: nanoid(),
-			value: 40
-		}
-	];
-	const [page, setPage] = useState(1);
-	const [totalPages, setTotalPages] = useState(0);
-	const [limit, setLimit] = useState(pageSizes[0].value);
-	const [filters, setFilters] = useState({
-		sort: "newest"
-	});
-
-	const handlePagination = (_, page) => {
-		setPage(page);
-	};
-
 	const closeResponseComponent = () => {
 		clearForm();
 		cancelFunction();
@@ -172,7 +143,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 					</dl>
 
 					<div className="flex justify-evenly items-center gap-0.5">
-						<button type="button" onClick={submitResponse} className={classNames(buttonVariants({ variant: "greenCircularBtn" }), "text-sm text-gray-600 font-medium border border-white -mr-2.5 z-16")}>
+						<button type="button" onClick={submitResponse} className={classNames(buttonVariants({ variant: "greenCircularBtn" }), "text-sm text-gray-600 font-medium border border-white -mr-2.5 z-16 cursor-pointer")}>
 							<PaperAirplaneIcon className="size-3" />
 						</button>
 					</div>
