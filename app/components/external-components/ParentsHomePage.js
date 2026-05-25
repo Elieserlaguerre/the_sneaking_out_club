@@ -4,6 +4,9 @@ import { useTheme } from "../providers/ThemeProvider";
 import Link from "next/link";
 import { buttonVariants } from "../shadcn/button";
 import { nanoid } from "nanoid";
+import { AcademicCapIcon, BellAlertIcon, ChatBubbleLeftRightIcon, UserGroupIcon } from "@heroicons/react/20/solid";
+import { MdFamilyRestroom } from "react-icons/md";
+import { GiProgression } from "react-icons/gi";
 
 export default function ParentsHomePage() {
 	function classNames(...classes) {
@@ -11,42 +14,45 @@ export default function ParentsHomePage() {
 	}
 
 	const theme = useTheme();
-	console.log("theme", theme);
 
 	const studentGrowthDetails = [
 		{
 			id: nanoid(),
+			icon: GiProgression,
 			title: "Track Academic Progress",
 			description: "Stay informed about your child’s educational journey with access to classroom updates, assignments, participation activity, important announcements, and academic progress indicators. Parents can monitor performance trends and remain actively engaged in supporting their child’s success throughout the school year."
 		},
 		{
 			id: nanoid(),
+			icon: ChatBubbleLeftRightIcon,
 			title: "Communicate Directly With Educators",
 			description: "Build stronger relationships with teachers and school staff through direct communication tools designed to encourage collaboration and transparency. Ask questions, discuss concerns, receive updates, and work together to create the best possible learning environment for your child."
 		},
 		{
 			id: nanoid(),
+			icon: UserGroupIcon,
 			title: "Stay Involved Every Step of the Way",
 			description: "From classroom activities and school events to student milestones and important reminders, parents can remain connected to every stage of their child’s development. The platform helps families stay engaged, informed, and present in both academic and community experiences."
 		},
 		{
 			id: nanoid(),
+			icon: BellAlertIcon,
 			title: "Receive Important School Updates",
 			description: "Never miss critical information again. Receive timely notifications for announcements, schedule changes, events, meetings, and school-wide communications so your family can stay prepared and organized."
 		},
 		{
 			id: nanoid(),
+			icon: MdFamilyRestroom,
 			title: "Strengthen Family Engagement",
 			description: "Encourage a stronger connection between home and school by creating a collaborative support system around each student. Active family engagement helps reinforce learning, accountability, and student confidence both inside and outside the classroom."
 		},
 		{
 			id: nanoid(),
+			icon: AcademicCapIcon,
 			title: "Support Student Growth With Confidence",
 			description: "Gain the tools and visibility needed to better support your child’s academic, social, and personal development. By staying connected to educators and school activities, parents can make more informed decisions and provide guidance when it matters most."
 		}
 	];
-
-	// https://images.unsplash.com/photo-1675687607764-555dc874b4d3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
 
 	const featuredTestimonial = {
 		testimony: "I’ve used several school communication tools before, but this is the first one that truly feels designed with parents in mind.",
@@ -155,7 +161,7 @@ export default function ParentsHomePage() {
 
 	return (
 		<div>
-			<header className={classNames(theme.base, "relative isolate min-h-screen")}>
+			<header className={classNames(theme.base, "relative isolate min-h-auto")}>
 				<div className="mx-auto max-w-4xl py-32 sm:py-48 lg:py-56">
 					<div className="text-center">
 						<h1 className={classNames(theme?.text?.primary, "text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-6xl dark:text-white")}>A safer, smarter way to manage your family, and stay connected to your child’s school life.</h1>
@@ -179,7 +185,7 @@ export default function ParentsHomePage() {
 							{studentGrowthDetails.map((detail) => (
 								<div key={detail.id} className="relative pl-16">
 									<dt className="text-base/7 font-semibold text-gray-900 dark:text-white">
-										<div className="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-indigo-600 dark:bg-indigo-500">{/* <detail.icon aria-hidden="true" className="size-6 text-white" /> */}</div>
+										<div className="absolute top-0 left-0 flex size-10 items-center justify-center rounded-lg bg-blue-600 dark:bg-blue-500">{detail?.icon && <detail.icon aria-hidden="true" className="size-6 text-white" />}</div>
 										{detail.title}
 									</dt>
 									<dd className="mt-2 text-base/7 text-gray-600 dark:text-gray-400">{detail.description}</dd>
@@ -189,11 +195,11 @@ export default function ParentsHomePage() {
 					</div>
 				</div>
 			</section>
-			<div className="bg-white">
-				<div className="overflow-hidden pt-32 sm:pt-14">
-					<div className={classNames(theme.base, "bg-gray-800")}>
-						<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-							<div className="relative pt-48 pb-16 sm:pb-24">
+			<section className="bg-white">
+				<div className="pt-32 sm:pt-14">
+					<div className={classNames(theme.base, "bg-gray-800 overflow-x-clip")}>
+						<div className="mx-auto w-10/12 px-4 sm:px-6 lg:px-8">
+							<div className="relative pt-48 md:pt-28 pb-16 sm:pb-24">
 								<div>
 									<h2 id="sale-heading" className="text-4xl font-bold tracking-tight text-white md:text-5xl">
 										Help your child
@@ -208,24 +214,40 @@ export default function ParentsHomePage() {
 									</div>
 								</div>
 
-								<div className="absolute -top-32 left-1/2 min-w-max -translate-x-1/2 transform sm:top-6 sm:translate-x-0">
+								<div className="md:hidden lg:block absolute -top-32 left-1/2 min-w-max -translate-x-1/2 transform sm:top-6 sm:translate-x-48 xl:-translate-x-14">
 									<div className="ml-24 flex space-x-6 sm:ml-3 lg:space-x-8">
-										<div className="flex space-x-6 sm:flex-col sm:space-y-6 sm:space-x-0 lg:space-y-8">
+										<div className="flex space-x-6 sm:flex-col sm:justify-center sm:space-y-6 sm:space-x-0 lg:space-y-8">
 											<div className="shrink-0">
-												<img alt="" src="https://tailwindcss.com/plus-assets/img/ecommerce-images/home-page-03-category-01.jpg" className="size-64 rounded-lg object-cover md:size-72" />
+												<img alt="" src="https://images.unsplash.com/photo-1585144374720-64d181405b1c?q=80&w=1095&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
 											</div>
-
 											<div className="mt-6 shrink-0 sm:mt-0">
-												<img alt="" src="https://tailwindcss.com/plus-assets/img/ecommerce-images/home-page-03-category-02.jpg" className="size-64 rounded-lg object-cover md:size-72" />
+												<img alt="" src="https://images.unsplash.com/photo-1660841813634-29ad54f0a793?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
 											</div>
 										</div>
 										<div className="flex space-x-6 sm:-mt-20 sm:flex-col sm:space-y-6 sm:space-x-0 lg:space-y-8">
 											<div className="shrink-0">
-												<img alt="" src="https://tailwindcss.com/plus-assets/img/ecommerce-images/home-page-03-favorite-01.jpg" className="size-64 rounded-lg object-cover md:size-72" />
+												<img alt="" src="https://images.unsplash.com/photo-1675687607764-555dc874b4d3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
+											</div>
+
+											<div className="mt-6 shrink-0 sm:mt-0">
+												<img alt="" src="https://images.unsplash.com/photo-1560346740-a8678c61a524?q=80&w=1136&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
 											</div>
 
 											<div className="mt-6 shrink-0 sm:mt-0">
 												<img alt="" src="https://tailwindcss.com/plus-assets/img/ecommerce-images/home-page-03-favorite-02.jpg" className="size-64 rounded-lg object-cover md:size-72" />
+											</div>
+										</div>
+										<div className="flex space-x-6 sm:-mt-60 sm:flex-col sm:space-y-6 sm:space-x-0 lg:space-y-8">
+											<div className="shrink-0">
+												<img alt="" src="https://images.unsplash.com/photo-1513774415755-ab8d0ef5e23c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
+											</div>
+
+											<div className="mt-6 shrink-0 sm:mt-0">
+												<img alt="" src="https://images.unsplash.com/photo-1730575208519-04fe3bee68e5?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
+											</div>
+
+											<div className="shrink-0">
+												<img alt="" src="https://images.unsplash.com/photo-1617939767459-50d8ac3df080?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="size-64 rounded-lg object-cover md:size-72" />
 											</div>
 										</div>
 									</div>
@@ -234,7 +256,7 @@ export default function ParentsHomePage() {
 						</div>
 					</div>
 				</div>
-			</div>
+			</section>
 			<section id="section_features" className={classNames("min-h-screen bg-white")}>
 				<div className="relative isolate bg-white pt-24 pb-32 sm:pt-32 dark:bg-gray-900">
 					<div className="mx-auto max-w-7xl px-6 lg:px-8">

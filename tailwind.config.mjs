@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import tailwindcssAnimate from "tailwindcss-animate";
 const config = {
 	darkMode: ["class"],
 	content: ["./pages/**/*.{js,jsx}", "./components/**/*.{js,jsx}", "./app/**/*.{js,jsx}", "./src/**/*.{js,jsx}"],
@@ -188,10 +189,7 @@ const config = {
 				"4xl": "56rem",
 				"5xl": "64rem",
 				"6xl": "72rem",
-				"7xl": "80rem",
-				"8xl": "88rem",
-				"9xl": "96rem",
-				"10xl": "104rem"
+				"7xl": "80rem"
 			},
 			borderRadius: {
 				lg: "var(--radius)",
@@ -253,7 +251,7 @@ const config = {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")]
+	plugins: [tailwindcssAnimate]
 };
 
 export default config;

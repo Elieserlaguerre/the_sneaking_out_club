@@ -48,6 +48,16 @@
 	--radius-2xl: calc(var(--radius) * 1.8);
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
+	--container-8xl: 88rem;
+	--container-9xl: 96rem;
+	--container-10xl: 104rem;
+	--container-11xl: 112rem;
+	--container-12xl: 120rem;
+	--container-13xl: 128rem;
+	--container-14xl: 136rem;
+	--container-15xl: 144rem;
+	--container-16xl: 152rem;
+	--container-17xl: 160rem;
 }
 
 :root {
