@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import { useTheme } from "../providers/ThemeProvider";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { buttonVariants } from "../shadcn/button";
 import { nanoid } from "nanoid";
@@ -55,26 +54,32 @@ export default function AdminHomePage() {
 		body: "Managing a growing platform requires more than communication tools alone. Administrators need systems that improve coordination, reduce manual work, strengthen accountability, and support long-term organizational growth. The Sneaking Out Club provides scalable administrative infrastructure designed to simplify daily operations while improving the overall user experience.",
 		features: [
 			{
+				id: nanoid(),
 				title: "Centralized Dashboard Management",
 				description: "Access platform activity, organizational updates, user management tools, notifications, and operational insights from a unified administrative dashboard."
 			},
 			{
+				id: nanoid(),
 				title: "Real-Time Activity Monitoring",
 				description: "Monitor engagement, communication activity, moderation actions, and platform interactions as they happen to maintain visibility across the community."
 			},
 			{
+				id: nanoid(),
 				title: "Community Growth Management",
 				description: "Support expanding schools, organizations, and community networks with scalable tools designed to handle increasing users, groups, and interactions efficiently."
 			},
 			{
+				id: nanoid(),
 				title: "Administrative Workflow Automation",
 				description: "Reduce repetitive tasks through automated notifications, approval workflows, user verification processes, and scheduled administrative actions."
 			},
 			{
+				id: nanoid(),
 				title: "Secure Data & Access Management",
 				description: "Protect sensitive information through permission-based access controls, account security tools, and administrative oversight mechanisms."
 			},
 			{
+				id: nanoid(),
 				title: "Cross-Department Coordination",
 				description: "Improve collaboration between administrators, teachers, staff members, and organizational leaders through connected communication and management systems."
 			}
@@ -168,7 +173,7 @@ export default function AdminHomePage() {
 						<div className="max-w-xl text-base/7 text-gray-400 lg:col-span-7">
 							<ul role="list" className="mt-8 max-w-xl space-y-8 text-gray-400">
 								{sectionThree.features.map((feature) => (
-									<li className="flex flex-col gap-x-3">
+									<li key={feature.id} className="flex flex-col gap-x-3">
 										<p>
 											<strong className="font-semibold text-white mr-1">{feature.title}</strong>
 										</p>
