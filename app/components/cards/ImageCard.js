@@ -39,11 +39,11 @@ export default function ImageCard({ image, settings }) {
 			if (imageValidation.success) {
 				return <Image src={image?.url} width={image?.width ?? 300} height={image?.height ?? 300} className={classNames(settings?.styles?.image)} alt={settings.alt} loading="eager" />;
 			} else {
-				if (image) return <img src={image?.url} className={classNames(settings?.styles?.image)} alt={settings.alt} />;
+				if (image) return <img src={image} className={classNames(settings?.styles?.image)} alt={settings.alt} />;
 				else return <div className={classNames(settings?.styles?.background, "size-full")} />;
 			}
 		}
 	};
 
-	return <div className={classNames(settings?.styles?.background, "overflow-hidden bg-white flex justify-center items-center size-full")}>{dynamicImageDisplay()}</div>;
+	return <div className={classNames(settings?.styles?.background, "overflow-hidden bg-white flex justify-center items-center")}>{dynamicImageDisplay()}</div>;
 }

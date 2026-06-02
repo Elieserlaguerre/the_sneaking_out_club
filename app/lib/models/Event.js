@@ -9,6 +9,11 @@ const eventSchema = new Schema(
 			trim: true,
 			required: true
 		},
+		description: {
+			type: String,
+			trim: true,
+			required: true
+		},
 		status: {
 			type: String,
 			trim: true,
@@ -41,10 +46,17 @@ const eventSchema = new Schema(
 			enum: ["standard", "local", "non-local", "sponsored"]
 		},
 
-		startDate: Date,
-		endDate: Date,
+		startDate: {
+			type: Date,
+			required: true
+		},
+		endDate: {
+			type: Date
+		},
 
-		capacity: Number,
+		capacity: {
+			type: Number
+		},
 
 		participants: [
 			{

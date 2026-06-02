@@ -37,7 +37,7 @@ const assignmentSchema = new Schema(
 			type: String,
 			trim: true,
 			required: true,
-			enum: ["pending", "started", "action_required", "completed"]
+			enum: ["pending", "active", "action_required", "completed"]
 		},
 		comments: [
 			{
@@ -130,9 +130,10 @@ const assignmentSchema = new Schema(
 				}
 			]
 		},
-		type: {
+
+		source: {
 			type: String,
-			enum: ["school", "parent", "club"],
+			enum: ["school", "Teacher", "parent", "Spouse", "the_club", "family_member"],
 			required: true
 		},
 
