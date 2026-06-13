@@ -46,7 +46,7 @@ const messageSchema = new Schema(
 			required: true
 		},
 
-		messageType: {
+		type: {
 			type: String,
 			trim: true,
 			lowercase: true,
@@ -64,29 +64,9 @@ const messageSchema = new Schema(
 			}
 		],
 
-		firstName: {
-			type: String,
-			trim: true
-		},
-
-		lastName: {
-			type: String,
-			trim: true
-		},
-
-		email: {
-			type: String,
-			trim: true
-		},
-
-		phone: {
-			type: String,
-			trim: true
-		},
-
-		department: {
-			type: String,
-			trim: true
+		sharedPost: {
+			type: ObjectId,
+			ref: "Post"
 		}
 	},
 	{ timestamps: true }

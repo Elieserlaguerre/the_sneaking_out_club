@@ -315,8 +315,7 @@ TEXT POST SCHEMA
 
 const textPostSchema = basePostSchema.extend({
 	type: z.literal("text"),
-
-	caption: z.string().trim().nonempty({
+	message: z.string().trim().nonempty({
 		message: "post message is required."
 	})
 });
@@ -379,4 +378,13 @@ export const responseSchema = z.object({
 	message: z.string().trim().nonempty({ message: "message is required." }),
 	creator: z.string().trim().nonempty({ message: "response creator is required." }),
 	creatorType: z.string().trim().nonempty({ message: "creator type is required." })
+});
+
+export const sharePostSchema = z.object({
+	type: z.string().trim().nonempty({ message: "post type is required." }),
+	visibility: z.string().trim().nonempty({ message: "visibility is required." }),
+	caption: z.string().optional(),
+	sharedPost: z.string().trim().nonempty({ message: "shared post is required." }),
+	creator: z.string().trim().nonempty({ message: "post creator ID is required." }),
+	creatorType: z.string().trim().nonempty({ message: "user type is required." })
 });

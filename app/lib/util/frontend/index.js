@@ -1,3 +1,4 @@
+import ImageCard from "@/app/components/cards/ImageCard";
 import { adminAssignmentsSectionNav, adminDashboardSectionNav, adminDocumentsSectionNav, adminEventsSectionNav, adminExternalSectionNav, adminInaternalSectionNav, adminInternalSectionNav, adminMeetingSectionNav, adminMessagesSectionNav, adminReportsSectionNav } from "@/app/components/navigation/lists/admin-nav-list";
 import { careersAssignmentsSectionNav, careersDashboardSectionNav, careersDocumentsSectionNav, careersEventsSectionNav, careersExternalSectionNav, careersInaternalSectionNav, careersMeetingSectionNav, careersMessagesSectionNav, careersReportsSectionNav } from "@/app/components/navigation/lists/careers-nav-list";
 import { membersAssignmentsSectionNav, membersDashboardSectionNav, membersDocumentsSectionNav, membersEventsSectionNav, membersExternalSectionNav, membersInaternalSectionNav, membersMeetingSectionNav, membersMessagesSectionNav, membersReportsSectionNav, membersSchedulesSectionNav } from "@/app/components/navigation/lists/members-nav-list";
@@ -739,3 +740,65 @@ export function formatPostDate(date, settings) {
 	// Convert words into Facebook-style shorthand
 	return relative.replace(" seconds", "s").replace(" second", "s").replace(" minutes", "m").replace(" minute", "m").replace(" hours", "h").replace(" hour", "h").replace(" days", "d").replace(" day", "d").replace(" months", "M").replace(" month", "M").replace(" years", "yrs").replace(" year", "yr");
 }
+
+export const dynamicPostContentDisplay = (type, currentPost) => {
+	switch (type) {
+		case "text":
+			return (
+				<div className="px-4 py-5 sm:p-6">
+					<p className="text-gray-900">{currentPost?.message}</p>
+				</div>
+			);
+		case "image":
+			return (
+				<ImageCard
+					image={currentPost?.sharedPost?.media}
+					settings={{
+						alt: "post image",
+						styles: {
+							image: "object-contain object-center",
+							background: "size-full"
+						}
+					}}
+				/>
+			);
+		case "video":
+			break;
+		case "share":
+			const postType = currentPost.sharedPost.type;
+			console.log("postType", postType);
+			return (
+				<div className="">
+					{currentPost.caption && <div className="px-4 py-2.5 sm:px-6">{currentPost.caption}</div>}
+					<div className="px-4 py-5 sm:p-6">
+						{postType === "text" ? (
+							<p>{currentPost?.sharedPost?.message ?? "Original content unavailable"}</p>
+						) : postType === "image" ? (
+							<div>
+								{currentPost.sharedPost?.media?.publicId ? (
+									<ImageCard
+										image={currentPost?.sharedPost?.media}
+										settings={{
+											alt: "post image",
+											styles: {
+												image: "object-contain object-center",
+												background: "size-full"
+											}
+										}}
+									/>
+								) : (
+									<p>Original content unavailable</p>
+								)}
+							</div>
+						) : postType === "video" ? (
+							<div>{currentPost.sharedPost?.media?.publicId ? "Video component" : <p>Original content unavailable</p>}</div>
+						) : (
+							<div className="">{dynamicPostContentDisplay(currentPost["sharedPost"]["sharedPost"]?.type, currentPost["sharedPost"]["sharedPost"])}</div>
+						)}
+					</div>
+				</div>
+			);
+		default:
+			throw new Error("Post type not recognized.");
+	}
+};

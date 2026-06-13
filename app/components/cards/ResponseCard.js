@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { responseSchema } from "@/app/lib/util/global/zod-validations";
 import { fromZodError } from "zod-validation-error";
+import { TextareaAutosize } from "@mui/material";
 
 export default function ResponseCard({ comment, cancelFunction }) {
 	function classNames(...classes) {
@@ -113,7 +114,7 @@ export default function ResponseCard({ comment, cancelFunction }) {
 			<div className="w-full">
 				<div className="flex justify-between items-center">
 					<div className="flex-auto min-h-10">
-						<input onChange={handleChanges} type="text" name="message" className="text-left size-full p-1 bg-gray-200 rounded-md min-h-10 border border-gray-400" value={formContent.message} />
+						<TextareaAutosize onChange={handleChanges} name="message" value={formContent.message} aria-label="message" minRows={1} className="text-left size-full p-1 bg-gray-200 rounded-md min-h-10 border border-gray-400" />
 					</div>
 					<div className="w-6">
 						<Menu as="div" className="relative hidden group-hover:block">

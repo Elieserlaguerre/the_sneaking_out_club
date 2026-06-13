@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
 import { fromZodError } from "zod-validation-error";
 import CommentCard from "../../cards/CommentCard";
+import { TextareaAutosize } from "@mui/material";
+import { dynamicPostContentDisplay } from "@/app/lib/util/frontend";
 
 export default function PostComment({ post, open, closingFunction }) {
 	function classNames(...classes) {
@@ -22,19 +24,6 @@ export default function PostComment({ post, open, closingFunction }) {
 	const theme = useTheme();
 
 	const user = useAtomValue(currentUser);
-
-	const dynamicContentDisplay = (type) => {
-		switch (type) {
-			case "text":
-				return <p className="text gray-900">{post?.caption}</p>;
-			case "image":
-				break;
-			case "video":
-				break;
-			default:
-				throw new Error("Post type not recognized.");
-		}
-	};
 
 	const [formContent, setFormContent] = useState({
 		post: "",
@@ -183,23 +172,6 @@ export default function PostComment({ post, open, closingFunction }) {
 		createReaction({ type: reaction, user: user?._id, userType: user?.docType, comment });
 	};
 
-	const selectedReactions = (comment) => {
-		const type = comment?.reaction?.type;
-		if (type) {
-			return (
-				<button type="button" onClick={() => handlePostReaction(type, comment._id)} className={classNames(type === "like" ? "text-blue-500" : type === "dislike" ? "text-yellow-500" : type === "love" ? "text-red-500" : type === "laugh" ? "text-yellow-400" : type === "wow" ? "text-yellow-500" : type === "sad" ? "text-orange-500" : type === "angry" ? "text-red-500" : null, "text-left capitalize text-sm font-medium cursor-pointer hover:underline")}>
-					{comment?.reaction?.type}
-				</button>
-			);
-		} else {
-			return (
-				<button type="button" onClick={() => handlePostReaction("like", comment._id)} className="text-left capitalize text-sm font-medium text-gray-600 cursor-pointer hover:underline">
-					like
-				</button>
-			);
-		}
-	};
-
 	return (
 		<Dialog open={open} onClose={closingFunction} className="z-10">
 			<DialogBackdrop transition className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900/50" />
@@ -217,12 +189,7 @@ export default function PostComment({ post, open, closingFunction }) {
 								</button>
 							</div>
 							<div className="mt-3 text-center sm:mt-5 flex-auto overflow-y-auto flex flex-col divide-y divide-gray-300">
-								{post?.type !== "text" && post?.caption && (
-									<div className="px-4 py-5 sm:px-6">
-										<p>{post.caption}</p>
-									</div>
-								)}
-								<div className="px-4 py-5 sm:p-6 flex flex-col justify-center items-center min-h-52">{dynamicContentDisplay(post?.type)}</div>
+								<div className="px-4 py-5 sm:p-6 flex flex-col justify-center items-center min-h-52">{dynamicPostContentDisplay(post?.type, post)}</div>
 								<div className="px-4 py-4 sm:px-6">
 									<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10">
 										{comments.map((comment) => (
@@ -248,7 +215,7 @@ export default function PostComment({ post, open, closingFunction }) {
 									/>
 								</div>
 								<div className="flex-auto">
-									<input onChange={handleChanges} type="text" name="message" id="comment" value={formContent?.message} className="bg-gray-200 rounded-full w-full px-2.5 py-3.5 h-full" placeholder={`Comment as ${post.creator.firstName} ${post?.creator?.lastName}`} />
+									<input onChange={handleChanges} type="text" name="message" id="comment" value={formContent?.message} className="bg-gray-200 rounded-full w-full px-2.5 py-3.5 h-full" />
 								</div>
 								<div className="flex justify-evenly items-center gap-1.5">
 									<button type="submit">

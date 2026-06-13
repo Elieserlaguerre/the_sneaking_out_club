@@ -33,25 +33,24 @@ export default function PostPage() {
 		{
 			id: nanoid(),
 			name: "memories",
-			destination: "#",
+			destination: "/dashboard/posts/memories",
 			type: "link"
 		},
 		{
 			id: nanoid(),
 			name: "groups",
-			destination: "#",
+			destination: "/dashboard/posts/groups",
 			type: "link"
 		},
 		{
 			id: nanoid(),
 			name: "saved",
-			destination: "#",
+			destination: "/dashboard/posts/saved",
 			type: "link"
 		}
 	];
 
 	const theme = useTheme();
-	// console.log("theme", theme);
 
 	const pageSizes = [
 		{
@@ -93,6 +92,7 @@ export default function PostPage() {
 		} else if (getPostResults.isSuccess) {
 			// toast.success(getPostResults.data.message);
 			const { results } = getPostResults.data;
+			console.log("posts", results.posts);
 			setTotalPages(results?.totalPages ?? 0);
 			setPosts(results?.posts ?? []);
 		}
@@ -103,6 +103,8 @@ export default function PostPage() {
 			getPosts({ userId: user._id, page, limit, filters: JSON.stringify(filters) });
 		}
 	}, [user, page, limit, filters]);
+
+	const [promotions, setPromotions] = useState([]);
 
 	return (
 		<div>
@@ -135,7 +137,16 @@ export default function PostPage() {
 					<aside className="sticky top-14 hidden w-96 shrink-0 xl:flex xl:flex-col h-screen overflow-y-auto bg-white">
 						<div className="divide-y divide-gray-100 overflow-hidden flex-auto flex flex-col">
 							<div className="px-4 py-5 sm:px-6 capitalize font-medium">sponsored</div>
-							<div className="p-2 bg-gray-200 flex-auto"></div>
+							<div className="p-2 bg-gray-200 flex-auto">
+								{promotions.length > 0 ? (
+									""
+								) : (
+									<div className="text-center w-full py-4 rounded-sm flex flex-col justify-center items-center bg-white size-full">
+										<h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-white capitalize">No promotions to display</h3>
+										<p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Promotions will appear here once available.</p>
+									</div>
+								)}
+							</div>
 						</div>
 					</aside>
 				</div>

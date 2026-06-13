@@ -1,10 +1,13 @@
+import cloudinary from "@/app/lib/cloudinary";
 import db from "@/app/lib/database";
 import Admin from "@/app/lib/models/Admin";
+import Comment from "@/app/lib/models/Comment";
 import Member from "@/app/lib/models/Member";
 import Parent from "@/app/lib/models/Parent";
 import Post from "@/app/lib/models/Post";
 import Reaction from "@/app/lib/models/Reaction";
 import Teacher from "@/app/lib/models/Teacher";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req) {
@@ -51,23 +54,44 @@ export async function PATCH(req) {
 	}
 }
 
-export const dynamic = "force-dynamic";
-
-export async function GET(req) {
+export async function DELETE(req) {
 	try {
 		await db.connect();
-		let query, data;
-		query = await req.nextUrl.searchParams;
-		// console.log("query",query);
+		let data;
+		data = await req.json();
+		console.log("data", data);
 
-		data = Object.fromEntries(query.entries());
-		// console.log("data", data);
+		const { postId, userId } = data;
 
-		const reaction = await Reaction.findOne(data);
+		const post = await Post.findById({ _id: data.postId });
 
-		return NextResponse.json({ results: reaction, message: "Post reaction successfully retrieved." }, { status: 200 });
+		if (!post) return NextResponse.json({ message: "Post not found." }, { status: 404 });
+
+		if (post.creator.toString() !== userId) return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+
+		const session = await mongoose.startSession();
+
+		try {
+			await session.withTransaction(async () => {
+				if (post.media?.publicId) {
+					await cloudinary.uploader.destroy(post.media.publicId, {
+						resource_type: post.type === "video" ? "video" : "image"
+					});
+				}
+
+				await Comment.deleteMany({ post: postId }, { session });
+
+				await Reaction.deleteMany({ post: postId }, { session });
+
+				await Post.deleteOne({ _id: postId }, { session });
+			});
+		} finally {
+			await session.endSession();
+		}
+
+		return NextResponse.json({ message: "Your post was successfully deleted." }, { status: 200 });
 	} catch (error) {
-		console.log("GET route error:", error.message);
+		console.log("DELETE route error:", error.message);
 		return NextResponse.json({ message: error.message }, { status: 500 });
 	}
 }

@@ -8,7 +8,7 @@ const postSchema = new Schema(
 			type: String,
 			trim: true,
 			required: true,
-			enum: ["text", "image", "video"]
+			enum: ["text", "image", "video", "share"]
 		},
 
 		// optional text attached to any post
@@ -16,6 +16,12 @@ const postSchema = new Schema(
 			type: String,
 			trim: true,
 			maxlength: 5000
+		},
+
+		// message for text type posts
+		message: {
+			type: String,
+			trim: true
 		},
 
 		// only used for image/video posts
@@ -123,6 +129,17 @@ const postSchema = new Schema(
 		saveCount: {
 			type: Number,
 			default: 0
+		},
+
+		sharedPost: {
+			type: ObjectId,
+			ref: "Post"
+		},
+
+		visibility: {
+			type: String,
+			enum: ["public", "friends", "private"],
+			default: "public"
 		}
 	},
 	{ timestamps: true }
@@ -131,5 +148,18 @@ const postSchema = new Schema(
 postSchema.index({ creator: 1, createdAt: -1 });
 
 postSchema.index({ createdAt: -1 });
+
+postSchema.index(
+	{
+		creator: 1,
+		sharedPost: 1
+	},
+	{
+		unique: true,
+		partialFilterExpression: {
+			type: "share"
+		}
+	}
+);
 
 export default mongoose.models.Post || mongoose.model("Post", postSchema);

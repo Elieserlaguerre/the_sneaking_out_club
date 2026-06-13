@@ -11,10 +11,11 @@ import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import { Popper, Fade } from "@mui/material";
 import toast from "react-hot-toast";
-import { useLazyGetMyReactionsQuery, useReactToPostMutation, useSaveItemMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useDeletePostMutation, useReactToPostMutation, useSaveItemMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { EMOJI_MAP } from "@/app/lib/util/frontend/variables";
 import PostComment from "../overlays/modals/PostComment";
-import { formatPostDate } from "@/app/lib/util/frontend";
+import { dynamicPostContentDisplay, formatPostDate } from "@/app/lib/util/frontend";
+import SharePost from "../overlays/modals/SharePost";
 
 export default function PostCard({ post }) {
 	function classNames(...classes) {
@@ -25,18 +26,9 @@ export default function PostCard({ post }) {
 
 	const existingConnection = user?.connections?.some((connection) => connection?.member?.toString() === post?.creator?._id?.toString());
 
-	const dynamicContentDisplay = (type) => {
-		switch (type) {
-			case "text":
-				return <p className="text gray-900">{post?.caption}</p>;
-			case "image":
-				break;
-			case "video":
-				break;
-			default:
-				throw new Error("Post type not recognized.");
-		}
-	};
+	console.log("post", post);
+
+	
 
 	const options = [
 		{
@@ -133,24 +125,11 @@ export default function PostCard({ post }) {
 		}
 	};
 
-	const [getMyReaction, getMyReactionResults] = useLazyGetMyReactionsQuery();
-
 	useEffect(() => {
-		if (getMyReactionResults.isError) {
-			const message = typeof getMyReactionResults.error === "string" ? getMyReactionResults.error : getMyReactionResults.error.message;
-			toast.error(message);
-		} else if (getMyReactionResults.isSuccess) {
-			// toast.success(getMyReactionResults.data.message);
-			const { results } = getMyReactionResults.data;
-			setReaction(results);
+		if (post.reaction) {
+			setReaction(post.reaction);
 		}
-	}, [getMyReactionResults.isFetching, getMyReactionResults.isSuccess, getMyReactionResults.isError]);
-
-	useEffect(() => {
-		if (user && post) {
-			getMyReaction({ user: user._id, post: post._id });
-		}
-	}, [user]);
+	}, [post]);
 
 	const [saveItem, saveItemResults] = useSaveItemMutation();
 
@@ -187,9 +166,30 @@ export default function PostCard({ post }) {
 		setOpenCommentModal(false);
 	};
 
+	const [openShareModal, setOpenShareModal] = useState(false);
+
+	const handlePostSharing = () => {
+		setOpenShareModal((prev) => !prev);
+	};
+
+	const [deletePost, deletePostResults] = useDeletePostMutation();
+
+	useEffect(() => {
+		if (deletePostResults.isError) {
+			const message = typeof deletePostResults.error === "string" ? deletePostResults.error : deletePostResults.error.message;
+			toast.error(message);
+		} else if (deletePostResults.isSuccess) {
+			toast.success(deletePostResults.data.message);
+		}
+	}, [deletePostResults.isLoading, deletePostResults.isSuccess, deletePostResults.isError]);
+
+	const handlePostDeletion = () => {
+		deletePost({ postId: post._id, userId: user._id });
+	};
+
 	return (
 		<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-sm dark:divide-white/10 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
-			<div className="px-4 py-5 sm:px-6 flex flex-col justify-evenly">
+			<div className="px-4 py-3.5 sm:px-6 flex flex-col justify-evenly">
 				<div className="flex justify-between items-center">
 					<div className="flex justify-evenly items-center gap-2.5">
 						<div className="border border-gray-400 size-10 rounded-full overflow-clip">
@@ -229,20 +229,17 @@ export default function PostCard({ post }) {
 								</MenuItems>
 							</Menu>
 						</div>
-						<div className="size-full">
-							<button className={classNames(buttonVariants({ variant: "grayCircularBtn" }), "hover:bg-red-500 hover:text-white")}>
-								<XMarkIcon className="size-6" />
-							</button>
-						</div>
+						{post?.creator?._id === user?._id && (
+							<div className="size-full">
+								<button onClick={handlePostDeletion} className={classNames(buttonVariants({ variant: "grayCircularBtn" }), "hover:bg-red-500 hover:text-white")}>
+									<XMarkIcon className="size-6" />
+								</button>
+							</div>
+						)}
 					</div>
 				</div>
-				{post?.type !== "text" && post?.caption && (
-					<div>
-						<p>{post?.caption}</p>
-					</div>
-				)}
 			</div>
-			<div className="px-4 py-5 sm:p-6">{dynamicContentDisplay(post.type)}</div>
+			<div className="">{dynamicPostContentDisplay(post.type, post)}</div>
 			<div className="px-4 py-4 sm:px-6 flex justify-between items-center">
 				<dl className="flex justify-evenly items-center gap-2.5">
 					<div className="flex justify-evenly items-center gap-1">
@@ -295,7 +292,7 @@ export default function PostCard({ post }) {
 						<dd>{post?.commentCount ?? 0}</dd>
 					</div>
 					<div className="flex justify-evenly items-center gap-1">
-						<dt>
+						<dt onClick={handlePostSharing}>
 							<IoArrowRedoOutline className="size-6 cursor-pointer" />
 						</dt>
 						<dd>{post?.shareCount ?? 0}</dd>
@@ -303,6 +300,7 @@ export default function PostCard({ post }) {
 				</dl>
 				<div className="hidden">
 					<PostComment post={post} open={openCommentModal} closingFunction={closeComments} />
+					<SharePost open={openShareModal} closingFunction={handlePostSharing} post={post} />
 				</div>
 			</div>
 		</div>

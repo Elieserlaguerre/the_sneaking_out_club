@@ -30,7 +30,6 @@ export async function GET(req) {
 		await db.connect();
 		let query, data;
 		query = await req.nextUrl.searchParams;
-		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
 		// console.log("data", data);
@@ -66,12 +65,37 @@ export async function GET(req) {
 						image: 1,
 						docType: 1
 					}
+				},
+				"sharedPost",
+				{
+					path: "sharedPost",
+					populate: ["sharedPost"]
 				}
-			]);
+			])
+			.lean();
+
+		const postIds = posts.map((post) => post._id);
+
+		const reactions = await Reaction.find({
+			user: userId,
+			post: { $in: postIds },
+			comment: null
+		}).lean();
+
+		const reactionMap = {};
+
+		reactions.forEach((reaction) => {
+			reactionMap[reaction.post.toString()] = reaction;
+		});
+
+		const formattedPost = posts.map((post) => ({
+			...post,
+			reaction: reactionMap[post._id] || null
+		}));
 
 		const results = {
 			totalPages,
-			posts
+			posts: formattedPost
 		};
 
 		// console.log("results", results);
