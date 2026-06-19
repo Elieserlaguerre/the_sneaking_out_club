@@ -388,3 +388,23 @@ export const sharePostSchema = z.object({
 	creator: z.string().trim().nonempty({ message: "post creator ID is required." }),
 	creatorType: z.string().trim().nonempty({ message: "user type is required." })
 });
+
+export const collectionSchema = z.object({
+	name: z.string().trim().nonempty({ message: "name is required." }),
+	owner: z.string().trim().nonempty({ message: "owner is required." }),
+	ownerType: z.string().trim().nonempty({ message: "owner typer is required." }),
+	image: z.union([
+		z.string().optional(),
+		z.object({
+			publicId: z.string().trim().nonempty({ message: "publicId is required." }),
+			url: z.string().trim().nonempty({ message: "image url is required." }),
+			width: z.coerce.number(),
+			height: z.coerce.number()
+		})
+	])
+});
+
+export const manageCollectionSchema = z.object({
+	savedItemId: z.string().trim().nonempty({ message: "saved item ID is required." }),
+	collectionId: z.string().trim().nonempty({ message: "collection ID is required." })
+});

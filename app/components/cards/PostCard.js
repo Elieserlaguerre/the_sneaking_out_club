@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import { Popper, Fade } from "@mui/material";
 import toast from "react-hot-toast";
-import { useDeletePostMutation, useReactToPostMutation, useSaveItemMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useDeletePostMutation, useReactToPostMutation, useSaveItemMutation, useSavePostMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { EMOJI_MAP } from "@/app/lib/util/frontend/variables";
 import PostComment from "../overlays/modals/PostComment";
 import { dynamicPostContentDisplay, formatPostDate } from "@/app/lib/util/frontend";
@@ -131,21 +131,21 @@ export default function PostCard({ post }) {
 		}
 	}, [post]);
 
-	const [saveItem, saveItemResults] = useSaveItemMutation();
+	const [savePost, savePostResults] = useSavePostMutation();
 
 	useEffect(() => {
-		if (saveItemResults.isError) {
-			const message = typeof saveItemResults.error === "string" ? saveItemResults.error : saveItemResults.error.message;
+		if (savePostResults.isError) {
+			const message = typeof savePostResults.error === "string" ? savePostResults.error : savePostResults.error.message;
 			toast.error(message);
-		} else if (saveItemResults.isSuccess) {
-			toast.success(saveItemResults.data.message);
+		} else if (savePostResults.isSuccess) {
+			toast.success(savePostResults.data.message);
 		}
-	}, [saveItemResults.isLoading, saveItemResults.isSuccess, saveItemResults.isError]);
+	}, [savePostResults.isLoading, savePostResults.isSuccess, savePostResults.isError]);
 
 	const handleMenuOptions = (option) => {
 		switch (option) {
 			case "save post":
-				saveItem({ user: user._id, userType: user.docType, content: post._id, contentType: post.docType });
+				savePost({ user: user._id, userType: user.docType, content: post._id, contentType: post.docType });
 				break;
 			case "hide post":
 				break;

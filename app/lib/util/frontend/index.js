@@ -765,8 +765,7 @@ export const dynamicPostContentDisplay = (type, currentPost) => {
 		case "video":
 			break;
 		case "share":
-			const postType = currentPost.sharedPost.type;
-			console.log("postType", postType);
+			const postType = currentPost?.sharedPost?.type;
 			return (
 				<div className="">
 					{currentPost.caption && <div className="px-4 py-2.5 sm:px-6">{currentPost.caption}</div>}

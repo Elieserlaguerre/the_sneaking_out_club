@@ -11,4 +11,10 @@ export function calculateAge(dateString) {
 	}
 }
 
-
+export function getInitials(str = "") {
+	return str
+		.split(/[\s_]+/) // split on spaces and underscores
+		.filter((word) => /^[a-zA-Z0-9]/.test(word)) // ignore &, -, etc.
+		.map((word) => word[0].toUpperCase())
+		.join("");
+}

@@ -7,7 +7,8 @@ const savedItemSchema = new Schema(
 		user: {
 			type: ObjectId,
 			required: true,
-			refPath: "userType"
+			refPath: "userType",
+			index: true
 		},
 
 		userType: {
@@ -33,6 +34,13 @@ const savedItemSchema = new Schema(
 			trim: true,
 			required: true,
 			default: "Saved_Item"
+		},
+
+		location: {
+			type: ObjectId,
+			ref: "Saved_Collection",
+			index: true,
+			default: null
 		}
 	},
 	{ timestamps: true }

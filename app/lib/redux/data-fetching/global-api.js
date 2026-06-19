@@ -235,8 +235,101 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			}),
 			invalidatesTags: [{ type: "parents post" }],
 			transformErrorResponse: (results) => results.data.message
+		}),
+		savePost: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved posts" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getSavedPosts: build.query({
+			query: (query) => ({
+				url: "/global/posts/save",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global saved posts" }],
+			transformErrorResponse: (results) => results.data.message
+			// keepUnusedDataFor: 0
+		}),
+		deleteSavedPost: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved posts" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		createCollection: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save/collections",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved collections" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getCollections: build.query({
+			query: (query) => ({
+				url: "/global/posts/save/collections",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global saved collections" }],
+			transformErrorResponse: (results) => results.data.message,
+			keepUnusedDataFor: 0
+		}),
+		getCollectionToAdd: build.query({
+			query: (query) => ({
+				url: "/global/posts/save/collections/management",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global add to collection" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		addToCollection: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save/collections/management",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global add to collection" }, { type: "global saved posts" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		reportSavedItem: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save/complaints",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global report saved item" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		deleteCollection: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save/collections",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved collections" }, { type: "global saved posts" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		editCollection: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/save/collections",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global saved collections" }],
+			transformErrorResponse: (results) => results.data.message
 		})
 	})
 });
 
-export const { useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const { useEditCollectionMutation, useDeleteCollectionMutation, useReportSavedItemMutation, useAddToCollectionMutation, useLazyGetCollectionToAddQuery, useLazyGetCollectionsQuery, useCreateCollectionMutation, useDeleteSavedPostMutation, useLazyGetSavedPostsQuery, useSavePostMutation, useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
