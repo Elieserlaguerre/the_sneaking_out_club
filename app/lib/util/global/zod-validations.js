@@ -408,3 +408,24 @@ export const manageCollectionSchema = z.object({
 	savedItemId: z.string().trim().nonempty({ message: "saved item ID is required." }),
 	collectionId: z.string().trim().nonempty({ message: "collection ID is required." })
 });
+
+export const groupSchema = z.object({
+	name: z.string().trim().nonempty({ message: "group name is required." }),
+	about: z.string().trim().nonempty({ message: "about is required." }),
+	privacy: z.string().trim().nonempty({ message: "privacy setting is required." }),
+	visibility: z.string().trim().nonempty({ message: "visibility setting is required." }),
+	members: z.array(z.any()).optional(),
+	image: z.union([
+		z.string().optional(),
+		z.object({
+			publicId: z.string().trim().nonempty({ message: "publicId is required." }),
+			url: z.string().trim().nonempty({ message: "image url is required." }),
+			width: z.coerce.number(),
+			height: z.coerce.number()
+		})
+	]),
+	events: z.array(z.any()).optional(),
+	owner: z.string().trim().nonempty({ message: "owner is required." }),
+	ownerType: z.string().trim().nonempty({ message: "owner type is required." }),
+	managers: z.array(z.any()).optional()
+});

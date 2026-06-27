@@ -70,9 +70,9 @@ export async function PATCH(req) {
 		await db.connect();
 		let data;
 		data = await req.json();
-		console.log("data", data);
+		// console.log("data", data);
 
-		const updatedCollection = await SavedCollection.findByIdAndUpdate(data.collectionId, data, { new: true });
+		await SavedCollection.findByIdAndUpdate(data.collectionId, data, { new: true });
 
 		return NextResponse.json({ message: "collection successfully updated." }, { status: 200 });
 	} catch (error) {

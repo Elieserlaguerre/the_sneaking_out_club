@@ -4,41 +4,43 @@ const { ObjectId } = Schema;
 
 const connectionSchema = new Schema(
 	{
-		requester: {
+		firstName: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		lastName: {
+			type: String,
+			trim: true,
+			required: true
+		},
+		details: {
 			type: ObjectId,
 			required: true,
-			refPath: "requesterType"
+			refPath: "detailType"
 		},
-
-		requesterType: {
+		detailType: {
 			type: String,
 			required: true,
 			enum: ["Member", "Parent", "Teacher", "Admin"]
 		},
-
-		recipient: {
-			type: ObjectId,
-			required: true,
-			refPath: "recipientType"
+		image: {
+			publicId: {
+				type: String,
+				trim: true
+			},
+			url: {
+				type: String,
+				trim: true
+			},
+			width: {
+				type: Number
+			},
+			height: {
+				type: Number
+			}
 		},
 
-		recipientType: {
-			type: String,
-			required: true,
-			enum: ["Member", "Parent", "Teacher", "Admin"]
-		},
-
-		status: {
-			type: String,
-			enum: ["pending", "accepted", "denied", "blocked"],
-			default: "pending"
-		},
-
-		favored: {
-			type: Boolean,
-			required: true,
-			default: false
-		},
 		docType: {
 			type: String,
 			trim: true,
@@ -48,7 +50,5 @@ const connectionSchema = new Schema(
 	},
 	{ timestamps: true }
 );
-
-connectionSchema.index({ requester: 1, recipient: 1 });
 
 export default mongoose.models.Connection || mongoose.model("Connection", connectionSchema);

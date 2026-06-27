@@ -19,6 +19,7 @@
 		"@headlessui/react": "^2.2.9",
 		"@heroicons/react": "^2.2.0",
 		"@mui/icons-material": "^7.3.9",
+		"@mui/lab": "^7.0.1-beta.25",
 		"@mui/material": "^7.3.9",
 		"@mui/material-nextjs": "^7.3.9",
 		"@mui/x-charts": "^8.28.0",

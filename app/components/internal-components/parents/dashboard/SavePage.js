@@ -283,14 +283,21 @@ export default function SavePage() {
 							</button>
 						</div>
 					</div>
-					<div className="px-4 py-5 sm:p-6 flex-1">
-						<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10">
-							{savedItems.map((item) => (
-								<li key={item?._id} className="py-4">
-									<SavedCard item={item} />
-								</li>
-							))}
-						</ul>
+					<div className="flex-1">
+						{savedItems.length > 0 ? (
+							<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10 px-4 py-5 sm:p-6 size-full">
+								{savedItems.map((item) => (
+									<li key={item?._id} className="py-4">
+										<SavedCard item={item} />
+									</li>
+								))}
+							</ul>
+						) : (
+							<div className="text-center size-full py-4 rounded-sm flex flex-col justify-center items-center bg-white">
+								<h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-white capitalize">Nothing to display</h3>
+								<p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by saving new posts.</p>
+							</div>
+						)}
 					</div>
 				</div>
 			</main>
@@ -346,7 +353,6 @@ export default function SavePage() {
 							</div>
 						</div>
 					</Dialog>
-					;
 				</div>
 			</div>
 		</div>
