@@ -28,18 +28,21 @@ export default function GroupPage() {
 	const sideNav = [
 		{
 			id: nanoid(),
+			icon: CgFeed,
 			name: "your feed",
-			icon: CgFeed
+			destination: "/dashboard/posts/groups"
 		},
 		{
 			id: nanoid(),
+			icon: TbEyeSearch,
 			name: "discover",
-			icon: TbEyeSearch
+			destination: "/dashboard/posts/groups"
 		},
 		{
 			id: nanoid(),
+			icon: UserGroupIcon,
 			name: "your groups",
-			icon: UserGroupIcon
+			destination: "/dashboard/posts/groups"
 		}
 	];
 
