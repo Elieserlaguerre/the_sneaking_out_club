@@ -48,7 +48,8 @@ export default function CreateAndManageGroup({ open, closingFunction, settings }
 				events: settings?.group?.events ?? [],
 				owner: settings?.group?.owner ?? "",
 				ownerType: settings?.group?.ownerType ?? "",
-				managers: settings?.group?.managers ?? []
+				managers: settings?.group?.managers ?? [],
+				groupId: settings?.group?._id ?? ""
 			});
 		}
 	}, [open, settings]);

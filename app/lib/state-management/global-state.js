@@ -17,5 +17,6 @@ export const groupPreview = atom({
 	events: [],
 	owner: "",
 	ownerType: "",
-	managers: []
+	managers: [],
+	groupId: ""
 });

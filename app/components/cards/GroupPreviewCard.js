@@ -32,7 +32,8 @@ export default function GroupPreviewCard({ closingFunction }) {
 			events: [],
 			owner: "",
 			ownerType: "",
-			managers: []
+			managers: [],
+			groupId: ""
 		});
 	};
 
@@ -167,9 +168,6 @@ export default function GroupPreviewCard({ closingFunction }) {
 				return (
 					<div className="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 size-full flex-1">
 						<div className="px-4 py-5 sm:p-6">
-							<div>
-								<p className="capitalize text-lg text-gray-900 text-center font-medium">{section}</p>
-							</div>
 							<div className="grid grid-cols-1 sm:grid-cols-2 mt-2.5 gap-2.5">
 								<div>
 									<dl role="list" className="divide-y divide-gray-200 dark:divide-white/10 size-full grid grid-cols-2">
@@ -204,8 +202,8 @@ export default function GroupPreviewCard({ closingFunction }) {
 				);
 			case "posts":
 				return (
-					<div className="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 size-full flex-1">
-						<div className="px-4 py-5 sm:p-6">{section}</div>
+					<div className="overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 size-full flex-1 flex flex-col">
+						<div className="px-4 py-5 sm:p-6 w-full sm:w-3/5 mx-auto flex-1 bg-gray-200">{section}</div>
 					</div>
 				);
 			case "members":
@@ -261,9 +259,8 @@ export default function GroupPreviewCard({ closingFunction }) {
 						}}
 					/>
 				</div>
-				<div className="flex flex-col gap-1.5 border-b border-gray-300 py-2.5">
+				<div className="border-b border-gray-300 py-3">
 					<h1 className="text-3xl font-bold capitalize text-gray-900">{preview?.name ? preview.name : "group name"}</h1>
-					<p className="capitalize text-base text-gray-700">{preview?.visibility ? preview?.visibility : "visibility"}</p>
 				</div>
 				<div className="size-full">
 					<TabContext value={value} className="size-full">

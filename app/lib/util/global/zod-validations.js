@@ -427,5 +427,6 @@ export const groupSchema = z.object({
 	events: z.array(z.any()).optional(),
 	owner: z.string().trim().nonempty({ message: "owner is required." }),
 	ownerType: z.string().trim().nonempty({ message: "owner type is required." }),
-	managers: z.array(z.any()).optional()
+	managers: z.array(z.any()).optional(),
+	groupId: z.string().optional()
 });

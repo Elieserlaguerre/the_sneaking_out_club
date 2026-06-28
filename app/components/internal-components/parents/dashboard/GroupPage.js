@@ -28,7 +28,7 @@ export default function GroupPage() {
 	const sideNav = [
 		{
 			id: nanoid(),
-			name: "your feet",
+			name: "your feed",
 			icon: CgFeed
 		},
 		{
