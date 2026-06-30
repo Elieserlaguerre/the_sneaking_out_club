@@ -10,9 +10,9 @@ import { useTheme } from "../../providers/ThemeProvider";
 import { useUploadMutation } from "@/app/lib/hooks/useUploadMutation";
 import toast from "react-hot-toast";
 import { fromZodError } from "zod-validation-error";
-import { useCreatePostMutation } from "@/app/lib/redux/data-fetching/parents-api";
 import { postSchema } from "@/app/lib/util/global/zod-validations";
 import { nanoid } from "nanoid";
+import { useCreatePostMutation } from "@/app/lib/redux/data-fetching/global-api";
 
 export default function CreatePost() {
 	function classNames(...classes) {

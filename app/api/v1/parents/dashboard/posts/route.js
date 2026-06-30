@@ -42,7 +42,9 @@ export async function GET(req) {
 
 		const filters = JSON.parse(data.filters);
 
-		options = {};
+		options = {
+			creator: userId
+		};
 
 		if (filters.sort === "newest") sort = { createdAt: -1 };
 		else sort = { createdAt: 1 };

@@ -1,9 +1,9 @@
 "use client";
 
-import { currentUser } from "@/app/lib/state-management/global-state";
+import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
 import { PlusIcon, UserGroupIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useAtomValue } from "jotai";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { nanoid } from "zod";
 import { CgFeed } from "react-icons/cg";
 import { TbEyeSearch } from "react-icons/tb";
@@ -15,13 +15,16 @@ import CreateAndManageGroup from "@/app/components/overlays/drawers/CreateAndMan
 import { useLazyGetManagedGroupsQuery } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import GroupCard from "@/app/components/cards/GroupCard";
+import Link from "next/link";
 
-export default function GroupPage() {
+export default function GroupPage({ children }) {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
 
 	const user = useAtomValue(currentUser);
+
+	const department = useAtomValue(currentDepartment);
 
 	const theme = useTheme();
 
@@ -36,13 +39,13 @@ export default function GroupPage() {
 			id: nanoid(),
 			icon: TbEyeSearch,
 			name: "discover",
-			destination: "/dashboard/posts/groups"
+			destination: "/dashboard/posts/groups/discoveries"
 		},
 		{
 			id: nanoid(),
 			icon: UserGroupIcon,
 			name: "your groups",
-			destination: "/dashboard/posts/groups"
+			destination: "/dashboard/posts/groups/my-groups"
 		}
 	];
 
@@ -137,6 +140,19 @@ export default function GroupPage() {
 		}
 	}, [user, managedGroupPage, managedGroupLimit, managedGroupfilters]);
 
+	const dynamicButton = () => {
+		switch (department) {
+			case "members":
+				return buttonVariants({ variant: "destructiveBtn" });
+			case "parents":
+				return buttonVariants({ variant: "blueBtn" });
+			case "teachers":
+				return buttonVariants({ variant: "orangeBtn" });
+			default:
+				return;
+		}
+	};
+
 	return (
 		<div className="lg:flex min-h-screen">
 			<aside className="hidden inset-y-0 min-w-96 overflow-y-auto border border-gray-300 px-4 py-6 sm:px-6 lg:px-8 xl:block dark:border-white/10">
@@ -153,17 +169,19 @@ export default function GroupPage() {
 							<div className="py-5">
 								<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10">
 									{sideNav.map((nav) => (
-										<li key={nav.name} className="py-4 flex gap-4 justify-start items-center capitalize font-medium hover:bg-gray-200 cursor-pointer">
-											<span className={classNames(theme.base, "rounded-full flex justify-center items-center p-2.5 text-white")}>
-												<nav.icon className="size-5" />
-											</span>
-											{nav.name}
+										<li key={nav.name}>
+											<Link href={nav.destination} className="size-full cursor-pointer py-4 flex gap-4 justify-start items-center capitalize font-medium hover:bg-gray-200">
+												<span className={classNames(theme.base, "rounded-full flex justify-center items-center p-2.5 text-white")}>
+													<nav.icon className="size-5" />
+												</span>
+												{nav.name}
+											</Link>
 										</li>
 									))}
 								</ul>
 							</div>
 							<div className="py-4">
-								<button onClick={handleGroupCreation} className={classNames(buttonVariants({ variant: "blueBtn" }), "w-full")}>
+								<button onClick={handleGroupCreation} className={classNames(dynamicButton(), "w-full")}>
 									<PlusIcon className="size-5" />
 									create new group
 								</button>
@@ -172,7 +190,7 @@ export default function GroupPage() {
 					</div>
 					<div className="py-4">
 						<dt className="text-lg text-gray-900 font-medium">Groups you manage</dt>
-						<dd className="mt-2.5 size-full max-h-screen overflow-y-auto">
+						<dd className="mt-2.5 size-full max-h-screen overflow-y-auto overflow-x-hidden">
 							{managedGroups.length > 0 ? (
 								<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10 flex flex-col gap-2.5">
 									{managedGroups.map((group) => (
@@ -210,8 +228,14 @@ export default function GroupPage() {
 					</div>
 				</dl>
 			</aside>
-			<main className="grow">
-				<div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6 bg-gray-200 size-full">{viewGroupPreview ? <GroupPreviewCard closingFunction={closeGroupPreview} /> : ""}</div>
+			<main className="bg-gray-200 w-full">
+				{viewGroupPreview ? (
+					<div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
+						<GroupPreviewCard closingFunction={closeGroupPreview} />
+					</div>
+				) : (
+					<div className="size-full">{children}</div>
+				)}
 			</main>
 			<div className="hidden">
 				<CreateAndManageGroup open={openGroupDrawer} closingFunction={closeGroupCreationDrawer} settings={groupEditSettings} />
@@ -251,11 +275,13 @@ export default function GroupPage() {
 																<div className="py-5">
 																	<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10">
 																		{sideNav.map((nav) => (
-																			<li key={nav.name} className="py-4 flex gap-4 justify-start items-center capitalize font-medium hover:bg-gray-200 cursor-pointer">
-																				<span className={classNames(theme.base, "rounded-full flex justify-center items-center p-2.5 text-white")}>
-																					<nav.icon className="size-5" />
-																				</span>
-																				{nav.name}
+																			<li key={nav.name}>
+																				<Link href={nav.destination} className="size-full cursor-pointer py-4 flex gap-4 justify-start items-center capitalize font-medium hover:bg-gray-200">
+																					<span className={classNames(theme.base, "rounded-full flex justify-center items-center p-2.5 text-white")}>
+																						<nav.icon className="size-5" />
+																					</span>
+																					{nav.name}
+																				</Link>
 																			</li>
 																		))}
 																	</ul>

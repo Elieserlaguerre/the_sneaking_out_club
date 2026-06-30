@@ -27,8 +27,8 @@ export default function GroupCard({ group, editFunction }) {
 
 	return (
 		<div className="rounded-lg bg-white shadow-sm dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 border border-gray-400">
-			<div className="px-4 py-5 sm:p-6 flex justify-start items-center gap-4">
-				<div className="size-10">
+			<div className="px-4 py-5 flex justify-start items-center gap-4">
+				<div className="size-10 shrink-0">
 					{group?.image ? (
 						<div className="size-full rounded-md overflow-clip">
 							<ImageCard
@@ -47,7 +47,7 @@ export default function GroupCard({ group, editFunction }) {
 					)}
 				</div>
 				<dl className="flex-1">
-					<dt className="capitalize font-medium">{group?.name}</dt>
+					<dt className="capitalize font-medium text-nowrap truncate">{group?.name}</dt>
 					<dd className="text-sm text-gray-700 capitalize">{group?.privacy}</dd>
 				</dl>
 				{group.owner === user._id && (
@@ -55,7 +55,7 @@ export default function GroupCard({ group, editFunction }) {
 						<MenuButton className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-xs ring-inset hover:ring-gray-400">
 							<EllipsisVerticalIcon aria-hidden="true" className="w-5 text-gray-900" />
 						</MenuButton>
-						<MenuItems transition className="absolute right-0 z-10 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in grid grid-cols-1 gap-1 p-1">
+						<MenuItems transition className="absolute right-3.5 z-10 mt-2 -mr-1 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in grid grid-cols-1 gap-1 p-1">
 							<Fragment>
 								<MenuItem>
 									<button onClick={() => handleGroupEdit(group)} className={classNames(buttonVariants({ variant: "yellowBtn" }))}>

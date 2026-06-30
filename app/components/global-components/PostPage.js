@@ -2,8 +2,8 @@
 import PostCard from "@/app/components/cards/PostCard";
 import CreatePost from "@/app/components/overlays/modals/CreatePost";
 import { useTheme } from "@/app/components/providers/ThemeProvider";
-import { useLazyGetPostsQuery } from "@/app/lib/redux/data-fetching/parents-api";
-import { currentUser } from "@/app/lib/state-management/global-state";
+import { useLazyGetPostsQuery } from "@/app/lib/redux/data-fetching/global-api";
+import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
 import { useAtomValue } from "jotai";
 import { nanoid } from "nanoid";
 import Link from "next/link";
@@ -16,6 +16,8 @@ export default function PostPage() {
 	}
 
 	const user = useAtomValue(currentUser);
+	const department = useAtomValue(currentDepartment);
+	console.log("department", department);
 
 	const navlinks = [
 		{
@@ -51,6 +53,7 @@ export default function PostPage() {
 	];
 
 	const theme = useTheme();
+	console.log("theme", theme);
 
 	const pageSizes = [
 		{
@@ -106,6 +109,19 @@ export default function PostPage() {
 
 	const [promotions, setPromotions] = useState([]);
 
+	const navHighlight = () => {
+		switch (department) {
+			case "members":
+				return "hover:bg-red-600 hover:text-white";
+			case "parents":
+				return "hover:bg-blue-600 hover:text-white";
+			case "teachers":
+				return "hover:bg-orange-600 hover:text-white";
+			default:
+				return;
+		}
+	};
+
 	return (
 		<div>
 			<div className="mx-auto w-full px-4 sm:px-6 lg:w-11/12 lg:px-8 min-h-screen flex flex-col py-10">
@@ -114,7 +130,7 @@ export default function PostPage() {
 					<aside className="sticky top-14 hidden w-60 shrink-0 lg:block overflow-y-auto h-full border border-gray-200">
 						<ul role="list" className="divide-y divide-gray-200 dark:divide-white/10">
 							{navlinks.map((item) => (
-								<li key={item.id} className={classNames(`flex items-center bg-white hover:${theme.sectionNavbar.root} hover:${theme.text.navbar}`)}>
+								<li key={item.id} className={classNames(navHighlight(), "flex items-center bg-white")}>
 									{item.type === "link" ? (
 										<Link href={item?.destination} className="capitalize font-medium size-full p-3.5 text-left">
 											{item.name}

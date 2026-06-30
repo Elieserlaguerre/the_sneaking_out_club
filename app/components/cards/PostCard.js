@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import { Popper, Fade } from "@mui/material";
 import toast from "react-hot-toast";
-import { useDeletePostMutation, useReactToPostMutation, useSaveItemMutation, useSavePostMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useDeletePostMutation, useReactToPostMutation, useSavePostMutation } from "@/app/lib/redux/data-fetching/global-api";
 import { EMOJI_MAP } from "@/app/lib/util/frontend/variables";
 import PostComment from "../overlays/modals/PostComment";
 import { dynamicPostContentDisplay, formatPostDate } from "@/app/lib/util/frontend";
@@ -25,10 +25,6 @@ export default function PostCard({ post }) {
 	const user = useAtomValue(currentUser);
 
 	const existingConnection = user?.connections?.some((connection) => connection?.member?.toString() === post?.creator?._id?.toString());
-
-	console.log("post", post);
-
-	
 
 	const options = [
 		{

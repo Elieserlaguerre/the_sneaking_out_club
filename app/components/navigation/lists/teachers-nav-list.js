@@ -79,14 +79,34 @@ export const teachersInaternalSectionNav = [
 
 export const teachersDashboardSectionNav = [
 	{
-		component: {
-			hideMobileButton: true,
-			elements: (
-				<div className="w-full h-full flex justify-center items-center">
-					<h1 className="uppercase font-bold tracking-widest">teachers dashboard</h1>
-				</div>
-			)
-		}
+		id: nanoid(),
+		title: "summary",
+		href: "/dashboard"
+	},
+	{
+		id: nanoid(),
+		title: "posts",
+		href: "/dashboard/posts"
+	},
+	{
+		id: nanoid(),
+		title: "reels",
+		href: "/dashboard/reels"
+	},
+	{
+		id: nanoid(),
+		title: "connections",
+		href: "/dashboard/connections"
+	},
+	{
+		id: nanoid(),
+		title: "store",
+		href: "/dashboard/store"
+	},
+	{
+		id: nanoid(),
+		title: "programs",
+		href: "/dashboard/programs"
 	}
 ];
 
