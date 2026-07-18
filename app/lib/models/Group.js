@@ -100,6 +100,25 @@ const groupSchema = new Schema(
 				}
 			],
 			default: []
+		},
+		feed: {
+			type: ObjectId,
+			ref: "Feed"
+		},
+		rules: {
+			type: [
+				{
+					rule: {
+						type: String,
+						trim: true
+					},
+					description: {
+						type: String,
+						trim: true
+					}
+				}
+			],
+			default: []
 		}
 	},
 	{ timestamps: true }

@@ -70,6 +70,11 @@ const notificationSchema = new Schema(
 			type: String,
 			required: true,
 			enum: ["Member", "Parent", "Teacher", "Admin", "Applicant"]
+		},
+		key: {
+			type: String,
+			trim: true,
+			required: true
 		}
 	},
 	{ timestamps: true }

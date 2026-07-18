@@ -377,8 +377,75 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			providesTags: [{ type: "global posts" }],
 			transformErrorResponse: (results) => results.data.message,
 			keepUnusedDataFor: 0
+		}),
+		groupDiscoveries: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/discoveries",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global group discoveries" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		joinGroup: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/groups/discoveries",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global group discoveries" }, { type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		cancelGroupJoinRequest: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/groups/discoveries",
+				method: "DELETE",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global group discoveries" }, { type: "global user notifications" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		respondToJoinRequest: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/groups/discoveries",
+				method: "PATCH",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global group discoveries" }, { type: "global user notifications" }, { type: "global joined groups" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getYourGroups: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/your-groups",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global your groups" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		viewGroup: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/view",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global view group" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		getGroupDetails: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/view/about",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global group details" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
 		})
 	})
 });
 
-export const { useLazyGetPostsQuery, useCreatePostMutation, useLazyGetJoinedGroupsQuery, useLazyGetManagedGroupsQuery, useCreateGroupMutation, useEditCollectionMutation, useDeleteCollectionMutation, useReportSavedItemMutation, useAddToCollectionMutation, useLazyGetCollectionToAddQuery, useLazyGetCollectionsQuery, useCreateCollectionMutation, useDeleteSavedPostMutation, useLazyGetSavedPostsQuery, useSavePostMutation, useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const {useGetGroupDetailsQuery, useLazyViewGroupQuery, useLazyGetYourGroupsQuery, useRespondToJoinRequestMutation, useCancelGroupJoinRequestMutation, useJoinGroupMutation, useLazyGroupDiscoveriesQuery, useLazyGetPostsQuery, useCreatePostMutation, useLazyGetJoinedGroupsQuery, useLazyGetManagedGroupsQuery, useCreateGroupMutation, useEditCollectionMutation, useDeleteCollectionMutation, useReportSavedItemMutation, useAddToCollectionMutation, useLazyGetCollectionToAddQuery, useLazyGetCollectionsQuery, useCreateCollectionMutation, useDeleteSavedPostMutation, useLazyGetSavedPostsQuery, useSavePostMutation, useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

@@ -6,14 +6,15 @@ RULE: ALL FILE NAMES IN THIS BUILDER-LAYER MUST START WITH "BUILD"
 
 import { NOTIFICATIONS } from "@/app/lib/events/events";
 import { nanoid } from "nanoid";
+import slugify from "slugify";
 
 export const buildNotificationObject = async (data) => {
 	try {
 		if (!data) throw new Error("No data provided.");
 
-		console.log("build notification", data);
-
 		const notification = NOTIFICATIONS[data.event];
+
+		const key = `${notification.title} ${nanoid()}`;
 
 		const results = data?.list?.map((user) => ({
 			...data,
@@ -23,7 +24,8 @@ export const buildNotificationObject = async (data) => {
 			sender: user.sender,
 			senderType: user.senderType,
 			recipient: user.recipient,
-			recipientType: user.recipientType
+			recipientType: user.recipientType,
+			key: slugify(key)
 		}));
 
 		return {

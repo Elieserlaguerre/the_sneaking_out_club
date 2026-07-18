@@ -11,8 +11,7 @@ export const createNotifications = async (data, session) => {
 		if (!session) throw new Error("session is reuired to send notifications.");
 
 		const notifications = await buildNotificationObject(data);
-
-		console.log("notification", notifications);
+		// console.log("notification", notifications);
 
 		if (notifications.success === true) {
 			console.log(notifications.message);

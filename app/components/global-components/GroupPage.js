@@ -12,10 +12,11 @@ import { useTheme } from "@/app/components/providers/ThemeProvider";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import GroupPreviewCard from "@/app/components/cards/GroupPreviewCard";
 import CreateAndManageGroup from "@/app/components/overlays/drawers/CreateAndManageGroup";
-import { useLazyGetManagedGroupsQuery } from "@/app/lib/redux/data-fetching/global-api";
+import { useLazyGetJoinedGroupsQuery, useLazyGetManagedGroupsQuery } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import GroupCard from "@/app/components/cards/GroupCard";
 import Link from "next/link";
+import { dynamicButton } from "@/app/lib/util/global";
 
 export default function GroupPage({ children }) {
 	function classNames(...classes) {
@@ -126,7 +127,7 @@ export default function GroupPage({ children }) {
 			const message = typeof getManagedGroupResults.error === "string" ? getManagedGroupResults.error : getManagedGroupResults.error.message;
 			toast.error(message);
 		} else if (getManagedGroupResults.isSuccess) {
-			toast.success(getManagedGroupResults.data.message);
+			// toast.success(getManagedGroupResults.data.message);
 
 			const { results } = getManagedGroupResults.data;
 			setManagedGrouptTotalPages(results?.totalPages ?? 0);
@@ -140,18 +141,55 @@ export default function GroupPage({ children }) {
 		}
 	}, [user, managedGroupPage, managedGroupLimit, managedGroupfilters]);
 
-	const dynamicButton = () => {
-		switch (department) {
-			case "members":
-				return buttonVariants({ variant: "destructiveBtn" });
-			case "parents":
-				return buttonVariants({ variant: "blueBtn" });
-			case "teachers":
-				return buttonVariants({ variant: "orangeBtn" });
-			default:
-				return;
+	const joinedGroupPageSizes = [
+		{
+			id: nanoid(),
+			value: 3
+		},
+		{
+			id: nanoid(),
+			value: 6
+		},
+		{
+			id: nanoid(),
+			value: 9
+		},
+		{
+			id: nanoid(),
+			value: 12
 		}
+	];
+	const [joinedGroupPage, setJoinedGroupPage] = useState(1);
+	const [totalJoinedGroupPages, setTotalJoinedGroupPages] = useState(0);
+	const [joinedGroupLimit, setJoinedGroupLimit] = useState(joinedGroupPageSizes[0].value);
+	const [joinedGroupFilters, setJoinedGroupFilters] = useState({
+		sort: "newest"
+	});
+
+	const handlePagination = (_, page) => {
+		setPage(page);
 	};
+
+	const [getJoinedGroups, getJoinedGroupsResults] = useLazyGetJoinedGroupsQuery();
+
+	useEffect(() => {
+		if (getJoinedGroupsResults.isError) {
+			const message = typeof getJoinedGroupsResults.error === "string" ? getJoinedGroupsResults.error : getJoinedGroupsResults.error.message;
+			toast.error(message);
+		} else if (getJoinedGroupsResults.isSuccess) {
+			// toast.success(getJoinedGroupsResults.data.message);
+
+			const { results } = getJoinedGroupsResults.data;
+			setJoinedGroups(results?.groups ?? []);
+			setTotalJoinedGroupPages(results?.totalPages ?? 0);
+		}
+	}, [getJoinedGroupsResults.isFetching, getJoinedGroupsResults.isSuccess, getJoinedGroupsResults.isError]);
+
+	useEffect(() => {
+		if (user) {
+			getJoinedGroups({ userId: user._id, page: joinedGroupPage, limit: joinedGroupLimit, filters: JSON.stringify(joinedGroupFilters) });
+		}
+	}, [user, joinedGroupPage, joinedGroupLimit, joinedGroupFilters]);
 
 	return (
 		<div className="lg:flex min-h-screen">
@@ -181,7 +219,7 @@ export default function GroupPage({ children }) {
 								</ul>
 							</div>
 							<div className="py-4">
-								<button onClick={handleGroupCreation} className={classNames(dynamicButton(), "w-full")}>
+								<button onClick={handleGroupCreation} className={classNames(dynamicButton(department), "w-full")}>
 									<PlusIcon className="size-5" />
 									create new group
 								</button>

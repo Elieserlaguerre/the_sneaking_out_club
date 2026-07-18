@@ -11,7 +11,6 @@ export const processEvent = async (event, session) => {
 		if (!session) throw new Error("session is required.");
 
 		if (eventValidation.success) {
-			// console.log("process event", event);
 			if (event?.ledgerEntry?.create === true) {
 				// console.log("ledger event", event.ledger);
 				const entries = await buildNewLedgerEntries(event.ledger);
@@ -28,8 +27,8 @@ export const processEvent = async (event, session) => {
 			}
 
 			if (event?.notifications?.create === true && event?.ledgerEntry?.create === false) {
-				// console.log("notification event", event.notifications);
 				const notificationResults = await createNotifications(event.notifications, session);
+				// console.log("notification event", notificationResults);
 				if (notificationResults.succes === true) console.log("Notifications Message:", notificationResults.message);
 				else throw new Error(notificationResults.error);
 			}

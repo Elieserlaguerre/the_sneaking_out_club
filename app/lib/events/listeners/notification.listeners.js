@@ -1,8 +1,14 @@
 import { eventBus } from "../eventBus";
-import { handleFriendRequestAcceptedEvent, handleFriendRequestDeniedEvent, handleFriendRequestNotificationEvent } from "../handlers/notifications";
+import { handleNotificationEvent } from "../handlers/notifications";
 
-eventBus.on("user.friend_request", handleFriendRequestNotificationEvent);
+eventBus.on("user.friend_request", handleNotificationEvent);
 
-eventBus.on("user.request_accepted", handleFriendRequestAcceptedEvent);
+eventBus.on("user.request_accepted", handleNotificationEvent);
 
-eventBus.on("user.request_denied", handleFriendRequestDeniedEvent);
+eventBus.on("user.request_denied", handleNotificationEvent);
+
+eventBus.on("group.join_request", handleNotificationEvent);
+
+eventBus.on("group.request_accepted", handleNotificationEvent);
+
+eventBus.on("group.request_denied", handleNotificationEvent);

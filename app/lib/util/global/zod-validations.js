@@ -1,5 +1,16 @@
 import z from "zod";
 
+const idSchema = z.preprocess((value) => {
+	if (value == null) return value;
+
+	// ObjectId has a toString() method
+	if (typeof value === "object" && typeof value.toString === "function") {
+		return value.toString();
+	}
+
+	return value;
+}, z.string().trim().nonempty());
+
 export const registrationFormSchema = z
 	.object({
 		firstName: z.string().trim().min(1, { message: "first name is required." }),
@@ -202,16 +213,16 @@ export const eventSchema = z
 			list: z
 				.array(
 					z.object({
-						_id: z.string().optional(),
-						sender: z.string().trim().nonempty({ message: "sender's ID is required for notifications." }),
+						_id: idSchema.optional(),
+						sender: idSchema,
 						senderType: z.string().trim().nonempty({ message: "Sender type is required for notifications." }),
-						recipient: z.string().trim().nonempty({ message: "Recipient Id is required for notifications." }),
+						recipient: idSchema,
 						recipientType: z.string().trim().nonempty({ message: "Recipient type is required for notifications." })
 					})
 				)
 				.nonempty({ message: "notification list is required." }),
 			metaData: z.any().optional(),
-			creator: z.string().trim().nonempty({ message: "notification creator is required." }),
+			creator: idSchema,
 			creatorType: z.string().trim().nonempty({ message: "notification creator type is required." })
 		})
 	})

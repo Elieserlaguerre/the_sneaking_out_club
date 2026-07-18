@@ -140,6 +140,11 @@ const postSchema = new Schema(
 			type: String,
 			enum: ["public", "friends", "private"],
 			default: "public"
+		},
+
+		feed: {
+			type: ObjectId,
+			ref: "Feed"
 		}
 	},
 	{ timestamps: true }

@@ -1,0 +1,13 @@
+"use client";
+import { useParams } from "next/navigation";
+import React from "react";
+
+export default function GroupMembersPage() {
+	function classNames(...classes) {
+		return classes.filter(Boolean).join(" ");
+	}
+
+	const { groupId } = useParams();
+
+	return <div>Group Members Page: {groupId} </div>;
+}

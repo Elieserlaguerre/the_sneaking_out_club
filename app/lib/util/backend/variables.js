@@ -1,4 +1,6 @@
 import Admin from "../../models/Admin";
+import Event from "../../models/Event";
+import Group from "../../models/Group";
 import Member from "../../models/Member";
 import Parent from "../../models/Parent";
 import Post from "../../models/Post";
@@ -21,5 +23,7 @@ export const MODEL_MAP = {
 
 
 export const CONTENT_MAP = {
-	Post
+	Post,
+	Group,
+	Event
 }

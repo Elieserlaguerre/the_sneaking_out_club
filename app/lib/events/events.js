@@ -126,6 +126,26 @@ export const EVENTS = {
 	USER_ASSIGNMENT: {
 		event: "assignments.assigned_to_user",
 		notification: ""
+	},
+
+	/*
+	============
+	GROUP EVENTS
+	============
+	*/
+
+	JOIN_GROUP: {
+		event: "group.join_request",
+		notification: "GROUP_JOIN_REQUEST"
+	},
+
+	GROUP_JOIN_REQUEST_ACCEPTED: {
+		event: "group.request_accepted",
+		notification: "GROUP_JOIN_ACCEPTED"
+	},
+	GROUP_JOIN_REQUEST_DENIED: {
+		event: "group.request_denied",
+		notification: "GROUP_JOIN_DENIED"
 	}
 };
 
@@ -179,5 +199,28 @@ export const NOTIFICATIONS = {
 		event: "notifications.family_user_update",
 		title: "profile update",
 		message: "Your account was recently updated by a family member."
+	},
+
+	/*
+	===================
+	GROUP NOTIFICATIONS
+	===================
+	*/
+
+	GROUP_JOIN_REQUEST: {
+		event: "notifications.join_group_request",
+		title: "group join request",
+		message: "group join request from an interested user."
+	},
+
+	GROUP_JOIN_ACCEPTED: {
+		event: "notifications.join_group_request_accepted",
+		title: "goup join request accepted",
+		message: "your group join request was accepted."
+	},
+	GROUP_JOIN_DENIED: {
+		event: "notifications.join_group_request_denied",
+		title: "group join request denied",
+		message: "your group join request was denied."
 	}
 };

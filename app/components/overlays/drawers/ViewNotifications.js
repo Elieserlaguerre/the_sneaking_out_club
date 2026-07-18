@@ -1,14 +1,14 @@
 "use client";
 import { currentDepartment, currentUser } from "@/app/lib/state-management/global-state";
 import { useAtomValue } from "jotai";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { buttonVariants } from "../../shadcn/button";
 import { useTheme } from "../../providers/ThemeProvider";
 import { Pagination } from "@mui/material";
 import { nanoid } from "nanoid";
 import { Dialog, DialogPanel, DialogTitle, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ArrowPathIcon, EllipsisVerticalIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { useCancelFriendRequestMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useNotificationResponseMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useCancelFriendRequestMutation, useCancelGroupJoinRequestMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useNotificationResponseMutation, useRespondToJoinRequestMutation } from "@/app/lib/redux/data-fetching/global-api";
 import toast from "react-hot-toast";
 import EmptyNotifications from "../../empty-states/EmptyNotifications";
 import { add, milliseconds } from "date-fns";
@@ -144,6 +144,94 @@ export default function ViewNotifications({ open, closingFunction }) {
 		}
 	}, [cancelRequestResults.isLoading, cancelRequestResults.isSuccess, cancelRequestResults.isError]);
 
+	const [cancelJoinRequest, cancelJoinRequestResults] = useCancelGroupJoinRequestMutation();
+
+	useEffect(() => {
+		if (cancelJoinRequestResults.isError) {
+			const message = typeof cancelJoinRequestResults.error === "string" ? cancelJoinRequestResults.error : cancelJoinRequestResults.error.message;
+			toast.error(message);
+		} else if (cancelJoinRequestResults.isSuccess) {
+			toast.success(cancelJoinRequestResults.data.message);
+		}
+	}, [cancelJoinRequestResults.isLoading, cancelJoinRequestResults.isSuccess, cancelJoinRequestResults.isError]);
+
+	const [groupJoinResponse, groupJoinResponseResults] = useRespondToJoinRequestMutation();
+
+	useEffect(() => {
+		if (groupJoinResponseResults.isError) {
+			const message = typeof groupJoinResponseResults.error === "string" ? groupJoinResponseResults.error : groupJoinResponseResults.error.message;
+			toast.error(message);
+		} else if (groupJoinResponseResults.isSuccess) {
+			toast.success(groupJoinResponseResults.data.message);
+		}
+	}, [groupJoinResponseResults.isLoading, groupJoinResponseResults.isSuccess, groupJoinResponseResults.isError]);
+
+	const dynamicNotificationResponses = (event, notification) => {
+		switch (event) {
+			case "notifications.friend_request":
+				return (
+					<Fragment>
+						{notification.creator !== user?._id && (
+							<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+								<button type="button" onClick={() => handleNotificationResponse("accept", notification)} className={classNames(buttonVariants({ variant: "greenBtn" }), "flex-auto cursor-pointer")}>
+									accept
+								</button>
+								<button type="button" onClick={() => handleNotificationResponse("decline", notification)} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto cursor-pointer")}>
+									decline
+								</button>
+							</div>
+						)}
+
+						{notification.creator === user?._id && (
+							<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+								<button type="button" onClick={() => cancelRequest({ notificationId: notification._id, action: "cancel request" })} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto cursor-pointer")}>
+									cancel request
+								</button>
+							</div>
+						)}
+					</Fragment>
+				);
+			case "notifications.join_group_request":
+				return (
+					<div>
+						{notification.creator !== user._id && (
+							<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+								<button type="button" onClick={() => groupJoinResponse({ responseType: "accept", requestId: notification?.metaData?.joinRequestId, key: notification?.key, userId: user._id, userType: user.docType, event: "GROUP_JOIN_REQUEST_ACCEPTED" })} className={classNames(buttonVariants({ variant: "greenBtn" }), "flex-auto cursor-pointer")}>
+									accept
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										groupJoinResponse({ responseType: "decline", requestId: notification?.metaData?.joinRequestId, key: notification?.key, userId: user._id, userType: user.docType, event: "GROUP_JOIN_REQUEST_DENIED" });
+										closingFunction();
+									}}
+									className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto cursor-pointer")}>
+									decline
+								</button>
+							</div>
+						)}
+						{notification.creator === user._id && (
+							<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
+								<button
+									type="button"
+									onClick={() => {
+										cancelJoinRequest({ key: notification?.key, requestId: notification?.metaData?.joinRequestId });
+										closingFunction();
+									}}
+									className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto cursor-pointer")}>
+									cancel
+								</button>
+							</div>
+						)}
+					</div>
+				);
+			case "":
+				break;
+			default:
+				return;
+		}
+	};
+
 	return (
 		<Dialog open={open} onClose={closingFunction} className="relative z-50">
 			<div className="fixed inset-0" />
@@ -172,9 +260,7 @@ export default function ViewNotifications({ open, closingFunction }) {
 									<div className="divide-y divide-gray-200 grow overflow-y-auto pb-4">
 										<div className="space-y-6 pt-6 h-full max-w-md mx-auto px-4">
 											<ul role="list" className="divide-y divide-gray-100 dark:divide-white/5 flex flex-col size-full">
-												{getNotificationsResults.isFetching ? (
-													""
-												) : notifications.length === 0 ? (
+												{notifications.length === 0 ? (
 													<EmptyNotifications />
 												) : (
 													notifications.map((notification) => (
@@ -184,25 +270,7 @@ export default function ViewNotifications({ open, closingFunction }) {
 																<div className="min-w-0 flex-auto">
 																	<p className="text-sm/6 font-semibold text-gray-900 dark:text-white capitalize">{notification.title}</p>
 																	<p className="mt-1 flex text-xs/5 text-gray-500 dark:text-gray-400">{notification.message}</p>
-
-																	{notification.event === "notifications.friend_request" && notification.creator !== user?._id && (
-																		<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
-																			<button type="button" onClick={() => handleNotificationResponse("accept", notification)} className={classNames(buttonVariants({ variant: "greenBtn" }), "flex-auto")}>
-																				accept
-																			</button>
-																			<button type="button" onClick={() => handleNotificationResponse("decline", notification)} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto")}>
-																				decline
-																			</button>
-																		</div>
-																	)}
-
-																	{notification.event === "notifications.friend_request" && notification.creator === user?._id && (
-																		<div className="flex justify-evenly items-center gap-2.5 w-full mt-2.5">
-																			<button type="button" onClick={() => cancelRequest({ notificationId: notification._id, action: "cancel request" })} className={classNames(buttonVariants({ variant: "destructiveBtn" }), "flex-auto")}>
-																				cancel request
-																			</button>
-																		</div>
-																	)}
+																	{dynamicNotificationResponses(notification?.event, notification)}
 																</div>
 															</div>
 															<div className="flex shrink-0 items-start gap-x-6">

@@ -10,6 +10,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { nanoid } from "zod";
 import ImageCard from "./ImageCard";
+import { privacyDetails, visibilityDetails } from "@/app/lib/util/global";
 
 export default function GroupPreviewCard({ closingFunction }) {
 	function classNames(...classes) {
@@ -19,7 +20,7 @@ export default function GroupPreviewCard({ closingFunction }) {
 	const user = useAtomValue(currentUser);
 
 	const [preview, setPreview] = useAtom(groupPreview);
-	console.log("preview", preview);
+	// console.log("preview", preview);
 
 	const clearForm = () => {
 		setPreview({
@@ -65,28 +66,6 @@ export default function GroupPreviewCard({ closingFunction }) {
 			name: "managers"
 		}
 	];
-
-	const privacyDetails = (type) => {
-		switch (type) {
-			case "private":
-				return "Only members can see who's in the group and what they post.";
-			case "public":
-				return "Anyone can see who's in the group and what they post.";
-			default:
-				return;
-		}
-	};
-
-	const visibilityDetails = (type) => {
-		switch (type) {
-			case "visible":
-				return "Anyone can find this group";
-			case "hidden":
-				return "Only members can find this group.";
-			default:
-				return;
-		}
-	};
 
 	const [groupStats, setGroupStats] = useState([
 		{
