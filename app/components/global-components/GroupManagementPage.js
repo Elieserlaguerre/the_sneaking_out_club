@@ -12,6 +12,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { useTheme } from "../providers/ThemeProvider";
 import Link from "next/link";
 import { buttonVariants } from "../shadcn/button";
+import MyGroupsCardSkeleton from "../loading-skeletons/MyGroupsCardSkeleton";
 
 export default function GroupManagementPage() {
 	function classNames(...classes) {
@@ -64,7 +65,7 @@ export default function GroupManagementPage() {
 			const message = typeof getMyGroupsResults.error === "string" ? getMyGroupsResults.error : getMyGroupsResults.error.message;
 			toast.error(message);
 		} else if (getMyGroupsResults.isSuccess) {
-			toast.success(getMyGroupsResults.data.message);
+			// toast.success(getMyGroupsResults.data.message);
 
 			const { results } = getMyGroupsResults.data;
 			setTotalDocuments(results?.totalDocuments ?? 0);
@@ -102,6 +103,7 @@ export default function GroupManagementPage() {
 			name: "leave group"
 		}
 	];
+
 	return (
 		<div className="size-full flex-1">
 			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8 flex flex-col bg-white size-full">
@@ -125,11 +127,13 @@ export default function GroupManagementPage() {
 						</Menu>
 					</div>
 				</header>
-				<section>
-					<ul role="list" className="size-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-						{myGroups.map((group) => (
-							<li key={group._id}>
-								<div className="rounded-lg bg-white shadow-md shadow-gray-300 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 border border-gray-300">
+				<section className="max-h-screen overflow-y-auto">
+					<div className="size-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+						{getMyGroupsResults.isFetching ? (
+							Array.from({ length: 18 }).map((_, idx) => <MyGroupsCardSkeleton key={`loading_skeleton_${idx}`} />)
+						) : myGroups.length > 0 ? (
+							myGroups.map((group) => (
+								<div key={group._id} className="rounded-lg bg-white shadow-md shadow-gray-300 dark:bg-gray-800/50 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10 border border-gray-300 h-35">
 									<div className="px-4 py-5 flex justify-start items-center flex-wrap gap-4">
 										<div className="size-20 shrink-0">
 											{group?.image ? (
@@ -172,9 +176,14 @@ export default function GroupManagementPage() {
 										</Menu>
 									</div>
 								</div>
-							</li>
-						))}
-					</ul>
+							))
+						) : (
+							<div className="text-center border border-gray-400 min-h-screen py-4 rounded-sm flex flex-col justify-center items-center col-span-full">
+								<h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-white capitalize">No groups to display</h3>
+								<p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating or joining a new group.</p>
+							</div>
+						)}
+					</div>
 				</section>
 			</div>
 		</div>

@@ -35,7 +35,7 @@ export async function GET(req) {
 		query = await req.nextUrl.searchParams;
 
 		data = Object.fromEntries(query.entries());
-		// console.log("data", data);
+		console.log("data", data);
 
 		const { userId } = data;
 
@@ -46,7 +46,15 @@ export async function GET(req) {
 		const filters = JSON.parse(data.filters);
 
 		options = {
-			creator: userId
+			$or: [
+				{
+					creator: userId
+				},
+				{
+					section: data.section,
+					sectionType: data.sectionType
+				}
+			]
 		};
 
 		if (filters.sort === "newest") sort = { createdAt: -1 };

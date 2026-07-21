@@ -1,5 +1,6 @@
+import GroupFeedPage from "@/app/components/global-components/GroupFeedPage";
 import React from "react";
 
 export default function page() {
-	return <div>about group page</div>;
+	return <GroupFeedPage />;
 }

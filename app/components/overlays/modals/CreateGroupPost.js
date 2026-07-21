@@ -12,9 +12,10 @@ import toast from "react-hot-toast";
 import { fromZodError } from "zod-validation-error";
 import { postSchema } from "@/app/lib/util/global/zod-validations";
 import { nanoid } from "nanoid";
-import { useCreatePostMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useCreateGroupPostMutation, useCreatePostMutation } from "@/app/lib/redux/data-fetching/global-api";
+import { useParams } from "next/navigation";
 
-export default function CreatePost() {
+export default function CreateGroupPost() {
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
@@ -31,7 +32,7 @@ export default function CreatePost() {
 
 	const user = useAtomValue(currentUser);
 	const department = useAtomValue(currentDepartment);
-
+	const { groupId } = useParams();
 	const theme = useTheme();
 
 	const [formContent, setFormContent] = useState({
@@ -101,7 +102,7 @@ export default function CreatePost() {
 		}
 	}, [uploadFileResults.isLoading, uploadFileResults.isSuccess, uploadFileResults.isError]);
 
-	const [createPost, createPostResults] = useCreatePostMutation();
+	const [createPost, createPostResults] = useCreateGroupPostMutation();
 
 	useEffect(() => {
 		if (createPostResults.isError) {
@@ -120,7 +121,7 @@ export default function CreatePost() {
 		const validation = postSchema.safeParse(formContent);
 
 		if (validation.success) {
-			createPost({ ...validation.data, section: user._id, sectionType: user.docType });
+			createPost({ ...validation.data, section: groupId, sectionType: "Group" });
 		} else {
 			const error = fromZodError(validation.error);
 			error.details.map((error) => toast.error(error.message));

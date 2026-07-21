@@ -103,7 +103,7 @@ export default function PostPage() {
 
 	useEffect(() => {
 		if (user) {
-			getPosts({ userId: user._id, page, limit, filters: JSON.stringify(filters) });
+			getPosts({ userId: user._id, page, limit, filters: JSON.stringify(filters), section: user._id, sectionType: user.docType });
 		}
 	}, [user, page, limit, filters]);
 

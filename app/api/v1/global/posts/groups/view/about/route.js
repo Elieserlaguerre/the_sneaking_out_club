@@ -1,5 +1,9 @@
 import db from "@/app/lib/database";
+import Admin from "@/app/lib/models/Admin";
 import Group from "@/app/lib/models/Group";
+import Member from "@/app/lib/models/Member";
+import Parent from "@/app/lib/models/Parent";
+import Teacher from "@/app/lib/models/Teacher";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +16,7 @@ export async function GET(req) {
 		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
-		console.log("data", data);
+		// console.log("data", data);
 
 		const { groupId } = data;
 
@@ -48,7 +52,7 @@ export async function GET(req) {
 
 		if (!group) return NextResponse.json({ message: "group not found." }, { status: 404 });
 
-		console.log("group", group);
+		// console.log("group", group);
 
 		return NextResponse.json({ results: group, message: "group details successfully retrieved." }, { status: 200 });
 	} catch (error) {

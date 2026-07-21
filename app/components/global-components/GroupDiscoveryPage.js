@@ -12,6 +12,7 @@ import { getInitials } from "@/app/lib/util/global";
 import { useAtomValue } from "jotai";
 import { currentUser } from "@/app/lib/state-management/global-state";
 import Link from "next/link";
+import GroupDiscoveryCardSkeleton from "../loading-skeletons/GroupDiscoveryCardSkeleton";
 
 export default function GroupDiscoveryPage() {
 	function classNames(...classes) {
@@ -132,7 +133,7 @@ export default function GroupDiscoveryPage() {
 	};
 
 	const [searchResults, setSearchResults] = useState({
-		type: "",
+		type: "groups",
 		data: []
 	});
 
@@ -180,70 +181,76 @@ export default function GroupDiscoveryPage() {
 			case "groups":
 				return (
 					<ul role="list" className="dark:divide-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-h-screen mt-8 gap-3">
-						{data.map((group) => (
-							<li key={group._id} className="">
-								<div className="px-4 pb-4 border border-gray-300 shadow shadow-gray-500 rounded-md min-h-72">
-									<div className="-mx-4 h-40 rounded-t-md overflow-clip shrink-0">
-										{group?.image ? (
-											<div className="size-full rounded-md overflow-clip">
-												<ImageCard
-													image={group?.image}
-													settings={{
-														alt: "group image card",
-														styles: {
-															image: "object-contain object-center",
-															background: "size-full"
-														}
-													}}
-												/>
+						{groupSearchResults.isFetching
+							? Array.from({ length: 8 }).map((_, idx) => (
+									<li key={`loading_skeleton_${idx}`}>
+										<GroupDiscoveryCardSkeleton />
+									</li>
+								))
+							: data.map((group) => (
+									<li key={group._id}>
+										<div className="px-4 pb-4 border border-gray-300 shadow shadow-gray-500 rounded-md min-h-72">
+											<div className="-mx-4 h-40 rounded-t-md overflow-clip shrink-0">
+												{group?.image ? (
+													<div className="size-full rounded-md overflow-clip">
+														<ImageCard
+															image={group?.image}
+															settings={{
+																alt: "group image card",
+																styles: {
+																	image: "object-contain object-center",
+																	background: "size-full"
+																}
+															}}
+														/>
+													</div>
+												) : (
+													<div className={classNames(theme.base, "flex justify-center items-center size-full text-white font-medium uppercase text-3xl")}>{getInitials(group?.name)}</div>
+												)}
 											</div>
-										) : (
-											<div className={classNames(theme.base, "flex justify-center items-center size-full text-white font-medium uppercase text-3xl")}>{getInitials(group?.name)}</div>
-										)}
-									</div>
-									<div className="flex flex-1 flex-col px-8 py-4">
-										<h3 className="text-sm font-medium text-gray-900 text-center capitalize hover:cursor-pointer hover:underline">
-											<Link href={`/dashboard/posts/groups/view/${group?._id}`}>{group?.name}</Link>
-										</h3>
-										<dl className="mt-1 flex grow flex-col justify-between">
-											<dt className="sr-only">about information</dt>
-											<dd className="text-sm text-gray-500 text-center">{group?.about}</dd>
-											<div className="grid grid-cols-2 gap-2.5">
-												<div className="flex flex-col items-center">
-													<dt className="sr-only">privacy</dt>
-													<dd className="mt-3">
-														<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20">{group?.privacy}</span>
-													</dd>
-												</div>
-												<div className="flex flex-col items-center">
-													<dt className="sr-only">visibility</dt>
-													<dd className="mt-3">
-														<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20">{group?.visibility}</span>
-													</dd>
-												</div>
-												<div className="flex justify-center items-center gap-1.5">
-													<dt className="text-sm capitalize">members</dt>
-													<dd className="text-sm text-gray-900">{group.members.length}</dd>
-												</div>
-												<div className="flex justify-center items-center gap-1.5">
-													<dt className="text-sm capitalize">events</dt>
-													<dd className="text-sm text-gray-900">{group.events.length}</dd>
-												</div>
+											<div className="flex flex-1 flex-col px-8 py-4">
+												<h3 className="text-sm font-medium text-gray-900 text-center capitalize hover:cursor-pointer hover:underline">
+													<Link href={`/dashboard/posts/groups/view/${group?._id}`}>{group?.name}</Link>
+												</h3>
+												<dl className="mt-1 flex grow flex-col justify-between">
+													<dt className="sr-only">about information</dt>
+													<dd className="text-sm text-gray-500 text-center truncate">{group?.about}</dd>
+													<div className="grid grid-cols-2 gap-2.5">
+														<div className="flex flex-col items-center">
+															<dt className="sr-only">privacy</dt>
+															<dd className="mt-3">
+																<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 capitalize">{group?.privacy}</span>
+															</dd>
+														</div>
+														<div className="flex flex-col items-center">
+															<dt className="sr-only">visibility</dt>
+															<dd className="mt-3">
+																<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 capitalize">{group?.visibility}</span>
+															</dd>
+														</div>
+														<div className="flex justify-center items-center gap-1.5">
+															<dt className="text-sm capitalize">members</dt>
+															<dd className="text-sm text-gray-900">{group.members.length}</dd>
+														</div>
+														<div className="flex justify-center items-center gap-1.5">
+															<dt className="text-sm capitalize">events</dt>
+															<dd className="text-sm text-gray-900">{group.events.length}</dd>
+														</div>
+													</div>
+												</dl>
 											</div>
-										</dl>
-									</div>
-									<div>
-										<div className="-mt-px flex divide-x divide-gray-200">
-											<div className="flex w-0 flex-1">
-												<button onClick={() => joinGroup({ userId: user._id, userType: user.docType, groupId: group._id, docType: group.docType, event: "JOIN_GROUP" })} className={classNames(`hover:${theme.sectionNavbar.root} hover:text-white`, "relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-gray-900 cursor-pointer capitalize")}>
-													join
-												</button>
+											<div>
+												<div className="-mt-px flex divide-x divide-gray-200">
+													<div className="flex w-0 flex-1">
+														<button onClick={() => joinGroup({ userId: user._id, userType: user.docType, groupId: group._id, docType: group.docType, event: "JOIN_GROUP" })} className={classNames(`hover:${theme.sectionNavbar.root} hover:text-white`, "relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-b-lg border border-transparent py-4 text-sm font-semibold text-gray-900 cursor-pointer capitalize")}>
+															join
+														</button>
+													</div>
+												</div>
 											</div>
 										</div>
-									</div>
-								</div>
-							</li>
-						))}
+									</li>
+								))}
 					</ul>
 				);
 			case "categories":

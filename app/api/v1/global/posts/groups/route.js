@@ -7,7 +7,7 @@ export async function POST(req) {
 		await db.connect();
 		let data;
 		data = await req.json();
-		console.log("data", data);
+		// console.log("data", data);
 
 		const group = await Group.create(data);
 

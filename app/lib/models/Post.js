@@ -142,9 +142,16 @@ const postSchema = new Schema(
 			default: "public"
 		},
 
-		feed: {
+		section: {
 			type: ObjectId,
-			ref: "Feed"
+			required: true,
+			refPath: "sectionType"
+		},
+
+		sectionType: {
+			type: String,
+			required: true,
+			enum: ["Member", "Parent", "Teacher", "Admin", "Group"]
 		}
 	},
 	{ timestamps: true }

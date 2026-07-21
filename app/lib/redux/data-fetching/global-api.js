@@ -159,7 +159,7 @@ export const globalApi = multiTenantApi.injectEndpoints({
 				method: "PATCH",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "global posts" }],
+			invalidatesTags: [{ type: "global posts" }, { type: "global group posts" }, { type: "global group feed" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
 		saveItem: build.mutation({
@@ -177,7 +177,7 @@ export const globalApi = multiTenantApi.injectEndpoints({
 				method: "POST",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "global comments" }, { type: "global posts" }],
+			invalidatesTags: [{ type: "global comments" }, { type: "global posts" }, { type: "global group posts" }, { type: "global group feed" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
 		getPostComments: build.query({
@@ -224,7 +224,7 @@ export const globalApi = multiTenantApi.injectEndpoints({
 				method: "POST",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "global share post" }, { type: "global posts" }],
+			invalidatesTags: [{ type: "global share post" }, { type: "global posts" }, { type: "global group posts" }, { type: "global group feed" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
 		deletePost: build.mutation({
@@ -233,7 +233,7 @@ export const globalApi = multiTenantApi.injectEndpoints({
 				method: "DELETE",
 				body: formData
 			}),
-			invalidatesTags: [{ type: "global posts" }],
+			invalidatesTags: [{ type: "global posts" }, { type: "global group posts" }, { type: "global group feed" }],
 			transformErrorResponse: (results) => results.data.message
 		}),
 		savePost: build.mutation({
@@ -444,8 +444,37 @@ export const globalApi = multiTenantApi.injectEndpoints({
 			providesTags: [{ type: "global group details" }],
 			transformErrorResponse: (results) => results.data.message
 			//keepUnusedDataFor: 0
+		}),
+		getGroupPosts: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/view/group-posts",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global group posts" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
+		}),
+		createGroupPost: build.mutation({
+			query: (formData) => ({
+				url: "/global/posts/groups/view/group-posts",
+				method: "POST",
+				body: formData
+			}),
+			invalidatesTags: [{ type: "global group posts" }],
+			transformErrorResponse: (results) => results.data.message
+		}),
+		getGroupFeed: build.query({
+			query: (query) => ({
+				url: "/global/posts/groups/feed",
+				method: "GET",
+				params: query
+			}),
+			providesTags: [{ type: "global group feed" }],
+			transformErrorResponse: (results) => results.data.message
+			//keepUnusedDataFor: 0
 		})
 	})
 });
 
-export const {useGetGroupDetailsQuery, useLazyViewGroupQuery, useLazyGetYourGroupsQuery, useRespondToJoinRequestMutation, useCancelGroupJoinRequestMutation, useJoinGroupMutation, useLazyGroupDiscoveriesQuery, useLazyGetPostsQuery, useCreatePostMutation, useLazyGetJoinedGroupsQuery, useLazyGetManagedGroupsQuery, useCreateGroupMutation, useEditCollectionMutation, useDeleteCollectionMutation, useReportSavedItemMutation, useAddToCollectionMutation, useLazyGetCollectionToAddQuery, useLazyGetCollectionsQuery, useCreateCollectionMutation, useDeleteSavedPostMutation, useLazyGetSavedPostsQuery, useSavePostMutation, useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;
+export const { useLazyGetGroupFeedQuery, useCreateGroupPostMutation, useLazyGetGroupPostsQuery, useGetGroupDetailsQuery, useLazyViewGroupQuery, useLazyGetYourGroupsQuery, useRespondToJoinRequestMutation, useCancelGroupJoinRequestMutation, useJoinGroupMutation, useLazyGroupDiscoveriesQuery, useLazyGetPostsQuery, useCreatePostMutation, useLazyGetJoinedGroupsQuery, useLazyGetManagedGroupsQuery, useCreateGroupMutation, useEditCollectionMutation, useDeleteCollectionMutation, useReportSavedItemMutation, useAddToCollectionMutation, useLazyGetCollectionToAddQuery, useLazyGetCollectionsQuery, useCreateCollectionMutation, useDeleteSavedPostMutation, useLazyGetSavedPostsQuery, useSavePostMutation, useDeletePostMutation, useSharePostMutation, useLazyGetCommentRepliesQuery, useRespondToCommentsMutation, useReactToCommentMutation, useLazyGetPostCommentsQuery, useCreateCommentMutation, useSaveItemMutation, useReactToPostMutation, useCreateSearchHistoryMutation, useDeleteSearchHistoryMutation, useLazyGetSearchHistoryQuery, useCancelFriendRequestMutation, useNotificationResponseMutation, useDeleteUserNotificationMutation, useLazyGetUserNotificationsQuery, useCloudinaryUploadMutation, useContactUsMutation, useLazyGetMissionStatsQuery, useLazyGetCurrentUserQuery, useLazyLoginToAccountQuery, useLazyGetUserRegistrationQuery, useDeleteUserRegistrationMutation, useUpdateUserRegistrationMutation, useUserRegistrationMutation } = globalApi;

@@ -12,7 +12,7 @@ export async function GET(req) {
 		// console.log("query",query);
 
 		data = Object.fromEntries(query.entries());
-		console.log("data", data);
+		// console.log("data", data);
 
 		let page, limit, skip, totalDocuments, totalPages, options, sort;
 
